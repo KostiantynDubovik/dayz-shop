@@ -2,7 +2,6 @@ package com.dayz.shop.jpa.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -15,7 +14,6 @@ import java.util.List;
 
 @Data
 @Entity
-@RequiredArgsConstructor
 @Table(name = "USERS")
 public class User implements UserDetails {
 
@@ -36,13 +34,18 @@ public class User implements UserDetails {
 	@Column(name = "BALANCE")
 	private BigDecimal balance;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "ROLE")
-	private Role role;
+	@ManyToMany
+	@JoinTable(
+			name = "USERS_ROLES",
+			joinColumns = @JoinColumn(
+					name = "USER_ID", referencedColumnName = "USER_ID"),
+			inverseJoinColumns = @JoinColumn(
+					name = "ROLE_ID", referencedColumnName = "ROLE_ID"))
+	private List<Role> roles;
 
 	@ManyToOne
 	@JoinColumn(name = "STORE_ID")
-	private Store currentStore;
+	private Store store;
 
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 	private List<Order> orders;

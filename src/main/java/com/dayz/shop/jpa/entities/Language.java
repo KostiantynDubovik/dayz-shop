@@ -10,7 +10,6 @@ import javax.persistence.Table;
 import java.util.Objects;
 
 @Data
-@RequiredArgsConstructor
 @Entity
 @Table(name = "LANGUAGES")
 public class Language {

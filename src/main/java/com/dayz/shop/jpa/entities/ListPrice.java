@@ -8,7 +8,6 @@ import java.util.Objects;
 
 @Data
 @Entity
-@RequiredArgsConstructor
 @Table(name = "LIST_PRICE")
 public class ListPrice {
 

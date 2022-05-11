@@ -1,12 +1,10 @@
 package com.dayz.shop.jpa.entities;
 
 import lombok.Data;
-import lombok.Setter;
 
 import javax.persistence.*;
 
 @Data
-@Setter
 @Entity
 @Table(name = "SERVERS")
 public class Server {
