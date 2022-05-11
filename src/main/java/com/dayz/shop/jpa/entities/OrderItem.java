@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-@RequiredArgsConstructor
 @Table(name = "ORDER_ITEMS")
 public class OrderItem {
 

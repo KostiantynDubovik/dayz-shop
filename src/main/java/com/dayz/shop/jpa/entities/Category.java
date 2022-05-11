@@ -9,7 +9,6 @@ import java.util.Objects;
 
 @Data
 @Entity
-@RequiredArgsConstructor
 @Table(name = "CATEGORIES")
 public class Category {
 

@@ -78,6 +78,34 @@ create table offer_price
 		foreign key (ITEM_ID) references items (ITEM_ID)
 );
 
+create table privilege
+(
+	PRIVILEGE_ID bigint not null
+		primary key,
+	PRIVILEGE_NAME varchar(255) null
+);
+
+create table roles
+(
+	ROLE_ID bigint not null,
+	ROLE_NAME varchar(32) null,
+	constraint roles_ROLE_ID_uindex
+		unique (ROLE_ID)
+);
+
+alter table roles
+	add primary key (ROLE_ID);
+
+create table roles_privileges
+(
+	ROLE_ID bigint not null,
+	PRIVILEGE_ID bigint not null,
+	constraint FK8kxttvjnfb2dtfhjsw9nbwgnb
+		foreign key (PRIVILEGE_ID) references privilege (PRIVILEGE_ID),
+	constraint roles_privileges_roles_ROLE_ID_fk
+		foreign key (ROLE_ID) references roles (ROLE_ID)
+);
+
 create table stores
 (
 	STORE_ID bigint not null
@@ -131,8 +159,6 @@ create table users
 		primary key,
 	STEAM_ID varchar(255) null,
 	BALANCE decimal(19,2) null,
-	ROLE varchar(255) null,
-	OPEN_ID varchar(100) null,
 	STEAM_NICKNAME varchar(255) null,
 	STEAM_AVATAR_URL varchar(255) null,
 	STORE_ID bigint null,
@@ -173,6 +199,16 @@ create table order_items
 		foreign key (ORDER_ID) references orders (ORDER_ID),
 	constraint FKssyx5rw664bnq7bwtjerw3wwy
 		foreign key (ITEM_ID) references items (ITEM_ID)
+);
+
+create table users_roles
+(
+	USER_ID bigint null,
+	ROLE_ID bigint null,
+	constraint USERS_ROLES_users_USER_ID_fk
+		foreign key (USER_ID) references users (USER_ID),
+	constraint users_roles_roles_ROLE_ID_fk
+		foreign key (ROLE_ID) references roles (ROLE_ID)
 );
 
 -- Cyclic dependencies found

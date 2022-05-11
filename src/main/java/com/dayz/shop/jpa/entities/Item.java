@@ -7,7 +7,6 @@ import javax.persistence.*;
 import java.util.List;
 
 @Data
-@RequiredArgsConstructor
 @Entity
 @Table(name = "ITEMS")
 public class Item {

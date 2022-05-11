@@ -9,7 +9,6 @@ import java.util.Objects;
 
 @Data
 @Entity
-@RequiredArgsConstructor
 @Table(name = "STORE_CONFIG")
 public class StoreConfig {
 	@Id
