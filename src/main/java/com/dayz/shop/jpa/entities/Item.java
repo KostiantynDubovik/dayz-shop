@@ -1,7 +1,6 @@
 package com.dayz.shop.jpa.entities;
 
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
@@ -16,22 +15,22 @@ public class Item {
 	private Long id;
 
 	@Column(name = "ITEM_NAME", nullable = false)
-	private String itemName;
+	private String name;
 
 	@Column(name = "ITEM_DESCRIPTION")
-	private String itemDescription;
+	private String description;
 
 	@ManyToMany
 	@JoinTable(name = "ITEM_CATEGORY",
 			joinColumns = @JoinColumn(name = "ITEM_ID", referencedColumnName = "ITEM_ID"),
 			inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
-	private List<Category> itemCategories;
+	private List<Category> categories;
 
 	@OneToMany
 	@JoinTable(name = "OFFER_PRICE",
 			joinColumns = @JoinColumn(name = "ITEM_ID", referencedColumnName = "ITEM_ID"),
 			inverseJoinColumns = @JoinColumn(name = "OFFER_ID", referencedColumnName = "ITEM_ID"))
-	private List<OfferPrice> offerPriceList;
+	private List<OfferPrice> offerPrices;
 
 	@Column(name = "BUYABLE", nullable = false)
 	private boolean buyable;
@@ -40,7 +39,9 @@ public class Item {
 	private String imageUrl;
 
 	@OneToMany
-	@JoinTable(name = "SUB_ITEMS")
+	@JoinTable(name = "SUB_ITEMS",
+			joinColumns = @JoinColumn(name = "MAIN_ITEM_ID", referencedColumnName = "ITEM_ID"),
+			inverseJoinColumns = @JoinColumn(name = "SUB_ITEM_ID", referencedColumnName = "ITEM_ID"))
 	private List<Item> subItems;
 
 }
