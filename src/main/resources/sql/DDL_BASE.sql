@@ -22,28 +22,6 @@ create table hibernate_sequence
 	next_val bigint null
 );
 
-create table items
-(
-	ITEM_ID bigint not null
-		primary key,
-	ITEM_NAME varchar(255) not null,
-	ITEM_DESCRIPTION varchar(255) null,
-	BUYABLE bit not null,
-	IMAGE_URL varchar(255) null,
-	DELETABLE tinyint default 0 not null,
-	PUBLISHED tinyint default 0 not null
-);
-
-create table item_category
-(
-	ITEM_ID bigint not null,
-	CATEGORY_ID bigint not null,
-	constraint FK2vrjlr1cx4796d638s9laawh6
-		foreign key (CATEGORY_ID) references categories (CATEGORY_ID),
-	constraint FK9x3u4c5ap2ontvk8gid06sob6
-		foreign key (ITEM_ID) references items (ITEM_ID)
-);
-
 create table languages
 (
 	LANGUAGE_ID bigint not null
@@ -51,33 +29,6 @@ create table languages
 	LANGUAGE varchar(255) null,
 	COUNTRY varchar(255) null,
 	LOCALE varchar(255) null
-);
-
-create table list_price
-(
-	LISTPRICE bigint not null
-		primary key,
-	PRICE decimal(19,2) not null,
-	CURRENCY varchar(255) not null,
-	ITEM_ID bigint not null,
-	constraint FKflw3cs3wwdxl7ivwt2sue2ljf
-		foreign key (ITEM_ID) references items (ITEM_ID)
-);
-
-create table offer_price
-(
-	OFFER_ID bigint not null
-		primary key,
-	PRICE decimal(19,2) null,
-	CURRENCY varchar(255) null,
-	START_TIME datetime(6) null,
-	END_TIME datetime(6) null,
-	PRIORITY int null,
-	ITEM_ID bigint null,
-	constraint UK_equ60oycdwy8nhqr0emt1gh1e
-		unique (ITEM_ID),
-	constraint FKfenl0org6dixeh79gce55vj05
-		foreign key (ITEM_ID) references items (ITEM_ID)
 );
 
 create table privilege
@@ -115,6 +66,75 @@ create table stores
 	STORE_NAME varchar(255) not null,
 	constraint UK_b95rcr8yybvka6xv44j8f5avu
 		unique (STORE_NAME)
+);
+
+create table items
+(
+	ITEM_ID bigint not null
+		primary key,
+	ITEM_NAME varchar(255) not null,
+	ITEM_DESCRIPTION varchar(255) null,
+	BUYABLE bit not null,
+	IMAGE_URL varchar(255) null,
+	DELETABLE tinyint default 0 not null,
+	PUBLISHED tinyint not null,
+	STORE_ID bigint null,
+	constraint FK2gokdsrsrxhit2vaq2o5ghjmq
+		foreign key (STORE_ID) references stores (STORE_ID)
+);
+
+create table item_category
+(
+	ITEM_ID bigint not null,
+	CATEGORY_ID bigint not null,
+	constraint FK2vrjlr1cx4796d638s9laawh6
+		foreign key (CATEGORY_ID) references categories (CATEGORY_ID),
+	constraint FK9x3u4c5ap2ontvk8gid06sob6
+		foreign key (ITEM_ID) references items (ITEM_ID)
+);
+
+create table item_description
+(
+	DESCRIPTION_ID bigint not null
+		primary key,
+	DESCRIPTION varchar(255) null,
+	LANGUAGE_ID bigint null,
+	STORE_ID bigint null,
+	ITEM_ID bigint null,
+	PUBLISHED bit null,
+	constraint FK3fk9uqhit7s4219epgqrokwmo
+		foreign key (STORE_ID) references stores (STORE_ID),
+	constraint FKnsigttavejwcrw33a02pfswl4
+		foreign key (ITEM_ID) references items (ITEM_ID),
+	constraint FKtibhh4wrty273ummjngilhp5i
+		foreign key (LANGUAGE_ID) references languages (LANGUAGE_ID)
+);
+
+create table list_price
+(
+	LISTPRICE bigint not null
+		primary key,
+	PRICE decimal(19,2) not null,
+	CURRENCY varchar(255) not null,
+	ITEM_ID bigint not null,
+	constraint FKflw3cs3wwdxl7ivwt2sue2ljf
+		foreign key (ITEM_ID) references items (ITEM_ID)
+);
+
+create table offer_price
+(
+	OFFER_ID bigint not null
+		primary key,
+	PRICE decimal(19,2) null,
+	CURRENCY varchar(255) null,
+	START_TIME datetime(6) null,
+	END_TIME datetime(6) null,
+	PRIORITY int null,
+	ITEM_ID bigint null,
+	constraint UK_equ60oycdwy8nhqr0emt1gh1e
+		unique (ITEM_ID),
+	constraint FKfenl0org6dixeh79gce55vj05
+		foreign key (ITEM_ID) references items (ITEM_ID)
 );
 
 create table servers
