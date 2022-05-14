@@ -17,8 +17,9 @@ public class Item {
 	@Column(name = "ITEM_NAME", nullable = false)
 	private String name;
 
-	@Column(name = "ITEM_DESCRIPTION")
-	private String description;
+	@ManyToOne
+	@JoinColumn(name = "STORE_ID")
+	private Store store;
 
 	@ManyToMany
 	@JoinTable(name = "ITEM_CATEGORY",
@@ -44,4 +45,6 @@ public class Item {
 			inverseJoinColumns = @JoinColumn(name = "SUB_ITEM_ID", referencedColumnName = "ITEM_ID"))
 	private List<Item> subItems;
 
+	@Column(name = "DELETABLE")
+	private boolean deletable;
 }

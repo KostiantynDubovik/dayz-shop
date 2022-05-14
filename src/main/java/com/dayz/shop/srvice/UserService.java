@@ -1,6 +1,7 @@
 package com.dayz.shop.srvice;
 
 import com.dayz.shop.jpa.entities.User;
+import com.dayz.shop.repository.RoleRepository;
 import com.dayz.shop.repository.UserRepository;
 import org.apache.wink.client.RestClient;
 import org.apache.wink.json4j.JSONException;
@@ -15,6 +16,7 @@ import java.util.Map;
 @Service
 public class UserService {
 	private final UserRepository userRepository;
+	private final RoleRepository roleRepository;
 
 	@Value("${steam.api.url}")
 	private String apiUrl;
@@ -24,8 +26,9 @@ public class UserService {
 
 
 	@Autowired
-	public UserService(UserRepository userRepository) {
+	public UserService(UserRepository userRepository, RoleRepository roleRepository) {
 		this.userRepository = userRepository;
+		this.roleRepository = roleRepository;
 	}
 
 	public String getApiUrl() {
@@ -59,6 +62,7 @@ public class UserService {
 		user.setSteamNickName(stringObjectMap.get("personaname"));
 		user.setSteamAvatarUrl(stringObjectMap.get("avatar"));
 		user.setSteamId(steamId);
+		user.setRoles(roleRepository.findAllByName("USER"));
 		return user;
 	}
 

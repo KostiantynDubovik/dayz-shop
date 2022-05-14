@@ -47,7 +47,7 @@ public class User implements UserDetails {
 	@JoinColumn(name = "STORE_ID")
 	private Store store;
 
-	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "user")
 	private List<Order> orders;
 
 	@Override

@@ -29,7 +29,9 @@ create table items
 	ITEM_NAME varchar(255) not null,
 	ITEM_DESCRIPTION varchar(255) null,
 	BUYABLE bit not null,
-	IMAGE_URL varchar(255) null
+	IMAGE_URL varchar(255) null,
+	DELETABLE tinyint default 0 not null,
+	PUBLISHED tinyint default 0 not null
 );
 
 create table item_category
@@ -143,14 +145,14 @@ create table store_languages
 
 create table sub_items
 (
-	Item_ITEM_ID bigint not null,
-	subItems_ITEM_ID bigint not null,
-	constraint UK_538jgfuh86sdec6d4vjd9lya4
-		unique (subItems_ITEM_ID),
-	constraint FKifw2p6j3k1u43kr32fv0j258b
-		foreign key (subItems_ITEM_ID) references items (ITEM_ID),
-	constraint FKl9i91c3usemmafcajktlymeub
-		foreign key (Item_ITEM_ID) references items (ITEM_ID)
+	MAIN_ITEM_ID bigint not null,
+	SUB_ITEM_ID bigint not null,
+	constraint UK_2b96x3q13nt9u9bmb9ug0jn04
+		unique (SUB_ITEM_ID),
+	constraint FKk6pfbc7yumixkvqfwlw2t60sw
+		foreign key (SUB_ITEM_ID) references items (ITEM_ID),
+	constraint FKs26m23h1yrh7ku91jmw4n9grx
+		foreign key (MAIN_ITEM_ID) references items (ITEM_ID)
 );
 
 create table users

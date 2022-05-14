@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Locale;
 import java.util.Objects;
 
 @Data
@@ -24,5 +25,5 @@ public class Language {
 	private String country;
 
 	@Column(name = "LOCALE")
-	private String locale;
+	private Locale locale;
 }
