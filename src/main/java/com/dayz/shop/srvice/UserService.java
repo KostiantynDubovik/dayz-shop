@@ -1,5 +1,6 @@
 package com.dayz.shop.srvice;
 
+import com.dayz.shop.jpa.entities.Store;
 import com.dayz.shop.jpa.entities.User;
 import com.dayz.shop.repository.RoleRepository;
 import com.dayz.shop.repository.UserRepository;
@@ -55,7 +56,7 @@ public class UserService {
 
 	//method for updating user;
 	@SuppressWarnings("unchecked")
-	public User createUser(String steamId) throws JSONException {
+	public User createUser(String steamId, Store store) throws JSONException {
 		User user = new User();
 		Map<String, Object> userInfo = getSteamUserInfo(steamId);
 		Map<String, String > stringObjectMap = ((List<Map<String, String >>) ((Map<String, Object>) userInfo.get("response")).get("players")).get(0);
@@ -63,6 +64,8 @@ public class UserService {
 		user.setSteamAvatarUrl(stringObjectMap.get("avatar"));
 		user.setSteamId(steamId);
 		user.setRoles(roleRepository.findAllByName("USER"));
+		user.setStore(store);
+		user.setActive(true);
 		return user;
 	}
 

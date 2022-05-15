@@ -31,7 +31,7 @@ create table languages
 	LOCALE varchar(255) null
 );
 
-create table privilege
+create table privileges
 (
 	PRIVILEGE_ID bigint not null
 		primary key,
@@ -54,7 +54,7 @@ create table roles_privileges
 	ROLE_ID bigint not null,
 	PRIVILEGE_ID bigint not null,
 	constraint FK8kxttvjnfb2dtfhjsw9nbwgnb
-		foreign key (PRIVILEGE_ID) references privilege (PRIVILEGE_ID),
+		foreign key (PRIVILEGE_ID) references privileges (PRIVILEGE_ID),
 	constraint roles_privileges_roles_ROLE_ID_fk
 		foreign key (ROLE_ID) references roles (ROLE_ID)
 );
@@ -151,15 +151,33 @@ create table servers
 		foreign key (STORE_ID) references stores (STORE_ID)
 );
 
+create table store_config
+(
+	STORE_CONFIG_ID bigint auto_increment,
+	STORE_ID bigint not null,
+	`KEY` varchar(255) not null,
+	VALUE varchar(255) not null,
+	storeId bigint null,
+	Store_STORE_ID bigint not null,
+	constraint STORE_CONFIG_STORE_CONFIG_ID_uindex
+		unique (STORE_CONFIG_ID),
+	constraint FK5g86a44ye5aeyltemv5mx0c4
+		foreign key (Store_STORE_ID) references stores (STORE_ID),
+	constraint STORE_CONFIG_stores_STORE_ID_fk
+		foreign key (STORE_ID) references stores (STORE_ID)
+			on delete cascade
+);
+
+alter table store_config
+	add primary key (STORE_CONFIG_ID);
+
 create table store_languages
 (
-	STORE_ID bigint not null,
-	LANGUAGE_ID bigint not null,
-	constraint UK_ch11u1nsh4kh6aaqfklgmpoiu
-		unique (LANGUAGE_ID),
-	constraint FK1kdytqfho0odvnxgrb06yoty9
+	STORE_ID bigint null,
+	LANGUAGE_ID bigint null,
+	constraint STORE_LANGUAGE_languages_LANGUAGE_ID_fk
 		foreign key (LANGUAGE_ID) references languages (LANGUAGE_ID),
-	constraint FKj02le5kpa0vpyhgrcknyr46mq
+	constraint STORE_LANGUAGE_stores_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID)
 );
 
@@ -179,11 +197,16 @@ create table users
 (
 	USER_ID bigint not null
 		primary key,
-	STEAM_ID varchar(255) null,
-	BALANCE decimal(19,2) null,
-	STEAM_NICKNAME varchar(255) null,
-	STEAM_AVATAR_URL varchar(255) null,
-	STORE_ID bigint null,
+	STEAM_ID varchar(255) not null,
+	BALANCE decimal(19,2) default 0.00 null,
+	STEAM_NICKNAME varchar(255) not null,
+	STEAM_AVATAR_URL varchar(255) not null,
+	STORE_ID bigint not null,
+	IS_ACTIVE bit not null,
+	constraint UKrsl8blftmuw9y1u82pt7o4i9r
+		unique (USER_ID, STORE_ID),
+	constraint USER_ID
+		unique (USER_ID, STORE_ID),
 	constraint FKojefi57a28my3srup14jrs2f8
 		foreign key (STORE_ID) references stores (STORE_ID)
 );
@@ -195,8 +218,11 @@ create table orders
 	ORDER_TOTAL decimal(19,2) null,
 	STATUS varchar(255) null,
 	USER_ID bigint null,
+	STORE_ID bigint null,
 	constraint FKenwru67yr8f0ei6m1bc2xlj4w
-		foreign key (USER_ID) references users (USER_ID)
+		foreign key (USER_ID) references users (USER_ID),
+	constraint orders_stores_STORE_ID_fk
+		foreign key (STORE_ID) references stores (STORE_ID)
 );
 
 create table order_items
@@ -209,7 +235,6 @@ create table order_items
 	PRICE decimal(19,2) null,
 	ITEM_ID bigint null,
 	USER_ID bigint null,
-	QUANTITY int null,
 	ORDER_ID bigint null,
 	constraint UK_8mqc19ne0nb63tawmougm4e2
 		unique (USER_ID),
@@ -228,32 +253,9 @@ create table users_roles
 	USER_ID bigint null,
 	ROLE_ID bigint null,
 	constraint USERS_ROLES_users_USER_ID_fk
-		foreign key (USER_ID) references users (USER_ID),
+		foreign key (USER_ID) references users (USER_ID)
+			on delete cascade,
 	constraint users_roles_roles_ROLE_ID_fk
 		foreign key (ROLE_ID) references roles (ROLE_ID)
 );
-
--- Cyclic dependencies found
-
-create table store_config
-(
-	STORE_CONFIG_ID bigint auto_increment,
-	STORE_ID bigint not null,
-	`KEY` varchar(255) not null,
-	VALUE varchar(255) not null,
-	storeId bigint null,
-	Store_STORE_ID bigint not null,
-	constraint STORE_CONFIG_STORE_CONFIG_ID_uindex
-		unique (STORE_CONFIG_ID),
-	constraint FK5g86a44ye5aeyltemv5mx0c4
-		foreign key (Store_STORE_ID) references stores (STORE_ID),
-	constraint FKoadin1w6tig7b51n89xkfiubm
-		foreign key (STORE_CONFIG_ID) references store_config (STORE_CONFIG_ID),
-	constraint STORE_CONFIG_stores_STORE_ID_fk
-		foreign key (STORE_ID) references stores (STORE_ID)
-			on delete cascade
-);
-
-alter table store_config
-	add primary key (STORE_CONFIG_ID);
 

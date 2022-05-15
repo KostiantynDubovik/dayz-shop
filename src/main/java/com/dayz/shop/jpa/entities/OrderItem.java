@@ -1,16 +1,21 @@
 package com.dayz.shop.jpa.entities;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
-
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Entity
 @Table(name = "ORDER_ITEMS")
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
 public class OrderItem {
 
 	@Id
@@ -42,6 +47,16 @@ public class OrderItem {
 	@Column(name = "PRICE")
 	private BigDecimal price;
 
-	@Column(name = "QUANTITY")
-	private Integer quantity;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+		OrderItem orderItem = (OrderItem) o;
+		return id != null && Objects.equals(id, orderItem.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return getClass().hashCode();
+	}
 }

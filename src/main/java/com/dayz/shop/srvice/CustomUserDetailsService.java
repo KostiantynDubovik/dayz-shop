@@ -2,12 +2,16 @@ package com.dayz.shop.srvice;
 
 import com.dayz.shop.jpa.entities.Privilege;
 import com.dayz.shop.jpa.entities.Role;
+import com.dayz.shop.jpa.entities.Store;
 import com.dayz.shop.jpa.entities.User;
 import com.dayz.shop.repository.RoleRepository;
 import com.dayz.shop.repository.UserRepository;
+import com.dayz.shop.utils.Utils;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wink.json4j.JSONException;
+import org.openid4java.consumer.ConsumerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +24,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.openid.OpenIDAuthenticationToken;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @Setter
@@ -34,8 +39,10 @@ public class CustomUserDetailsService implements AuthenticationUserDetailsServic
 
 	private UserRepository userRepository;
 	private RoleRepository roleRepository;
-
+	private ConsumerManager manager;
 	private UserService userService;
+	@Autowired
+	private HttpServletRequest request;
 
 	public UserService getUserService() {
 		return userService;
@@ -51,45 +58,39 @@ public class CustomUserDetailsService implements AuthenticationUserDetailsServic
 		this.userRepository = userRepository;
 	}
 
+	@Autowired
+	public void setRoleRepository(RoleRepository roleRepository) {
+		this.roleRepository = roleRepository;
+	}
+
 	@Override
 	public UserDetails loadUserDetails(OpenIDAuthenticationToken token) throws UsernameNotFoundException {
-
-		log.info("Loading user details ...");
-
 		String name = token.getName().substring(token.getName().lastIndexOf('/') + 1);
-
-		log.info("Finding user by token " + name);
-
-		User user = userRepository.findBySteamId(name);
-
+		Store store = Utils.extractStoreFromRequest(request);
+		User user = userRepository.getBySteamIdAndStore(name, store);
 		if (user == null) {
-
 			try {
-				user = getUserService().createUser(name);
+				user = getUserService().createUser(name, store);
 			} catch (JSONException e) {
 				throw new UsernameNotFoundException("ErrorParsing json", e);
 			}
 			user = userRepository.save(user);
 		}
 		return user;
-
 	}
 
 	@Override
 	public UserDetails loadUserByUsername(String steamId)
 			throws UsernameNotFoundException {
-
-		User user = userRepository.findBySteamId(steamId);
-		if (user == null) {
+		User user = userRepository.getBySteamId(steamId);
+		if (user != null) {
+			return user;
+		} else {
 			return new org.springframework.security.core.userdetails.User(
-					" ", " ", true, true, true, true,
+					StringUtils.EMPTY, StringUtils.EMPTY, true, true, true, true,
 					getAuthorities(Collections.singletonList(
 							roleRepository.findByName("USER"))));
 		}
-
-		return new org.springframework.security.core.userdetails.User(
-				user.getSteamId(), user.getPassword(), user.isEnabled(), user.isAccountNonExpired(),
-				user.isCredentialsNonExpired(), user.isAccountNonLocked(), getAuthorities(user.getRoles()));
 	}
 
 	private List<? extends GrantedAuthority> getAuthorities(List<Role> roles) {

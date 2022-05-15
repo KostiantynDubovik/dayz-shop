@@ -1,13 +1,20 @@
 package com.dayz.shop.jpa.entities;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Entity
 @Table(name = "ITEMS")
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
 public class Item {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -25,12 +32,14 @@ public class Item {
 	@JoinTable(name = "ITEM_CATEGORY",
 			joinColumns = @JoinColumn(name = "ITEM_ID", referencedColumnName = "ITEM_ID"),
 			inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
+	@ToString.Exclude
 	private List<Category> categories;
 
 	@OneToMany
 	@JoinTable(name = "OFFER_PRICE",
 			joinColumns = @JoinColumn(name = "ITEM_ID", referencedColumnName = "ITEM_ID"),
 			inverseJoinColumns = @JoinColumn(name = "OFFER_ID", referencedColumnName = "ITEM_ID"))
+	@ToString.Exclude
 	private List<OfferPrice> offerPrices;
 
 	@Column(name = "BUYABLE", nullable = false)
@@ -43,8 +52,22 @@ public class Item {
 	@JoinTable(name = "SUB_ITEMS",
 			joinColumns = @JoinColumn(name = "MAIN_ITEM_ID", referencedColumnName = "ITEM_ID"),
 			inverseJoinColumns = @JoinColumn(name = "SUB_ITEM_ID", referencedColumnName = "ITEM_ID"))
+	@ToString.Exclude
 	private List<Item> subItems;
 
 	@Column(name = "DELETABLE")
 	private boolean deletable;
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+		Item item = (Item) o;
+		return id != null && Objects.equals(id, item.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return getClass().hashCode();
+	}
 }

@@ -1,5 +1,6 @@
 package com.dayz.shop.jpa.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.hibernate.Hibernate;
 
@@ -10,9 +11,13 @@ import javax.persistence.Table;
 import java.util.Locale;
 import java.util.Objects;
 
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Entity
 @Table(name = "LANGUAGES")
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
 public class Language {
 	@Id
 	@Column(name = "LANGUAGE_ID", nullable = false)
@@ -26,4 +31,17 @@ public class Language {
 
 	@Column(name = "LOCALE")
 	private Locale locale;
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+		Language language = (Language) o;
+		return id != null && Objects.equals(id, language.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return getClass().hashCode();
+	}
 }

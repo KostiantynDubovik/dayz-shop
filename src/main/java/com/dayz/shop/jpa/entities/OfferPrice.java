@@ -1,14 +1,24 @@
 package com.dayz.shop.jpa.entities;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Entity
 @Table(name = "OFFER_PRICE")
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 public class OfferPrice {
 
 	@Id
@@ -34,4 +44,17 @@ public class OfferPrice {
 
 	@Column(name = "PRIORITY")
 	private int priority;
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+		OfferPrice that = (OfferPrice) o;
+		return id != null && Objects.equals(id, that.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return getClass().hashCode();
+	}
 }

@@ -1,26 +1,42 @@
 package com.dayz.shop.jpa.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.Hibernate;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
-@Data
+@Getter
+@Setter
+@ToString
 @Entity
-@Table(name = "USERS")
+@Table(name = "USERS", uniqueConstraints = {@UniqueConstraint(columnNames = {"USER_ID", "STORE_ID"})})
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 public class User implements UserDetails {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "USER_ID", nullable = false)
+	@Column(name = "USER_ID")
 	private Long id;
+
+	@ManyToOne
+	@JsonIgnore
+	@JoinColumn(name = "STORE_ID")
+	private Store store;
 
 	@Column(name = "STEAM_ID")
 	private String steamId;
@@ -32,9 +48,14 @@ public class User implements UserDetails {
 	private String steamAvatarUrl;
 
 	@Column(name = "BALANCE")
-	private BigDecimal balance;
+	private BigDecimal balance = BigDecimal.ZERO;
 
-	@ManyToMany
+	@Column(name = "IS_ACTIVE")
+	private Boolean active;
+
+	@JsonIgnore
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE})
 	@JoinTable(
 			name = "USERS_ROLES",
 			joinColumns = @JoinColumn(
@@ -43,18 +64,27 @@ public class User implements UserDetails {
 					name = "ROLE_ID", referencedColumnName = "ROLE_ID"))
 	private List<Role> roles;
 
-	@ManyToOne
-	@JoinColumn(name = "STORE_ID")
-	private Store store;
-
+	@JsonIgnore
+	@ToString.Exclude
 	@OneToMany(mappedBy = "user")
 	private List<Order> orders;
+
+	public Boolean isActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
 
 	@Override
 	@Transient
 	@JsonIgnore
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return AuthorityUtils.createAuthorityList("ROLE_USER");
+		return getRoles().stream()
+				.flatMap(role -> role.getPrivileges().stream())
+				.map(privilege -> new SimpleGrantedAuthority(privilege.getName()))
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -96,7 +126,20 @@ public class User implements UserDetails {
 	@Transient
 	@Override
 	public boolean isEnabled() {
-		return true;
+		return isActive();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+		User user = (User) o;
+		return id != null && Objects.equals(id, user.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return getClass().hashCode();
 	}
 }
 

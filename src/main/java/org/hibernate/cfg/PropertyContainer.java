@@ -60,7 +60,7 @@ public class PropertyContainer {
 
 		preFilter(fields, getters);
 
-		final Map<String, XProperty> persistentAttributesFromGetters = new HashMap<String, XProperty>();
+		final Map<String, XProperty> persistentAttributesFromGetters = new HashMap<>();
 
 		final LinkedHashMap<String, XProperty> localAttributeMap = new LinkedHashMap<>();
 		collectPersistentAttributesUsingLocalAccessType(
@@ -219,7 +219,7 @@ public class PropertyContainer {
 	}
 
 	private static List<XProperty> verifyAndInitializePersistentAttributes(XClass xClass, Map<String, XProperty> localAttributeMap) {
-		ArrayList<XProperty> output = new ArrayList(localAttributeMap.size());
+		ArrayList<XProperty> output = new ArrayList<>(localAttributeMap.size());
 		for (XProperty xProperty : localAttributeMap.values()) {
 			if (!xProperty.isTypeResolved() && !discoverTypeWithoutReflection(xProperty)) {
 				String msg = "Property " + StringHelper.qualify(xClass.getName(), xProperty.getName()) +
@@ -290,10 +290,9 @@ public class PropertyContainer {
 			return true;
 		} else if (p.isAnnotationPresent(Type.class)) {
 			return true;
-		} else if (p.isAnnotationPresent(Target.class)) {
-			return true;
+		} else {
+			return p.isAnnotationPresent(Target.class);
 		}
-		return false;
 	}
 
 	private static boolean mustBeSkipped(XProperty property) {

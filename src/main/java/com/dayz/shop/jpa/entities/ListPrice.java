@@ -1,5 +1,6 @@
 package com.dayz.shop.jpa.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import java.util.Objects;
 @Data
 @Entity
 @Table(name = "LIST_PRICE")
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
 public class ListPrice {
 
 	@Id

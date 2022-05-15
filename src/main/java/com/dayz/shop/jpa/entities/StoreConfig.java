@@ -1,15 +1,19 @@
 package com.dayz.shop.jpa.entities;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.util.Objects;
 
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Entity
 @Table(name = "STORE_CONFIG")
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
 public class StoreConfig {
 	@Id
 	@Column(name = "STORE_CONFIG_ID", nullable = false)
@@ -23,4 +27,17 @@ public class StoreConfig {
 
 	@Column(name = "VALUE", nullable = false)
 	private String value;
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+		StoreConfig that = (StoreConfig) o;
+		return id != null && Objects.equals(id, that.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return getClass().hashCode();
+	}
 }
