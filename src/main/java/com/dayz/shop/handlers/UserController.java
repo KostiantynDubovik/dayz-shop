@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -34,14 +33,21 @@ public class UserController {
 	@Transactional
 	@GetMapping("app/{steamId}")
 	@PreAuthorize("hasAuthority('APP_WRITE')")
-	public User getUser(@PathVariable String steamId, @RequestAttribute Store store) {
+	public User getUser(@PathVariable String steamId) {
 		return userRepository.getBySteamId(steamId);
+	}
+
+	@Transactional
+	@GetMapping("app")
+	@PreAuthorize("hasAuthority('APP_WRITE')")
+	public List<User> getAllUsers() {
+		return userRepository.findAll();
 	}
 
 	@Transactional
 	@GetMapping("store/list")
 	@PreAuthorize("hasAuthority('STORE_WRITE')")
-	public List<User> getAllUsers(@RequestAttribute Store store) {
+	public List<User> getAllUsersByStore(@RequestAttribute Store store) {
 		return userRepository.getAllByStore(store);
 	}
 

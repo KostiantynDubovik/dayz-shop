@@ -49,11 +49,7 @@ public class SecurityWebConfiguration extends WebSecurityConfigurerAdapter {
 				.authenticationUserDetailsService(authenticationUserDetailsService())
 				.failureUrl("/?fail")
 				.and()
-				.csrf().disable()
-				.logout()
-				.logoutSuccessUrl("/")
-				.invalidateHttpSession(true)
-				.deleteCookies("JSESSIONID");
+				.csrf().disable();
 	}
 
 	private ConsumerManager consumerManager() {

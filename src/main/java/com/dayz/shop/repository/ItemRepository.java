@@ -16,8 +16,8 @@ public interface ItemRepository extends PagingAndSortingRepository<Item, Long> {
 
 	Item findByIdAndStore(Long itemId, Store store);
 
-	Page<Item> findAllByCategoriesInAndStore(List<List<Category>> categories, Store store, Pageable pageable);
-	Page<Item> findAllByCategoriesIn(List<List<Category>> categories, Pageable pageable);
+	Page<Item> findAllByCategoriesInAndStore(List<Category> categories, Store store, Pageable pageable);
+	Page<Item> findAllByCategoriesIn(List<Category> categories, Pageable pageable);
 
 	Page<Item> findAllByStore(Store store, Pageable pageable);
 }

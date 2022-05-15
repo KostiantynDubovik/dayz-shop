@@ -6,7 +6,6 @@ import com.dayz.shop.utils.Utils;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.openid.OpenIDAuthenticationToken;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Component;
 
@@ -34,14 +33,16 @@ public class StoreFilter implements Filter {
 			if (securityContext != null) {
 				Authentication authentication = securityContext.getAuthentication();
 				User user = (User) authentication.getPrincipal();
-				Store userStore = user.getStore();
-				if (!userStore.equals(requestedStore) || !Utils.isAppAdmin(user)) {
-					SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
-					logoutHandler.setClearAuthentication(true);
-					logoutHandler.setInvalidateHttpSession(true);
-					logoutHandler.logout(httpRequest, (HttpServletResponse) response, authentication);
-					((HttpServletResponse) response).sendRedirect("/");
-					return;
+				if (!Utils.isAppAdmin(user)) {
+					Store userStore = user.getStore();
+					if (!userStore.getId().equals(requestedStore.getId()) || !Utils.isAppAdmin(user)) {
+						SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
+						logoutHandler.setClearAuthentication(true);
+						logoutHandler.setInvalidateHttpSession(true);
+						logoutHandler.logout(httpRequest, (HttpServletResponse) response, authentication);
+						((HttpServletResponse) response).sendRedirect("/");
+						return;
+					}
 				}
 			}
 		}

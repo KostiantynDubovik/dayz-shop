@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Getter
 @Setter
@@ -65,12 +64,15 @@ public class CustomUserDetailsService implements AuthenticationUserDetailsServic
 
 	@Override
 	public UserDetails loadUserDetails(OpenIDAuthenticationToken token) throws UsernameNotFoundException {
-		String name = token.getName().substring(token.getName().lastIndexOf('/') + 1);
+		String steamId = token.getName().substring(token.getName().lastIndexOf('/') + 1);
 		Store store = Utils.extractStoreFromRequest(request);
-		User user = userRepository.getBySteamIdAndStore(name, store);
+		User user = userRepository.getBySteamIdAndRolesIn(steamId, Collections.singletonList(roleRepository.findByName("APP_ADMIN")));
+		if (user == null) {
+			user = userRepository.getBySteamIdAndStore(steamId, store);
+		}
 		if (user == null) {
 			try {
-				user = getUserService().createUser(name, store);
+				user = getUserService().createUser(steamId, store);
 			} catch (JSONException e) {
 				throw new UsernameNotFoundException("ErrorParsing json", e);
 			}
