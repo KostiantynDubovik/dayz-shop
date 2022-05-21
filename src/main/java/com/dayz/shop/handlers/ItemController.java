@@ -36,7 +36,7 @@ public class ItemController {
 			@RequestParam(defaultValue = "name") String sortBy,
 			@RequestParam(defaultValue = "9") int pageSize,
 			@RequestAttribute Store store) {
-		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(sortBy));
+		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 3 ? 3 : pageSize, Sort.by(sortBy));
 		return itemRepository.findAllByStore(store, pageable);
 	}
 
@@ -47,7 +47,7 @@ public class ItemController {
 			@RequestParam(defaultValue = "name") String sortBy,
 			@RequestParam(defaultValue = "9") int pageSize,
 			@RequestAttribute Store store) {
-		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(sortBy));
+		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 3 ? 3 : pageSize, Sort.by(sortBy));
 		return itemService.findAllByCategoryNameAndStore(categoryName, store, pageable);
 	}
 
@@ -64,7 +64,8 @@ public class ItemController {
 
 	@PostMapping()
 	@PreAuthorize("hasAuthority('STORE_WRITE')")
-	public Item createItem(@RequestBody Item item) {
+	public Item createItem(@RequestBody Item item, @RequestAttribute Store store) {
+		item.setStore(store);
 		return itemRepository.save(item);
 	}
 

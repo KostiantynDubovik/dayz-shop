@@ -1,10 +1,13 @@
 package com.dayz.shop.jpa.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,7 +20,7 @@ import java.util.Objects;
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
 public class Item {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	@Column(name = "ITEM_ID", nullable = false)
 	private Long id;
 
@@ -25,6 +28,7 @@ public class Item {
 	private String name;
 
 	@ManyToOne
+	@JsonIgnore
 	@JoinColumn(name = "STORE_ID")
 	private Store store;
 
@@ -34,6 +38,9 @@ public class Item {
 			inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
 	@ToString.Exclude
 	private List<Category> categories;
+
+	@Formula("(select lp.PRICE from LIST_PRICE lp where lp.ITEM_ID = ITEM_ID AND lp.STORE_ID = STORE_ID)")
+	private BigDecimal listPrice;
 
 	@OneToMany
 	@JoinTable(name = "OFFER_PRICE",

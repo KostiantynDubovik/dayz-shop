@@ -21,7 +21,7 @@ public class Privilege {
 
 	@Id
 	@Column(name = "PRIVILEGE_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Long id;
 
 	@Column(name = "PRIVILEGE_NAME")

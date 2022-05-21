@@ -18,7 +18,7 @@ import java.util.Objects;
 public class Category {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	@Column(name = "CATEGORY_ID", nullable = false, unique = true)
 	private Long id;
 

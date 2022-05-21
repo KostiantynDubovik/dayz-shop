@@ -22,7 +22,7 @@ import java.util.Objects;
 public class OfferPrice {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	@Column(name = "OFFER_ID", nullable = false)
 	private Long id;
 

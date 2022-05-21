@@ -73,13 +73,11 @@ create table items
 	ITEM_ID bigint not null
 		primary key,
 	ITEM_NAME varchar(255) not null,
-	ITEM_DESCRIPTION varchar(255) null,
 	BUYABLE bit not null,
 	IMAGE_URL varchar(255) null,
-	DELETABLE tinyint default 0 not null,
-	PUBLISHED tinyint not null,
+	DELETABLE bit not null,
 	STORE_ID bigint null,
-	constraint FK2gokdsrsrxhit2vaq2o5ghjmq
+	constraint items_stores_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID)
 );
 
@@ -87,9 +85,9 @@ create table item_category
 (
 	ITEM_ID bigint not null,
 	CATEGORY_ID bigint not null,
-	constraint FK2vrjlr1cx4796d638s9laawh6
+	constraint item_category_item_category_CATEGORY_ID_fk
 		foreign key (CATEGORY_ID) references categories (CATEGORY_ID),
-	constraint FK9x3u4c5ap2ontvk8gid06sob6
+	constraint item_category_items_ITEM_ID_fk
 		foreign key (ITEM_ID) references items (ITEM_ID)
 );
 
@@ -102,11 +100,11 @@ create table item_description
 	STORE_ID bigint null,
 	ITEM_ID bigint null,
 	PUBLISHED bit null,
-	constraint FK3fk9uqhit7s4219epgqrokwmo
+	constraint item_description_store_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID),
-	constraint FKnsigttavejwcrw33a02pfswl4
+	constraint item_description_items_ITEM_ID_fk
 		foreign key (ITEM_ID) references items (ITEM_ID),
-	constraint FKtibhh4wrty273ummjngilhp5i
+	constraint item_description_languages_LANGUAGE_ID_fk
 		foreign key (LANGUAGE_ID) references languages (LANGUAGE_ID)
 );
 
@@ -117,8 +115,11 @@ create table list_price
 	PRICE decimal(19,2) not null,
 	CURRENCY varchar(255) not null,
 	ITEM_ID bigint not null,
-	constraint FKflw3cs3wwdxl7ivwt2sue2ljf
-		foreign key (ITEM_ID) references items (ITEM_ID)
+	STORE_ID bigint not null,
+	constraint list_price_items_ITEM_ID_fk
+		foreign key (ITEM_ID) references items (ITEM_ID),
+	constraint list_price_stores_STORE_ID_fk
+		foreign key (STORE_ID) references stores (STORE_ID)
 );
 
 create table offer_price

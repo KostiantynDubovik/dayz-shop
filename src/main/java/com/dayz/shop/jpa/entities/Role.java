@@ -19,7 +19,7 @@ public class Role {
 
 	@Id
 	@Column(name = "ROLE_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Long id;
 
 	@Column(name = "ROLE_NAME")

@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 public class User implements UserDetails {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	@Column(name = "USER_ID")
 	private Long id;
 
@@ -53,7 +53,6 @@ public class User implements UserDetails {
 	@Column(name = "IS_ACTIVE")
 	private Boolean active;
 
-	@JsonIgnore
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE})
 	@JoinTable(
