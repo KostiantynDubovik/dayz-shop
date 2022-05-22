@@ -1,0 +1,25 @@
+.BasketCard {
+  display: flex;
+  overflow-y: auto;
+}
+.imgCard {
+  width: 170px;
+  height: 130px;
+}
+
+.displayCount {
+  width: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.priceProduct {
+  font-weight: bold;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  padding-right: 40px;
+}
