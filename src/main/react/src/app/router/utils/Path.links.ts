@@ -2,5 +2,6 @@ export enum PATHS {
     MAIN = "/",
     CUSTOM = "/custom",
     CODELOCK = "/codelock",
-    PROFILE = "/profile"
+    PROFILE = "/profile",
+    SETTINGS = "/settings"
 }

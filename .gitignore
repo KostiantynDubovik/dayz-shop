@@ -60,3 +60,4 @@ out/
 hs_err_pid*
 
 **/node_modules/
+/src/main/resources/static/
