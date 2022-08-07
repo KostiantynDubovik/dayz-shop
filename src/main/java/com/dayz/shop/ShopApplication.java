@@ -28,7 +28,6 @@ public class ShopApplication {
 
 @RestController
 class Ctrl {
-
 	@GetMapping("/shutdown")
 	void shutdown() {
 		ShopApplication.shutdown();
@@ -37,7 +36,7 @@ class Ctrl {
 
 @Controller
 class RouteController {
-	@RequestMapping(value = "/{path:[^\\.]*}")
+	@RequestMapping(value = "/{path:[^.]*}")
 	public String redirect() {
 		return "forward:/";
 	}

@@ -49,6 +49,7 @@ public class SecurityWebConfiguration extends WebSecurityConfigurerAdapter {
 				.loginPage("/").permitAll()
 				.authenticationUserDetailsService(authenticationUserDetailsService())
 				.failureUrl("/?fail")
+				.defaultSuccessUrl("/", true)
 				.and()
 				.csrf().disable();
 	}
