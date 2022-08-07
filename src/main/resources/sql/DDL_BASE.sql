@@ -206,8 +206,6 @@ create table users
 	IS_ACTIVE bit not null,
 	constraint UKrsl8blftmuw9y1u82pt7o4i9r
 		unique (USER_ID, STORE_ID),
-	constraint USER_ID
-		unique (USER_ID, STORE_ID),
 	constraint FKojefi57a28my3srup14jrs2f8
 		foreign key (STORE_ID) references stores (STORE_ID)
 );
