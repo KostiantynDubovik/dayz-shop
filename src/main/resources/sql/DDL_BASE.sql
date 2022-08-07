@@ -241,8 +241,6 @@ create table order_items
 		unique (USER_ID),
 	constraint FK6sjhssmsryq1o07mqnpky6cny
 		foreign key (USER_ID) references users (USER_ID),
-	constraint FK7kago8adpfrwq13q6ypcn06xr
-		foreign key (ORDER_ITEM_ID) references users (USER_ID),
 	constraint FKnnrjyhgtcxoh0eo45qvl41ira
 		foreign key (ORDER_ID) references orders (ORDER_ID),
 	constraint FKssyx5rw664bnq7bwtjerw3wwy
