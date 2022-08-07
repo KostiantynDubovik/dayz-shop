@@ -45,4 +45,4 @@ INSERT INTO shop.items (ITEM_ID, ITEM_NAME, BUYABLE, IMAGE_URL, DELETABLE, STORE
 INSERT INTO shop.items (ITEM_ID, ITEM_NAME, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID) VALUES (-4, 'Canteen', true, 'https://static.wikia.nocookie.net/dayz_gamepedia/images/5/5e/Canteen.png/revision/latest/scale-to-width-down/163?cb=20180610230549', true, -2);
 
 
-INSERT INTO shop.store_config (STORE_CONFIG_ID, STORE_ID, `KEY`, VALUE) VALUES (-1, -2, 'steam.api.key', 'DF21B88E007F7F971EE63BFA733BB812');
+INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'steam.api.key', 'DF21B88E007F7F971EE63BFA733BB812');
