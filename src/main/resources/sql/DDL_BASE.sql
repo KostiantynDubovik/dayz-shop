@@ -154,19 +154,17 @@ create table servers
 
 create table store_config
 (
-	STORE_CONFIG_ID bigint auto_increment,
 	STORE_ID bigint not null,
 	`KEY` varchar(255) not null,
 	VALUE varchar(255) not null,
-	constraint STORE_CONFIG_STORE_CONFIG_ID_uindex
-		unique (STORE_CONFIG_ID),
-	constraint STORE_CONFIG_stores_STORE_ID_fk
+	primary key (STORE_ID, `KEY`),
+	constraint store_config_KEY_uindex
+		unique (`KEY`),
+	constraint store_config_STORE_ID_uindex
+		unique (STORE_ID),
+	constraint store_config_stores_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID)
-			on delete cascade
 );
-
-alter table store_config
-	add primary key (STORE_CONFIG_ID);
 
 create table store_languages
 (

@@ -71,12 +71,9 @@ public class CustomUserDetailsService implements AuthenticationUserDetailsServic
 			user = userRepository.getBySteamIdAndStore(steamId, store);
 		}
 		if (user == null) {
-			try {
-				user = getUserService().createUser(steamId, store);
-			} catch (JSONException e) {
-				throw new UsernameNotFoundException("ErrorParsing json", e);
-			}
-			user = userRepository.save(user);
+			user = getUserService().createUser(steamId, store);
+		} else {
+			user = userService.updateUser(user, store);
 		}
 		return user;
 	}

@@ -8,8 +8,5 @@ import java.util.List;
 
 public interface StoreConfigRepository  extends JpaRepository<StoreConfig, Long> {
 	StoreConfig findByKeyAndStore(String key, Store store);
-	default String getValueByKeyAndStore(String key, Store store) {
-		return findByKeyAndStore(key, store).getValue();
-	}
 	List<StoreConfig> findAllByStore(Store store);
 }

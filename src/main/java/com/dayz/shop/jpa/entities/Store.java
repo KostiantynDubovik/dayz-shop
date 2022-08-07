@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,7 +16,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "STORES")
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
-public class Store {
+public class Store implements Serializable {
 	@Id
 	@Column(name = "STORE_ID", nullable = false)
 	private Long id;

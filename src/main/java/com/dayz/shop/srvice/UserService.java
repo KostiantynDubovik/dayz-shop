@@ -17,6 +17,7 @@ import java.util.Map;
 
 @Service
 public class UserService {
+	public static final String STEAM_API_KEY = "steam.api.key";
 	private final UserRepository userRepository;
 	private final RoleRepository roleRepository;
 	private final StoreConfigRepository storeConfigRepository;
@@ -41,28 +42,39 @@ public class UserService {
 	}
 
 	public String getApiKey(Store store) {
-		return storeConfigRepository.getValueByKeyAndStore("steam.api.key", store);
+		return storeConfigRepository.findByKeyAndStore(STEAM_API_KEY, store).getValue();
 	}
 
 	//parse json to get nickname and avatar url
-	public JSONObject getSteamUserInfo(String steamId, Store store) throws JSONException {
+	public JSONObject getSteamUserInfo(String steamId, Store store) {
 		String userURI = getApiUrl() + "/ISteamUser/GetPlayerSummaries/v0002/?key=" + getApiKey(store) + "&steamids=" + steamId;
-		return new JSONObject(new RestClient().resource(userURI).get(String.class));
+		try {
+			return new JSONObject(new RestClient().resource(userURI).get(String.class));
+		} catch (JSONException e) {
+			return new JSONObject();
+		}
 	}
 
-	//method for updating user;
-	@SuppressWarnings("unchecked")
-	public User createUser(String steamId, Store store) throws JSONException {
+	public User createUser(String steamId, Store store) {
 		User user = new User();
-		Map<String, Object> userInfo = getSteamUserInfo(steamId, store);
-		Map<String, String > stringObjectMap = ((List<Map<String, String >>) ((Map<String, Object>) userInfo.get("response")).get("players")).get(0);
-		user.setSteamNickName(stringObjectMap.get("personaname"));
-		user.setSteamAvatarUrl(stringObjectMap.get("avatar"));
 		user.setSteamId(steamId);
 		user.setRoles(roleRepository.findAllByName("USER"));
 		user.setStore(store);
+		return updateUser(user, store);
+	}
+
+	public User updateUser(User user, Store store) {
+		fillUserSteamData(user, store);
+		return userRepository.save(user);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void fillUserSteamData(User user, Store store) {
+		Map<String, Object> userInfo = getSteamUserInfo(user.getSteamId(), store);
+		Map<String, String> stringObjectMap = ((List<Map<String, String>>) ((Map<String, Object>) userInfo.get("response")).get("players")).get(0);
+		user.setSteamNickName(stringObjectMap.get("personaname"));
+		user.setSteamAvatarUrl(stringObjectMap.get("avatar"));
 		user.setActive(true);
-		return user;
 	}
 
 	public User findOne(Long id) {
