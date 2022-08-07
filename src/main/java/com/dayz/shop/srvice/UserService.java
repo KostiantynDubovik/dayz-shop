@@ -42,7 +42,7 @@ public class UserService {
 	}
 
 	public String getApiKey(Store store) {
-		return storeConfigRepository.findByKeyAndStore("steam.api.key", store).getValue();
+		return storeConfigRepository.getValueByKeyAndStore("steam.api.key", store);
 	}
 
 	//parse json to get nickname and avatar url
