@@ -1,7 +1,6 @@
 package com.dayz.shop.srvice;
 
 import com.dayz.shop.jpa.entities.Store;
-import com.dayz.shop.jpa.entities.StoreConfig;
 import com.dayz.shop.jpa.entities.User;
 import com.dayz.shop.repository.RoleRepository;
 import com.dayz.shop.repository.StoreConfigRepository;

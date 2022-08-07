@@ -4,8 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
@@ -31,5 +32,13 @@ class Ctrl {
 	@GetMapping("/shutdown")
 	void shutdown() {
 		ShopApplication.shutdown();
+	}
+}
+
+@Controller
+class RouteController {
+	@RequestMapping(value = "/{path:[^\\.]*}")
+	public String redirect() {
+		return "forward:/";
 	}
 }

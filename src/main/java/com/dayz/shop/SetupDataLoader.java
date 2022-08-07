@@ -2,10 +2,8 @@ package com.dayz.shop;
 
 import com.dayz.shop.jpa.entities.Privilege;
 import com.dayz.shop.jpa.entities.Role;
-import com.dayz.shop.jpa.entities.User;
 import com.dayz.shop.repository.PrivilegeRepository;
 import com.dayz.shop.repository.RoleRepository;
-import com.dayz.shop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
