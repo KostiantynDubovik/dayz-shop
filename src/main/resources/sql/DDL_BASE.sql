@@ -158,12 +158,8 @@ create table store_config
 	STORE_ID bigint not null,
 	`KEY` varchar(255) not null,
 	VALUE varchar(255) not null,
-	storeId bigint null,
-	Store_STORE_ID bigint not null,
 	constraint STORE_CONFIG_STORE_CONFIG_ID_uindex
 		unique (STORE_CONFIG_ID),
-	constraint FK5g86a44ye5aeyltemv5mx0c4
-		foreign key (Store_STORE_ID) references stores (STORE_ID),
 	constraint STORE_CONFIG_stores_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID)
 			on delete cascade

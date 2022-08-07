@@ -1,8 +1,10 @@
 package com.dayz.shop.srvice;
 
 import com.dayz.shop.jpa.entities.Store;
+import com.dayz.shop.jpa.entities.StoreConfig;
 import com.dayz.shop.jpa.entities.User;
 import com.dayz.shop.repository.RoleRepository;
+import com.dayz.shop.repository.StoreConfigRepository;
 import com.dayz.shop.repository.UserRepository;
 import org.apache.wink.client.RestClient;
 import org.apache.wink.json4j.JSONException;
@@ -18,18 +20,17 @@ import java.util.Map;
 public class UserService {
 	private final UserRepository userRepository;
 	private final RoleRepository roleRepository;
+	private final StoreConfigRepository storeConfigRepository;
 
 	@Value("${steam.api.url}")
 	private String apiUrl;
 
-	@Value("${steam.api.key}")
-	private String apiKey;
-
 
 	@Autowired
-	public UserService(UserRepository userRepository, RoleRepository roleRepository) {
+	public UserService(UserRepository userRepository, RoleRepository roleRepository, StoreConfigRepository storeConfigRepository) {
 		this.userRepository = userRepository;
 		this.roleRepository = roleRepository;
+		this.storeConfigRepository = storeConfigRepository;
 	}
 
 	public String getApiUrl() {
@@ -40,17 +41,13 @@ public class UserService {
 		this.apiUrl = apiUrl;
 	}
 
-	public String getApiKey() {
-		return apiKey;
-	}
-
-	public void setApiKey(String apiKey) {
-		this.apiKey = apiKey;
+	public String getApiKey(Store store) {
+		return storeConfigRepository.findByKeyAndStore("steam.api.key", store).getValue();
 	}
 
 	//parse json to get nickname and avatar url
-	public JSONObject getSteamUserInfo(String steamId) throws JSONException {
-		String userURI = getApiUrl() + "/ISteamUser/GetPlayerSummaries/v0002/?key=" + getApiKey() + "&steamids=" + steamId;
+	public JSONObject getSteamUserInfo(String steamId, Store store) throws JSONException {
+		String userURI = getApiUrl() + "/ISteamUser/GetPlayerSummaries/v0002/?key=" + getApiKey(store) + "&steamids=" + steamId;
 		return new JSONObject(new RestClient().resource(userURI).get(String.class));
 	}
 
@@ -58,7 +55,7 @@ public class UserService {
 	@SuppressWarnings("unchecked")
 	public User createUser(String steamId, Store store) throws JSONException {
 		User user = new User();
-		Map<String, Object> userInfo = getSteamUserInfo(steamId);
+		Map<String, Object> userInfo = getSteamUserInfo(steamId, store);
 		Map<String, String > stringObjectMap = ((List<Map<String, String >>) ((Map<String, Object>) userInfo.get("response")).get("players")).get(0);
 		user.setSteamNickName(stringObjectMap.get("personaname"));
 		user.setSteamAvatarUrl(stringObjectMap.get("avatar"));
