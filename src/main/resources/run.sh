@@ -7,4 +7,5 @@ git pull
 npm run build
 cd ../../../
 git pull
+./gradlew clean
 ./gradlew bootRun
