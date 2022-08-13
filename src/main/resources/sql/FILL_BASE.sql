@@ -45,5 +45,10 @@ INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELE
 INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID) VALUES (-4, 'Canteen', 'Canteen', true, 'https://static.wikia.nocookie.net/dayz_gamepedia/images/5/5e/Canteen.png/revision/latest/scale-to-width-down/163?cb=20180610230549', true, -2);
 INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID) VALUES (1, 'NailBox', 'NailBox', true, 'https://static.wikia.nocookie.net/dayz_gamepedia/images/d/d4/Box_of_Nails.png/revision/latest?cb=20210503094929', true, -2);
 
+INSERT INTO shop.list_price (LISTPRICE, PRICE, CURRENCY, ITEM_ID, STORE_ID) VALUES (1, 10.00, 'RUB', -4, -2);
+INSERT INTO shop.list_price (LISTPRICE, PRICE, CURRENCY, ITEM_ID, STORE_ID) VALUES (2, 10.00, 'RUB', -3, -2);
+INSERT INTO shop.list_price (LISTPRICE, PRICE, CURRENCY, ITEM_ID, STORE_ID) VALUES (3, 10.00, 'RUB', -2, -2);
+INSERT INTO shop.list_price (LISTPRICE, PRICE, CURRENCY, ITEM_ID, STORE_ID) VALUES (4, 10.00, 'RUB', -1, -2);
+INSERT INTO shop.list_price (LISTPRICE, PRICE, CURRENCY, ITEM_ID, STORE_ID) VALUES (5, 80.00, 'RUB', 1, -2);
 
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'steam.api.key', 'DF21B88E007F7F971EE63BFA733BB812');
