@@ -1,6 +1,6 @@
 create table categories
 (
-	CATEGORY_ID bigint not null
+	CATEGORY_ID   bigint       not null
 		primary key,
 	CATEGORY_NAME varchar(255) not null
 );
@@ -8,7 +8,7 @@ create table categories
 create table category_relations
 (
 	PARENT_CATEGORY_ID bigint not null,
-	CHILD_CATEGORY_ID bigint not null,
+	CHILD_CATEGORY_ID  bigint not null,
 	constraint UK_ukumnt4tcuacos1h9fvkj2uu
 		unique (CHILD_CATEGORY_ID),
 	constraint FKalr31nuy9d9x4qs006sca2w70
@@ -24,23 +24,23 @@ create table hibernate_sequence
 
 create table languages
 (
-	LANGUAGE_ID bigint not null
+	LANGUAGE_ID bigint       not null
 		primary key,
-	LANGUAGE varchar(255) null,
-	COUNTRY varchar(255) null,
-	LOCALE varchar(255) null
+	LANGUAGE    varchar(255) null,
+	COUNTRY     varchar(255) null,
+	LOCALE      varchar(255) null
 );
 
 create table privileges
 (
-	PRIVILEGE_ID bigint not null
+	PRIVILEGE_ID   bigint       not null
 		primary key,
 	PRIVILEGE_NAME varchar(255) null
 );
 
 create table roles
 (
-	ROLE_ID bigint not null,
+	ROLE_ID   bigint      not null,
 	ROLE_NAME varchar(32) null,
 	constraint roles_ROLE_ID_uindex
 		unique (ROLE_ID)
@@ -51,7 +51,7 @@ alter table roles
 
 create table roles_privileges
 (
-	ROLE_ID bigint not null,
+	ROLE_ID      bigint not null,
 	PRIVILEGE_ID bigint not null,
 	constraint FK8kxttvjnfb2dtfhjsw9nbwgnb
 		foreign key (PRIVILEGE_ID) references privileges (PRIVILEGE_ID),
@@ -61,7 +61,7 @@ create table roles_privileges
 
 create table stores
 (
-	STORE_ID bigint not null
+	STORE_ID   bigint       not null
 		primary key,
 	STORE_NAME varchar(255) not null,
 	constraint UK_b95rcr8yybvka6xv44j8f5avu
@@ -70,20 +70,21 @@ create table stores
 
 create table items
 (
-	ITEM_ID bigint not null
+	ITEM_ID    bigint       not null
 		primary key,
-	ITEM_NAME varchar(255) not null,
-	BUYABLE bit not null,
-	IMAGE_URL varchar(255) null,
-	DELETABLE bit not null,
-	STORE_ID bigint null,
+	ITEM_NAME  varchar(255) not null,
+	IN_GAME_ID varchar(255) not null,
+	IMAGE_URL  varchar(255) null,
+	DELETABLE  bit          not null,
+	STORE_ID   bigint       null,
+	BUYABLE    bit          not null,
 	constraint items_stores_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID)
 );
 
 create table item_category
 (
-	ITEM_ID bigint not null,
+	ITEM_ID     bigint not null,
 	CATEGORY_ID bigint not null,
 	constraint item_category_item_category_CATEGORY_ID_fk
 		foreign key (CATEGORY_ID) references categories (CATEGORY_ID),
@@ -93,13 +94,13 @@ create table item_category
 
 create table item_description
 (
-	DESCRIPTION_ID bigint not null
+	DESCRIPTION_ID bigint       not null
 		primary key,
-	DESCRIPTION varchar(255) null,
-	LANGUAGE_ID bigint null,
-	STORE_ID bigint null,
-	ITEM_ID bigint null,
-	PUBLISHED bit null,
+	DESCRIPTION    varchar(255) null,
+	LANGUAGE_ID    bigint       null,
+	STORE_ID       bigint       null,
+	ITEM_ID        bigint       null,
+	PUBLISHED      bit          null,
 	constraint item_description_store_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID),
 	constraint item_description_items_ITEM_ID_fk
@@ -110,12 +111,12 @@ create table item_description
 
 create table list_price
 (
-	LISTPRICE bigint not null
+	LISTPRICE bigint         not null
 		primary key,
-	PRICE decimal(19,2) not null,
-	CURRENCY varchar(255) not null,
-	ITEM_ID bigint not null,
-	STORE_ID bigint not null,
+	PRICE     decimal(19, 2) not null,
+	CURRENCY  varchar(255)   not null,
+	ITEM_ID   bigint         not null,
+	STORE_ID  bigint         not null,
 	constraint list_price_items_ITEM_ID_fk
 		foreign key (ITEM_ID) references items (ITEM_ID),
 	constraint list_price_stores_STORE_ID_fk
@@ -124,14 +125,14 @@ create table list_price
 
 create table offer_price
 (
-	OFFER_ID bigint not null
+	OFFER_ID   bigint         not null
 		primary key,
-	PRICE decimal(19,2) null,
-	CURRENCY varchar(255) null,
-	START_TIME datetime(6) null,
-	END_TIME datetime(6) null,
-	PRIORITY int null,
-	ITEM_ID bigint null,
+	PRICE      decimal(19, 2) null,
+	CURRENCY   varchar(255)   null,
+	START_TIME datetime(6)    null,
+	END_TIME   datetime(6)    null,
+	PRIORITY   int            null,
+	ITEM_ID    bigint         null,
 	constraint UK_equ60oycdwy8nhqr0emt1gh1e
 		unique (ITEM_ID),
 	constraint FKfenl0org6dixeh79gce55vj05
@@ -140,9 +141,9 @@ create table offer_price
 
 create table servers
 (
-	SERVER_ID bigint null,
-	STORE_ID bigint null,
-	STORE_NAME varchar(40) null,
+	SERVER_ID   bigint       null,
+	STORE_ID    bigint       null,
+	STORE_NAME  varchar(40)  null,
 	SERVER_NAME varchar(255) null,
 	constraint UK_3jgue04c9ev4di3mrebxwegqn
 		unique (STORE_ID),
@@ -154,9 +155,9 @@ create table servers
 
 create table store_config
 (
-	STORE_ID bigint not null,
-	`KEY` varchar(255) not null,
-	VALUE varchar(255) not null,
+	STORE_ID bigint       not null,
+	`KEY`    varchar(255) not null,
+	VALUE    varchar(255) not null,
 	primary key (STORE_ID, `KEY`),
 	constraint store_config_KEY_uindex
 		unique (`KEY`),
@@ -168,7 +169,7 @@ create table store_config
 
 create table store_languages
 (
-	STORE_ID bigint null,
+	STORE_ID    bigint null,
 	LANGUAGE_ID bigint null,
 	constraint STORE_LANGUAGE_languages_LANGUAGE_ID_fk
 		foreign key (LANGUAGE_ID) references languages (LANGUAGE_ID),
@@ -179,7 +180,7 @@ create table store_languages
 create table sub_items
 (
 	MAIN_ITEM_ID bigint not null,
-	SUB_ITEM_ID bigint not null,
+	SUB_ITEM_ID  bigint not null,
 	constraint UK_2b96x3q13nt9u9bmb9ug0jn04
 		unique (SUB_ITEM_ID),
 	constraint FKk6pfbc7yumixkvqfwlw2t60sw
@@ -190,14 +191,14 @@ create table sub_items
 
 create table users
 (
-	USER_ID bigint not null
+	USER_ID          bigint                      not null
 		primary key,
-	STEAM_ID varchar(255) not null,
-	BALANCE decimal(19,2) default 0.00 null,
-	STEAM_NICKNAME varchar(255) not null,
-	STEAM_AVATAR_URL varchar(255) not null,
-	STORE_ID bigint not null,
-	IS_ACTIVE bit not null,
+	STEAM_ID         varchar(255)                not null,
+	BALANCE          decimal(19, 2) default 0.00 null,
+	STEAM_NICKNAME   varchar(255)                not null,
+	STEAM_AVATAR_URL varchar(255)                not null,
+	STORE_ID         bigint                      not null,
+	IS_ACTIVE        bit                         not null,
 	constraint UKrsl8blftmuw9y1u82pt7o4i9r
 		unique (USER_ID, STORE_ID),
 	constraint FKojefi57a28my3srup14jrs2f8
@@ -206,12 +207,12 @@ create table users
 
 create table orders
 (
-	ORDER_ID bigint not null
+	ORDER_ID    bigint         not null
 		primary key,
-	ORDER_TOTAL decimal(19,2) null,
-	STATUS varchar(255) null,
-	USER_ID bigint null,
-	STORE_ID bigint null,
+	ORDER_TOTAL decimal(19, 2) null,
+	STATUS      varchar(255)   null,
+	USER_ID     bigint         null,
+	STORE_ID    bigint         null,
 	constraint FKenwru67yr8f0ei6m1bc2xlj4w
 		foreign key (USER_ID) references users (USER_ID),
 	constraint orders_stores_STORE_ID_fk
@@ -220,15 +221,15 @@ create table orders
 
 create table order_items
 (
-	ORDER_ITEM_ID bigint not null
+	ORDER_ITEM_ID bigint         not null
 		primary key,
-	BOUGHT_TIME datetime(6) null,
-	RECEIVED bit null,
-	RECEIVE_TIME datetime(6) null,
-	PRICE decimal(19,2) null,
-	ITEM_ID bigint null,
-	USER_ID bigint null,
-	ORDER_ID bigint null,
+	BOUGHT_TIME   datetime(6)    null,
+	RECEIVED      bit            null,
+	RECEIVE_TIME  datetime(6)    null,
+	PRICE         decimal(19, 2) null,
+	ITEM_ID       bigint         null,
+	USER_ID       bigint         null,
+	ORDER_ID      bigint         null,
 	constraint UK_8mqc19ne0nb63tawmougm4e2
 		unique (USER_ID),
 	constraint FK6sjhssmsryq1o07mqnpky6cny

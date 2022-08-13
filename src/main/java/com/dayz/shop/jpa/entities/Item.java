@@ -27,6 +27,9 @@ public class Item {
 	@Column(name = "ITEM_NAME", nullable = false)
 	private String name;
 
+	@Column(name = "IN_GAME_ID", nullable = false)
+	private String inGameId;
+
 	@ManyToOne
 	@JsonIgnore
 	@JoinColumn(name = "STORE_ID")
