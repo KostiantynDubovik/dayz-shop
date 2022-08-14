@@ -39,7 +39,7 @@ public class SendToServerServiceTest {
 		ArrayList<OrderItem> orderItems = new ArrayList<>();
 		OrderItem orderItem = new OrderItem();
 		orderItem.setOrder(order);
-		orderItem.setMCode("HT-pwV2-fia1");
+		orderItem.setCode("HT-pwV2-fia1");
 		orderItem.setStatus(OrderStatus.COMPLETE);
 		orderItem.setServer(order.getServer());
 		Item item = new Item();

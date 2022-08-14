@@ -6,6 +6,7 @@ import com.dayz.shop.json.MItemsArray;
 import com.dayz.shop.json.MVehicles;
 import com.dayz.shop.json.Root;
 import com.dayz.shop.repository.OrderItemRepository;
+import com.dayz.shop.repository.UserRepository;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +20,12 @@ import java.util.stream.Collectors;
 public class MCodeMapper {
 
 	final OrderItemRepository orderItemRepository;
+	final UserRepository userRepository;
 
 	@Autowired
-	public MCodeMapper(OrderItemRepository orderItemRepository) {
+	public MCodeMapper(OrderItemRepository orderItemRepository, UserRepository userRepository) {
 		this.orderItemRepository = orderItemRepository;
+		this.userRepository = userRepository;
 	}
 
 	public Root mapOrderToRoot(Order order) {
@@ -36,7 +39,7 @@ public class MCodeMapper {
 		List<MCodeArray> mCodeArrays = new ArrayList<>();
 		for (OrderItem orderItem : orderItems) {
 			MCodeArray mCodeArray = new MCodeArray();
-			mCodeArray.setM_code(orderItem.getMCode());
+			mCodeArray.setM_code(orderItem.getCode());
 			mCodeArray.setM_name(orderItem.getItem().getName());
 			fillSubItems(orderItem, mCodeArray);
 			mCodeArrays.add(mCodeArray);
@@ -99,8 +102,8 @@ public class MCodeMapper {
 
 	public List<OrderItem> mapRootToOrderItems(Root root) {
 		List<String> mCodes =  root.getM_CodeArray().stream().map(MCodeArray::getM_code).collect(Collectors.toList());
-		List<OrderItem> orderItems = orderItemRepository.findAllByUserSteamIdAndReceivedAndStatus(root.getUserId(), false, OrderStatus.COMPLETE);
-		orderItems.removeAll(orderItemRepository.findAllByMCodeIn(mCodes));
+		List<OrderItem> orderItems = orderItemRepository.findAllByUserAndReceivedAndStatus(userRepository.getBySteamId(root.getUserId()), false, OrderStatus.COMPLETE);
+		orderItems.removeAll(orderItemRepository.findAllByCodeIn(mCodes));
 		orderItems.forEach(asd -> asd.setReceived(true));
 		orderItemRepository.saveAll(orderItems);
 		return orderItems;

@@ -52,7 +52,7 @@ public class OrderItem {
 	@GeneratedValue(generator = "m-code-generator")
 	@GenericGenerator(name = "m-code-generator",
 			strategy = "com.dayz.shop.utils.MCodeGenerator")
-	private String mCode;
+	private String code;
 
 	@ManyToOne
 	@JoinColumn(name = "SERVER_ID")
@@ -72,6 +72,6 @@ public class OrderItem {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, item, order, user, boughtTime, received, receiveDateTime, price, mCode, server);
+		return Objects.hash(id, item, order, user, boughtTime, received, receiveDateTime, price, code, server);
 	}
 }
