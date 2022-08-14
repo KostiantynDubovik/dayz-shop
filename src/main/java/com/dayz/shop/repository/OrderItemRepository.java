@@ -14,5 +14,5 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 	@Query("select OrderItem from OrderItem where user in (select User from User where steamId = ?1) and received = ?2 and status = ?3")
 	List<OrderItem> findAllByUserSteamIdAndReceivedAndStatus(String userSteamId, boolean received, OrderStatus status);
 
-	List<OrderItem> findAllByMCode(List<String> mCode);
+	List<OrderItem> findAllByMCodeIn(List<String> mCode);
 }

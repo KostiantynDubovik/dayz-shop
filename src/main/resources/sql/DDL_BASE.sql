@@ -158,10 +158,6 @@ create table store_config
 	`KEY`    varchar(255) not null,
 	VALUE    varchar(255) not null,
 	primary key (STORE_ID, `KEY`),
-	constraint store_config_KEY_uindex
-		unique (`KEY`),
-	constraint store_config_STORE_ID_uindex
-		unique (STORE_ID),
 	constraint store_config_stores_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID)
 );
@@ -239,7 +235,7 @@ create table order_items
 		unique (USER_ID),
 	constraint order_items_M_CODE_uindex
 		unique (M_CODE),
-	constraint orders_servers_SERVER_ID_fk
+	constraint order_items_servers_SERVER_ID_fk
 		foreign key (SERVER_ID) references servers (SERVER_ID),
 	constraint FK6sjhssmsryq1o07mqnpky6cny
 		foreign key (USER_ID) references users (USER_ID),
