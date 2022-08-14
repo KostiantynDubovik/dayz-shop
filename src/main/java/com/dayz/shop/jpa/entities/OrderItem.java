@@ -3,6 +3,7 @@ package com.dayz.shop.jpa.entities;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -47,6 +48,20 @@ public class OrderItem {
 	@Column(name = "PRICE")
 	private BigDecimal price;
 
+	@Column(name = "M_CODE")
+	@GeneratedValue(generator = "m-code-generator")
+	@GenericGenerator(name = "m-code-generator",
+			strategy = "com.dayz.shop.utils.MCodeGenerator")
+	private String mCode;
+
+	@ManyToOne
+	@JoinColumn(name = "SERVER_ID")
+	private Server server;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "STATUS")
+	private OrderStatus status;
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
@@ -57,6 +72,6 @@ public class OrderItem {
 
 	@Override
 	public int hashCode() {
-		return getClass().hashCode();
+		return Objects.hash(id, item, order, user, boughtTime, received, receiveDateTime, price, mCode, server);
 	}
 }

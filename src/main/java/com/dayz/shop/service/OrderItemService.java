@@ -1,4 +1,4 @@
-package com.dayz.shop.srvice;
+package com.dayz.shop.service;
 
 import com.dayz.shop.repository.OrderItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;

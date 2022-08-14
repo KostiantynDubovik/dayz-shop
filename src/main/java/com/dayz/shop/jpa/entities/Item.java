@@ -2,8 +2,10 @@ package com.dayz.shop.jpa.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.*;
-import org.hibernate.Hibernate;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
@@ -17,7 +19,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Entity
 @Table(name = "ITEMS")
-@JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 public class Item {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -68,16 +70,27 @@ public class Item {
 	@Column(name = "DELETABLE")
 	private boolean deletable;
 
+	@Column(name = "COUNT")
+	private int count;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "ITEM_TYPE")
+	private ItemType itemType;
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+		if (o == null || getClass() != o.getClass()) return false;
 		Item item = (Item) o;
-		return id != null && Objects.equals(id, item.id);
+		return buyable == item.buyable && deletable == item.deletable && count == item.count && id.equals(item.id)
+				&& name.equals(item.name) && inGameId.equals(item.inGameId) && store.equals(item.store)
+				&& Objects.equals(categories, item.categories) && listPrice.equals(item.listPrice)
+				&& Objects.equals(offerPrices, item.offerPrices) && Objects.equals(imageUrl, item.imageUrl)
+				&& subItems.equals(item.subItems) && itemType == item.itemType;
 	}
 
 	@Override
 	public int hashCode() {
-		return getClass().hashCode();
+		return Objects.hash(id, name, inGameId, store, categories, listPrice, offerPrices, buyable, imageUrl, subItems, deletable, count, itemType);
 	}
 }

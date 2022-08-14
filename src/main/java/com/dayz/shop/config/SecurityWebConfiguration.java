@@ -1,6 +1,6 @@
 package com.dayz.shop.config;
 
-import com.dayz.shop.srvice.CustomUserDetailsService;
+import com.dayz.shop.service.CustomUserDetailsService;
 import org.apache.commons.lang3.StringUtils;
 import org.openid4java.consumer.ConsumerManager;
 import org.springframework.context.annotation.Bean;

@@ -3,7 +3,7 @@ package com.dayz.shop.handlers;
 import com.dayz.shop.jpa.entities.Item;
 import com.dayz.shop.jpa.entities.Store;
 import com.dayz.shop.repository.ItemRepository;
-import com.dayz.shop.srvice.ItemService;
+import com.dayz.shop.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

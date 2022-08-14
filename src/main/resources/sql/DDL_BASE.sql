@@ -78,6 +78,8 @@ create table items
 	DELETABLE  bit          not null,
 	STORE_ID   bigint       null,
 	BUYABLE    bit          not null,
+	ITEM_TYPE  varchar(20)  not null,
+	COUNT      bigint       null,
 	constraint items_stores_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID)
 );
@@ -143,12 +145,9 @@ create table servers
 (
 	SERVER_ID   bigint       null,
 	STORE_ID    bigint       null,
-	STORE_NAME  varchar(40)  null,
 	SERVER_NAME varchar(255) null,
-	constraint UK_3jgue04c9ev4di3mrebxwegqn
-		unique (STORE_ID),
-	constraint FKh92krstf1jf72h0iqgs0mfnf
-		foreign key (SERVER_ID) references stores (STORE_ID),
+	constraint servers_pk
+		unique (SERVER_ID, STORE_ID, SERVER_NAME),
 	constraint servers_stores_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID)
 );
@@ -213,8 +212,11 @@ create table orders
 	STATUS      varchar(255)   null,
 	USER_ID     bigint         null,
 	STORE_ID    bigint         null,
+	SERVER_ID   bigint         not null,
 	constraint FKenwru67yr8f0ei6m1bc2xlj4w
 		foreign key (USER_ID) references users (USER_ID),
+	constraint orders_servers_SERVER_ID_fk
+		foreign key (SERVER_ID) references servers (SERVER_ID),
 	constraint orders_stores_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID)
 );
@@ -230,8 +232,15 @@ create table order_items
 	ITEM_ID       bigint         null,
 	USER_ID       bigint         null,
 	ORDER_ID      bigint         null,
+	SERVER_ID     bigint         not null,
+	M_CODE        varchar(20)    not null,
+	STATUS        varchar(20)    not null,
 	constraint UK_8mqc19ne0nb63tawmougm4e2
 		unique (USER_ID),
+	constraint order_items_M_CODE_uindex
+		unique (M_CODE),
+	constraint orders_servers_SERVER_ID_fk
+		foreign key (SERVER_ID) references servers (SERVER_ID),
 	constraint FK6sjhssmsryq1o07mqnpky6cny
 		foreign key (USER_ID) references users (USER_ID),
 	constraint FKnnrjyhgtcxoh0eo45qvl41ira

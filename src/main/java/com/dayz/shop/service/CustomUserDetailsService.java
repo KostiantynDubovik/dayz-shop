@@ -1,4 +1,4 @@
-package com.dayz.shop.srvice;
+package com.dayz.shop.service;
 
 import com.dayz.shop.jpa.entities.Privilege;
 import com.dayz.shop.jpa.entities.Role;
@@ -10,7 +10,6 @@ import com.dayz.shop.utils.Utils;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.wink.json4j.JSONException;
 import org.openid4java.consumer.ConsumerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

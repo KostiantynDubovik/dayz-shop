@@ -1,14 +1,20 @@
 package com.dayz.shop.utils;
 
-import com.dayz.shop.jpa.entities.Store;
-import com.dayz.shop.jpa.entities.User;
+import com.dayz.shop.jpa.entities.*;
 import com.dayz.shop.repository.RoleRepository;
 import com.dayz.shop.repository.StoreRepository;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.openid.OpenIDAuthenticationToken;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletRequest;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -35,11 +41,16 @@ public class Utils {
 		return rootStoreId.equals(store.getId());
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean isSameStore(User user, OpenIDAuthenticationToken principal) {
 		return user.getStore().getId().equals(((User) principal.getPrincipal()).getStore().getId());
 	}
 
 	public static Store extractStoreFromRequest(ServletRequest request) {
 		return storeRepository.getById(storeNameStoreMap.get(request.getServerName().split("\\.")[0].toLowerCase()));
+	}
+
+	public static User getCurrentUser() {
+		return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
 }

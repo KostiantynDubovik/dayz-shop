@@ -36,9 +36,23 @@ public class Order {
 	@JoinColumn(name = "STORE_ID")
 	private Store store;
 
+	@ManyToOne
+	@JoinColumn(name = "SERVER_ID")
+	private Server server;
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS")
 	private OrderStatus status;
+
+	public void addOrderItem(OrderItem orderItem) {
+		orderTotal = orderTotal.add(orderItem.getPrice());
+		orderItems.add(orderItem);
+	}
+
+	public void removeOrderItem(OrderItem orderItem) {
+		orderTotal = orderTotal.subtract(orderItem.getPrice());
+		orderItems.remove(orderItem);
+	}
 
 	@Override
 	public boolean equals(Object o) {
@@ -50,6 +64,6 @@ public class Order {
 
 	@Override
 	public int hashCode() {
-		return getClass().hashCode();
+		return Objects.hash(id, orderItems, orderTotal, user, store, server, status);
 	}
 }

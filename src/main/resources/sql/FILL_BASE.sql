@@ -39,11 +39,11 @@ INSERT INTO shop.users (USER_ID, STEAM_ID, BALANCE, STEAM_NICKNAME, STEAM_AVATAR
 INSERT INTO shop.users_roles (USER_ID, ROLE_ID) VALUES (-1, -4);
 INSERT INTO shop.users_roles (USER_ID, ROLE_ID) VALUES (-2, -4);
 
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID) VALUES (-1, 'Belt', 'Belt', true, 'https://static.wikia.nocookie.net/dayz_gamepedia/images/5/5e/CivilianBelt.png/revision/latest/scale-to-width-down/300?cb=20200908173558', true, -2);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID) VALUES (-2, 'Nylon Knife Sheath', 'Nylon Knife Sheath', true, 'https://static.wikia.nocookie.net/dayz_gamepedia/images/6/61/Sheath.png/revision/latest/scale-to-width-down/300?cb=20200908173200', true, -2);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID) VALUES (-3, 'Holster', 'PlateCarrierHolster', true, 'https://static.wikia.nocookie.net/dayz_gamepedia/images/4/41/GunHolster.png/revision/latest/scale-to-width-down/224?cb=20150226092659', true, -2);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID) VALUES (-4, 'Canteen', 'Canteen', true, 'https://static.wikia.nocookie.net/dayz_gamepedia/images/5/5e/Canteen.png/revision/latest/scale-to-width-down/163?cb=20180610230549', true, -2);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID) VALUES (1, 'NailBox', 'NailBox', true, 'https://static.wikia.nocookie.net/dayz_gamepedia/images/d/d4/Box_of_Nails.png/revision/latest?cb=20210503094929', true, -2);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID) VALUES (-1, 'Belt', 'Belt', true, 'https://static.wikia.nocookie.net/dayz_gamepedia/images/5/5e/CivilianBelt.png', true, -2);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID) VALUES (-2, 'Nylon Knife Sheath', 'Nylon Knife Sheath', true, 'https://static.wikia.nocookie.net/dayz_gamepedia/images/6/61/Sheath.png', true, -2);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID) VALUES (-3, 'Holster', 'PlateCarrierHolster', true, 'https://static.wikia.nocookie.net/dayz_gamepedia/images/4/41/GunHolster.png', true, -2);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID) VALUES (-4, 'Canteen', 'Canteen', true, 'https://static.wikia.nocookie.net/dayz_gamepedia/images/5/5e/Canteen.png', true, -2);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID) VALUES (1, 'NailBox', 'NailBox', true, 'https://static.wikia.nocookie.net/dayz_gamepedia/images/d/d4/Box_of_Nails.png', true, -2);
 
 INSERT INTO shop.list_price (LISTPRICE, PRICE, CURRENCY, ITEM_ID, STORE_ID) VALUES (1, 10.00, 'RUB', -4, -2);
 INSERT INTO shop.list_price (LISTPRICE, PRICE, CURRENCY, ITEM_ID, STORE_ID) VALUES (2, 10.00, 'RUB', -3, -2);

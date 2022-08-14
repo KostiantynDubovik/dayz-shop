@@ -2,12 +2,11 @@ package com.dayz.shop.handlers;
 
 import com.dayz.shop.jpa.entities.Item;
 import com.dayz.shop.jpa.entities.Order;
-import com.dayz.shop.jpa.entities.Store;
-import com.dayz.shop.jpa.entities.User;
-import com.dayz.shop.srvice.OrderService;
+import com.dayz.shop.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ServerErrorException;
 
 @RestController
 @RequestMapping("/api/order")
@@ -22,13 +21,33 @@ public class OrderController {
 
 	@PostMapping("add/{item}")
 	@PreAuthorize("hasAuthority('STORE_READ')")
-	public Order addOrderItem(@PathVariable Item item, @RequestAttribute Store store) {
-		return orderService.addOrderItem(item, store); //TODO
+	public Order addOrderItem(@PathVariable Item item) {
+		return orderService.addOrderItem(item);
+	}
+
+	@DeleteMapping("add/{item}")
+	@PreAuthorize("hasAuthority('STORE_READ')")
+	public Order deleteOrderItem(@PathVariable Item item) {
+		return orderService.deleteOrderItem(item);
 	}
 
 	@PostMapping("{item}")
 	@PreAuthorize("hasAuthority('STORE_READ')")
-	public Order buyItemNow(@PathVariable Item item, @RequestAttribute Store store) {
-		return orderService.buyItemNow(item, store); //TODO
+	public Order buyItemNow(@PathVariable Item item) {
+		try {
+			return orderService.buyItemNow(item);
+		} catch (Exception e) {
+			throw new ServerErrorException(e.getMessage(), e);
+		}
+	}
+
+	@PostMapping
+	@PreAuthorize("hasAuthority('STORE_READ')")
+	public Order placeOrder() {
+		try {
+			return orderService.placeOrder();
+		} catch (Exception e) {
+			throw new ServerErrorException(e.getMessage(), e);
+		}
 	}
 }
