@@ -31,8 +31,9 @@ public class SendToServerService {
 		String password = getPwd(order);
 		String host = getIp(order);
 		String pathToJson = getPathToJson(order);
-		String completePath = String.format(pathToJson, order.getServer().getServerName(), order.getUser().getSteamId());
-		File existingFile = new File("get");
+		String steamId = order.getUser().getSteamId();
+		String completePath = String.format(pathToJson, order.getServer().getServerName(), steamId);
+		File existingFile = new File(steamId + "/get");
 		getFile(username, password, host, completePath, existingFile);
 		Root root = new Root();
 		ObjectMapper om = new ObjectMapper();
@@ -43,17 +44,17 @@ public class SendToServerService {
 			MCodeArray mCodeArray = new MCodeArray();
 			root.getM_CodeArray().add(mCodeArray);
 		}
-		boolean deletedExisting = existingFile.delete();
+		existingFile.delete();
 
 		root.getM_CodeArray().addAll(mCodeMapper.mapOrderToRoot(order).getM_CodeArray());
 		//TODO dir *.json /b
 
-		File mCode = new File("put");
+		File mCode = new File(steamId + "/put");
 
 		om.writerWithDefaultPrettyPrinter().writeValue(mCode, root);
 
 		updateFile(username, password, host, completePath, mCode);
-		boolean deletedUpdated = mCode.delete();
+		mCode.delete();
 	}
 
 	private String getPathToJson(Order order) {
