@@ -15,7 +15,7 @@ public class MCodeArray {
 
 	List<MItemsArray> m_itemsArray;
 
-	String m_teleport_position;
+	String m_teleport_position = StringUtils.EMPTY;
 
 	MVehicles m_vehicles;
 

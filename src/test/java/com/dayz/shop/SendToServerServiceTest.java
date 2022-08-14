@@ -32,6 +32,9 @@ public class SendToServerServiceTest {
 		order.setStore(store);
 		List<OrderItem> orderItems = getOrderItems(order);
 		order.setOrderItems(orderItems);
+		User user = new User();
+		user.setSteamId("76561198107293144");
+		order.setUser(user);
 		sendToServerService.sendOrder(order);
 	}
 

@@ -43,6 +43,7 @@ public class SendToServerService {
 			MCodeArray mCodeArray = new MCodeArray();
 			root.getM_CodeArray().add(mCodeArray);
 		}
+		boolean deletedExisting = existingFile.delete();
 
 		root.getM_CodeArray().addAll(mCodeMapper.mapOrderToRoot(order).getM_CodeArray());
 		//TODO dir *.json /b
@@ -52,6 +53,7 @@ public class SendToServerService {
 		om.writerWithDefaultPrettyPrinter().writeValue(mCode, root);
 
 		updateFile(username, password, host, completePath, mCode);
+		boolean deletedUpdated = mCode.delete();
 	}
 
 	private String getPathToJson(Order order) {
@@ -70,63 +72,36 @@ public class SendToServerService {
 		return storeConfigRepository.findByKeyAndStore("SSH_IP", order.getStore()).getValue();
 	}
 
-	private void getFile(String username, String password, String host, String path, File file) throws JSchException, SftpException, FileNotFoundException {
-
-		ChannelSftp channelSftp = setupJsch(username, password, host);
+	private void getFile(String username, String password, String host, String path, File file) throws JSchException, SftpException, IOException {
+		Session session = setupJsch(username, password, host);
+		ChannelSftp channelSftp = (ChannelSftp) session.openChannel("sftp");
 		channelSftp.connect();
 
-		channelSftp.get(path, new FileOutputStream(file));
-
+		FileOutputStream dst = new FileOutputStream(file);
+		channelSftp.get(path, dst);
+		dst.close();
 		channelSftp.exit();
+		session.disconnect();
 	}
 
-	private void updateFile(String username, String password, String host, String path, File file) throws JSchException, SftpException, FileNotFoundException {
-		ChannelSftp channelSftp = setupJsch(username, password, host);
+	private void updateFile(String username, String password, String host, String path, File file) throws JSchException, SftpException, IOException {
+		Session session = setupJsch(username, password, host);
+		ChannelSftp channelSftp = (ChannelSftp) session.openChannel("sftp");
 		channelSftp.connect();
 
-		channelSftp.put(new FileInputStream(file), path);
-
+		FileInputStream dst = new FileInputStream(file);
+		channelSftp.put(dst, path);
+		dst.close();
 		channelSftp.exit();
+		session.disconnect();
 	}
 
-	private ChannelSftp setupJsch(String username, String password, String host) throws JSchException {
+	private Session setupJsch(String username, String password, String host) throws JSchException {
 		JSch jsch = new JSch();
 		jsch.setKnownHosts(SSH_KNOWN_HOSTS);
 		Session jschSession = jsch.getSession(username, host);
 		jschSession.setPassword(password);
 		jschSession.connect();
-		return (ChannelSftp) jschSession.openChannel("sftp");
+		return jschSession;
 	}
-
-	private String sendCommand(String username, String password, String host, String command) throws JSchException, InterruptedException {
-		Session session = null;
-		ChannelExec channel = null;
-
-		try {
-			session = new JSch().getSession(username, host, PORT);
-			session.setPassword(password);
-			session.setConfig("StrictHostKeyChecking", "no");
-			session.connect();
-
-			channel = (ChannelExec) session.openChannel("exec");
-			channel.setCommand(command);
-			ByteArrayOutputStream responseStream = new ByteArrayOutputStream();
-			channel.setOutputStream(responseStream);
-			channel.connect();
-
-			while (channel.isConnected()) {
-				Thread.sleep(100);
-			}
-
-			return responseStream.toString();
-		} finally {
-			if (session != null) {
-				session.disconnect();
-			}
-			if (channel != null) {
-				channel.disconnect();
-			}
-		}
-	}
-
 }
