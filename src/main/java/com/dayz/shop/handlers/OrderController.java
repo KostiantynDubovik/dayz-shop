@@ -2,6 +2,7 @@ package com.dayz.shop.handlers;
 
 import com.dayz.shop.jpa.entities.Item;
 import com.dayz.shop.jpa.entities.Order;
+import com.dayz.shop.jpa.entities.Store;
 import com.dayz.shop.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,21 +22,21 @@ public class OrderController {
 
 	@PostMapping("add/{item}")
 	@PreAuthorize("hasAuthority('STORE_READ')")
-	public Order addOrderItem(@PathVariable Item item) {
-		return orderService.addOrderItem(item);
+	public Order addOrderItem(@PathVariable Item item, @RequestAttribute Store store) {
+		return orderService.addOrderItem(item, store);
 	}
 
 	@DeleteMapping("add/{item}")
 	@PreAuthorize("hasAuthority('STORE_READ')")
-	public Order deleteOrderItem(@PathVariable Item item) {
-		return orderService.deleteOrderItem(item);
+	public Order deleteOrderItem(@PathVariable Item item,@RequestAttribute Store store) {
+		return orderService.deleteOrderItem(item, store);
 	}
 
 	@PostMapping("{item}")
 	@PreAuthorize("hasAuthority('STORE_READ')")
-	public Order buyItemNow(@PathVariable Item item) {
+	public Order buyItemNow(@PathVariable Item item, @RequestAttribute Store store) {
 		try {
-			return orderService.buyItemNow(item);
+			return orderService.buyItemNow(item, store);
 		} catch (Exception e) {
 			throw new ServerErrorException(e.getMessage(), e);
 		}
@@ -43,9 +44,9 @@ public class OrderController {
 
 	@PostMapping
 	@PreAuthorize("hasAuthority('STORE_READ')")
-	public Order placeOrder() {
+	public Order placeOrder(@RequestAttribute Store store) {
 		try {
-			return orderService.placeOrder();
+			return orderService.placeOrder(store);
 		} catch (Exception e) {
 			throw new ServerErrorException(e.getMessage(), e);
 		}

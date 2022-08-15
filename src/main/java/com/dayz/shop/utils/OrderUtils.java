@@ -24,25 +24,25 @@ public class OrderUtils {
 		return result;
 	}
 
-	public static Order getCurrentOrder() {
-		return getCurrentOrder(Utils.getCurrentUser());
+	public static Order getCurrentOrder(Store store) {
+		return getCurrentOrder(Utils.getCurrentUser(), store);
 	}
 
-	public static Order getCurrentOrder(User user) {
+	public static Order getCurrentOrder(User user, Store store) {
 		List<Order> orders = user.getOrders();
 		if (CollectionUtils.isEmpty(orders)) {
 			orders = new ArrayList<>();
 			user.setOrders(orders);
-			Order order = createOrder(user);
+			Order order = createOrder(user, store);
 			orders.add(order);
 		}
 		return orders.stream().filter(order -> order.getStatus().equals(OrderStatus.PENDING)).findFirst().get();
 	}
 
-	public static Order createOrder(User user) {
+	public static Order createOrder(User user, Store store) {
 		Order order = new Order();
 		order.setOrderItems(new ArrayList<>());
-		order.setStore(user.getStore());
+		order.setStore(store);
 		order.setUser(user);
 		order.setStatus(OrderStatus.PENDING);
 		order.setOrderTotal(BigDecimal.ZERO);

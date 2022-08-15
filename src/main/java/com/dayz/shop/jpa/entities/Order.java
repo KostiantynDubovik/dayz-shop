@@ -19,6 +19,7 @@ import java.util.Objects;
 public class Order {
 	@Id
 	@Column(name = "ORDER_ID", nullable = false)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Long id;
 
 	@OneToMany(mappedBy = "order")
@@ -45,13 +46,15 @@ public class Order {
 	private OrderStatus status;
 
 	public void addOrderItem(OrderItem orderItem) {
-		orderTotal = orderTotal.add(orderItem.getPrice());
-		orderItems.add(orderItem);
+		if (orderItems.add(orderItem)) {
+			orderTotal = orderTotal.add(orderItem.getPrice());
+		}
 	}
 
 	public void removeOrderItem(OrderItem orderItem) {
-		orderTotal = orderTotal.subtract(orderItem.getPrice());
-		orderItems.remove(orderItem);
+		if (orderItems.remove(orderItem)) {
+			orderTotal = orderTotal.subtract(orderItem.getPrice());
+		}
 	}
 
 	@Override

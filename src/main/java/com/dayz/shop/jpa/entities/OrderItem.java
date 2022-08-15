@@ -62,6 +62,9 @@ public class OrderItem {
 	@Column(name = "STATUS")
 	private OrderStatus status;
 
+	@Column(name = "COUNT")
+	private int count;
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
