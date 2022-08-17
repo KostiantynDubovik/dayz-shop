@@ -19,7 +19,7 @@ public class Server {
 	@Column(name = "SERVER_ID", nullable = false)
 	private Long id;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "STORE_ID")
 	private Store store;
 

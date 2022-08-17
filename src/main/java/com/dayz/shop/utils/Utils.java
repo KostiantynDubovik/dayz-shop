@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Component
 public class Utils {
 	public static final Long rootStoreId = -1L;
-	private static Map<String, Long> storeNameStoreMap;
+	private static Map<String, Store> storeNameStoreMap;
 
 	private static RoleRepository roleRepository;
 	private static StoreRepository storeRepository;
@@ -30,7 +30,7 @@ public class Utils {
 	public Utils(RoleRepository roleRepository, StoreRepository storeRepository) {
 		Utils.roleRepository = roleRepository;
 		Utils.storeRepository = storeRepository;
-		storeNameStoreMap = storeRepository.findAll().stream().collect(Collectors.toMap(Store::getStoreName, Store::getId));
+		storeNameStoreMap = storeRepository.findAll().stream().collect(Collectors.toMap(Store::getStoreName, store -> store));
 	}
 
 	public static boolean isAppAdmin(User user) {
@@ -47,7 +47,7 @@ public class Utils {
 	}
 
 	public static Store extractStoreFromRequest(ServletRequest request) {
-		return storeRepository.getById(storeNameStoreMap.get(request.getServerName().split("\\.")[0].toLowerCase()));
+		return storeNameStoreMap.get(request.getServerName().split("\\.")[0].toLowerCase());
 	}
 
 	public static User getCurrentUser() {

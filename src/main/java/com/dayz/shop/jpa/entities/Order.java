@@ -15,29 +15,29 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Entity
 @Table(name = "ORDERS")
-@JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 public class Order {
 	@Id
 	@Column(name = "ORDER_ID", nullable = false)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Long id;
 
-	@OneToMany(mappedBy = "order")
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
 	@ToString.Exclude
 	private List<OrderItem> orderItems;
 
 	@Column(name = "ORDER_TOTAL")
 	private BigDecimal orderTotal;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "USER_ID", foreignKey = @ForeignKey(name = "orders_users_STORE_ID_fk"))
 	private User user;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "STORE_ID")
 	private Store store;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "SERVER_ID")
 	private Server server;
 

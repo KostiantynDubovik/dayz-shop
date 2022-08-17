@@ -46,6 +46,7 @@ public class StoreConfig {
 }
 
 @Embeddable
+@Data
 class StoreConfigKey implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "STORE_ID", nullable = false, insertable = false, updatable = false)
@@ -53,33 +54,4 @@ class StoreConfigKey implements Serializable {
 
 	@Column(name = "KEY", nullable = false, insertable = false, updatable = false)
 	private String key;
-
-	public Store getStore() {
-		return store;
-	}
-
-	public void setStore(Store store) {
-		this.store = store;
-	}
-
-	public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		StoreConfigKey that = (StoreConfigKey) o;
-		return store.equals(that.store) && key.equals(that.key);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(store, key);
-	}
 }

@@ -19,15 +19,15 @@ public class ItemDescription {
 	@Column(name = "DESCRIPTION_ID", nullable = false)
 	private Long id;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "LANGUAGE_ID")
 	private Language language;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "STORE_ID")
 	private Store store;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "ITEM_ID")
 	private Item item;
 

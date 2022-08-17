@@ -254,8 +254,6 @@ create table order_items
 	M_CODE        varchar(20)    not null,
 	STATUS        varchar(20)    not null,
 	COUNT         int default 1  not null,
-	constraint UK_8mqc19ne0nb63tawmougm4e2
-		unique (USER_ID),
 	constraint order_items_M_CODE_uindex
 		unique (M_CODE),
 	constraint order_items_servers_SERVER_ID_fk

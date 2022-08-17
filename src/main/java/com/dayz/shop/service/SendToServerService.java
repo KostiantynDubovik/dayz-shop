@@ -17,6 +17,7 @@ import java.io.*;
 public class SendToServerService {
 	public static final int PORT = 22;
 	public static final String SSH_KNOWN_HOSTS = "~/.ssh/known_hosts";
+	public static final String SFTP_TYPE = "sftp";
 	final StoreConfigRepository storeConfigRepository;
 	final MCodeMapper mCodeMapper;
 
@@ -33,28 +34,35 @@ public class SendToServerService {
 		String pathToJson = getPathToJson(order);
 		String steamId = order.getUser().getSteamId();
 		String completePath = String.format(pathToJson, order.getServer().getServerName(), steamId);
-		File existingFile = new File(steamId + "/get");
-		getFile(username, password, host, completePath, existingFile);
-		Root root = new Root();
-		ObjectMapper om = new ObjectMapper();
-		om.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-		if (existingFile.length() > 0) {
-			root = om.readValue(existingFile, Root.class);
-		} else {
-			MCodeArray mCodeArray = new MCodeArray();
-			root.getM_CodeArray().add(mCodeArray);
+		File existingFile = new File("get/" + steamId + ".json");
+		try {
+			if (existingFile.createNewFile()) {
+				getFile(username, password, host, completePath, existingFile);
+				Root root = new Root();
+				ObjectMapper om = new ObjectMapper();
+				om.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+				if (existingFile.length() > 0) {
+					root = om.readValue(existingFile, Root.class);
+				} else {
+					MCodeArray mCodeArray = new MCodeArray();
+					root.getM_CodeArray().add(mCodeArray);
+				}
+				root.getM_CodeArray().addAll(mCodeMapper.mapOrderToRoot(order).getM_CodeArray());
+				//TODO dir *.json /b
+
+				File mCode = new File("put/" + steamId + ".json");
+				try {
+					if (mCode.createNewFile()) {
+						om.writerWithDefaultPrettyPrinter().writeValue(mCode, root);
+						updateFile(username, password, host, completePath, mCode);
+					}
+				} finally {
+					mCode.delete();
+				}
+			}
+		} finally {
+			existingFile.delete();
 		}
-		existingFile.delete();
-
-		root.getM_CodeArray().addAll(mCodeMapper.mapOrderToRoot(order).getM_CodeArray());
-		//TODO dir *.json /b
-
-		File mCode = new File(steamId + "/put");
-
-		om.writerWithDefaultPrettyPrinter().writeValue(mCode, root);
-
-		updateFile(username, password, host, completePath, mCode);
-		mCode.delete();
 	}
 
 	private String getPathToJson(Order order) {
@@ -73,26 +81,28 @@ public class SendToServerService {
 		return storeConfigRepository.findByKeyAndStore("SSH_IP", order.getStore()).getValue();
 	}
 
-	private void getFile(String username, String password, String host, String path, File file) throws JSchException, SftpException, IOException {
+	private void getFile(String username, String password, String host, String path, File file) throws
+			JSchException, SftpException, IOException {
 		Session session = setupJsch(username, password, host);
-		ChannelSftp channelSftp = (ChannelSftp) session.openChannel("sftp");
+		ChannelSftp channelSftp = (ChannelSftp) session.openChannel(SFTP_TYPE);
 		channelSftp.connect();
 
-		FileOutputStream dst = new FileOutputStream(file);
-		channelSftp.get(path, dst);
-		dst.close();
+		try (FileOutputStream dst = new FileOutputStream(file)) {
+			channelSftp.get(path, dst);
+		}
 		channelSftp.exit();
 		session.disconnect();
 	}
 
-	private void updateFile(String username, String password, String host, String path, File file) throws JSchException, SftpException, IOException {
+	private void updateFile(String username, String password, String host, String path, File file) throws
+			JSchException, SftpException, IOException {
 		Session session = setupJsch(username, password, host);
-		ChannelSftp channelSftp = (ChannelSftp) session.openChannel("sftp");
+		ChannelSftp channelSftp = (ChannelSftp) session.openChannel(SFTP_TYPE);
 		channelSftp.connect();
 
-		FileInputStream dst = new FileInputStream(file);
-		channelSftp.put(dst, path);
-		dst.close();
+		try (FileInputStream dst = new FileInputStream(file)) {
+			channelSftp.put(dst, path);
+		}
 		channelSftp.exit();
 		session.disconnect();
 	}

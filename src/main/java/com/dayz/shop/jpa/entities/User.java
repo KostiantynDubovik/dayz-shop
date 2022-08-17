@@ -33,7 +33,7 @@ public class User implements UserDetails {
 	@Column(name = "USER_ID")
 	private Long id;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JsonIgnore
 	@JoinColumn(name = "STORE_ID")
 	private Store store;
@@ -54,7 +54,7 @@ public class User implements UserDetails {
 	private Boolean active;
 
 	@LazyCollection(LazyCollectionOption.FALSE)
-	@ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE})
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(
 			name = "USERS_ROLES",
 			joinColumns = @JoinColumn(

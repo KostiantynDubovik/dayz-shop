@@ -6,6 +6,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -16,7 +17,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Entity
 @Table(name = "ORDER_ITEMS")
-@JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 public class OrderItem {
 
 	@Id
@@ -28,11 +29,11 @@ public class OrderItem {
 	@JoinColumn(name = "ITEM_ID")
 	private Item item;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "ORDER_ID")
 	private Order order;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID")
 	private User user;
 
@@ -49,12 +50,9 @@ public class OrderItem {
 	private BigDecimal price;
 
 	@Column(name = "M_CODE")
-	@GeneratedValue(generator = "m-code-generator")
-	@GenericGenerator(name = "m-code-generator",
-			strategy = "com.dayz.shop.utils.MCodeGenerator")
 	private String code;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "SERVER_ID")
 	private Server server;
 
@@ -65,16 +63,4 @@ public class OrderItem {
 	@Column(name = "COUNT")
 	private int count;
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-		OrderItem orderItem = (OrderItem) o;
-		return id != null && Objects.equals(id, orderItem.id);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(id, item, order, user, boughtTime, received, receiveDateTime, price, code, server);
-	}
 }

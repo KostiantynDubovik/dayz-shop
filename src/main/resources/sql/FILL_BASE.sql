@@ -143,6 +143,10 @@ insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (19, 26);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (19, 27);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (19, 28);
 
+insert into shop.servers (SERVER_NAME, STORE_ID, SERVER_ID) VALUES ('1PP', -2, 1);
+insert into shop.servers (SERVER_NAME, STORE_ID, SERVER_ID) VALUES ('LITE', -2, 2);
+insert into shop.servers (SERVER_NAME, STORE_ID, SERVER_ID) VALUES ('3PP', -2, 3);
+insert into shop.servers (SERVER_NAME, STORE_ID, SERVER_ID) VALUES ('CASUAL', -2, 4);
 
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'PATH_TO_JSON', 'servers/%s/profiles/HotlineTrade/%s.json');
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'SSH_IP', '195.18.27.91');

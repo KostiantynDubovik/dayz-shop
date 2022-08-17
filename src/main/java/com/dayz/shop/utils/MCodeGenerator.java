@@ -12,23 +12,19 @@ import java.io.Serializable;
 import java.util.Properties;
 import java.util.Random;
 
-public class MCodeGenerator implements IdentifierGenerator, Configurable {
+public class MCodeGenerator {
 
 	public static final String CANDIDATES = "zxcvbnmasdfghjklqwertyuiopZXCVBNMASDFGHJKLQWERTYUIOP1234567890";
 	public static final String BASE = "HT-%s-%s";
 
-	@Override
-	public Serializable generate(SharedSessionContractImplementor session, Object obj) throws HibernateException {
-		return generateMCode();
-	}
 
-	private String generateMCode() {
+	public static String generateMCode() {
 		String first = generateChunk();
 		String second = generateChunk();
 		return String.format(BASE, first, second);
 	}
 
-	private String generateChunk() {
+	private static String generateChunk() {
 		StringBuilder chunk = new StringBuilder();
 		for (int i = 0; i < 4; i++) {
 			chunk.append(getRandomChar());
@@ -36,18 +32,8 @@ public class MCodeGenerator implements IdentifierGenerator, Configurable {
 		return chunk.toString();
 	}
 
-	private String getRandomChar() {
+	private static String getRandomChar() {
 		Random random = new Random();
 		return String.valueOf((CANDIDATES.charAt(random.nextInt(CANDIDATES.length()))));
-	}
-
-	@Override
-	public void configure(Type type, Properties properties, ServiceRegistry serviceRegistry) throws MappingException {
-		// no op
-	}
-
-	@Override
-	public void configure(Properties properties) throws HibernateException {
-		// no op
 	}
 }
