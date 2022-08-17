@@ -30,7 +30,7 @@ public class ItemService {
 	public Page<Item> findAllByCategory(String categoryName, Pageable pageable) {
 		Category category = categoryRepository.findByCategoryName(categoryName);
 		if (category != null) {
-			return itemRepository.findAllByCategoriesIn(Collections.singletonList(category), pageable);
+			return itemRepository.findAllByCategoriesInAndBuyable(Collections.singletonList(category), true, pageable);
 		} else {
 			return Page.empty();
 		}
@@ -39,7 +39,7 @@ public class ItemService {
 	public Page<Item> findAllByCategoryNameAndStore(String categoryName, Store store, Pageable pageable) {
 		Category category = categoryRepository.findByCategoryName(categoryName);
 		if (category != null) {
-			return itemRepository.findAllByCategoriesInAndStore(Collections.singletonList(category), store, pageable);
+			return itemRepository.findAllByCategoriesInAndStoreAndBuyable(Collections.singletonList(category), store, true, pageable);
 		} else {
 			return Page.empty();
 		}

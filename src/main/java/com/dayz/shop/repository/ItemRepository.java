@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface ItemRepository extends PagingAndSortingRepository<Item, Long> {
@@ -16,8 +17,8 @@ public interface ItemRepository extends PagingAndSortingRepository<Item, Long> {
 
 	Item findByIdAndStore(Long itemId, Store store);
 
-	Page<Item> findAllByCategoriesInAndStore(List<Category> categories, Store store, Pageable pageable);
-	Page<Item> findAllByCategoriesIn(List<Category> categories, Pageable pageable);
+	Page<Item> findAllByCategoriesInAndStoreAndBuyable(Collection<Category> categories, Store store, boolean buyable, Pageable pageable);
+	Page<Item> findAllByCategoriesInAndBuyable(Collection<Category> categories, boolean buyable, Pageable pageable);
 
-	Page<Item> findAllByStore(Store store, Pageable pageable);
+	Page<Item> findAllByStoreAndBuyable(Store store, Pageable pageable, boolean buyable);
 }

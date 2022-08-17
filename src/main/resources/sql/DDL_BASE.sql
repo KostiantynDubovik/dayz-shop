@@ -12,9 +12,11 @@ create table category_relations
 	constraint UK_ukumnt4tcuacos1h9fvkj2uu
 		unique (CHILD_CATEGORY_ID),
 	constraint FKalr31nuy9d9x4qs006sca2w70
-		foreign key (CHILD_CATEGORY_ID) references categories (CATEGORY_ID),
+		foreign key (CHILD_CATEGORY_ID) references categories (CATEGORY_ID)
+			on delete cascade,
 	constraint FKc50resr68q3cpwobaikm9lf9c
 		foreign key (PARENT_CATEGORY_ID) references categories (CATEGORY_ID)
+			on delete cascade
 );
 
 create table hibernate_sequence
@@ -54,9 +56,11 @@ create table roles_privileges
 	ROLE_ID      bigint not null,
 	PRIVILEGE_ID bigint not null,
 	constraint FK8kxttvjnfb2dtfhjsw9nbwgnb
-		foreign key (PRIVILEGE_ID) references privileges (PRIVILEGE_ID),
+		foreign key (PRIVILEGE_ID) references privileges (PRIVILEGE_ID)
+			on delete cascade,
 	constraint roles_privileges_roles_ROLE_ID_fk
 		foreign key (ROLE_ID) references roles (ROLE_ID)
+			on delete cascade
 );
 
 create table stores
@@ -82,6 +86,7 @@ create table items
 	COUNT      bigint       null,
 	constraint items_stores_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID)
+			on delete cascade
 );
 
 create table item_category
@@ -89,9 +94,11 @@ create table item_category
 	ITEM_ID     bigint not null,
 	CATEGORY_ID bigint not null,
 	constraint item_category_item_category_CATEGORY_ID_fk
-		foreign key (CATEGORY_ID) references categories (CATEGORY_ID),
+		foreign key (CATEGORY_ID) references categories (CATEGORY_ID)
+			on delete cascade,
 	constraint item_category_items_ITEM_ID_fk
 		foreign key (ITEM_ID) references items (ITEM_ID)
+			on delete cascade
 );
 
 create table item_description
@@ -104,11 +111,14 @@ create table item_description
 	ITEM_ID        bigint       null,
 	PUBLISHED      bit          null,
 	constraint item_description_store_STORE_ID_fk
-		foreign key (STORE_ID) references stores (STORE_ID),
+		foreign key (STORE_ID) references stores (STORE_ID)
+			on delete cascade,
 	constraint item_description_items_ITEM_ID_fk
-		foreign key (ITEM_ID) references items (ITEM_ID),
+		foreign key (ITEM_ID) references items (ITEM_ID)
+			on delete cascade,
 	constraint item_description_languages_LANGUAGE_ID_fk
 		foreign key (LANGUAGE_ID) references languages (LANGUAGE_ID)
+			on delete cascade
 );
 
 create table list_price
@@ -120,9 +130,11 @@ create table list_price
 	ITEM_ID   bigint         not null,
 	STORE_ID  bigint         not null,
 	constraint list_price_items_ITEM_ID_fk
-		foreign key (ITEM_ID) references items (ITEM_ID),
+		foreign key (ITEM_ID) references items (ITEM_ID)
+			on delete cascade,
 	constraint list_price_stores_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID)
+			on delete cascade
 );
 
 create table offer_price
@@ -139,6 +151,7 @@ create table offer_price
 		unique (ITEM_ID),
 	constraint FKfenl0org6dixeh79gce55vj05
 		foreign key (ITEM_ID) references items (ITEM_ID)
+			on delete cascade
 );
 
 create table servers
@@ -150,6 +163,7 @@ create table servers
 		unique (SERVER_ID, STORE_ID, SERVER_NAME),
 	constraint servers_stores_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID)
+			on delete cascade
 );
 
 create table store_config
@@ -160,6 +174,7 @@ create table store_config
 	primary key (STORE_ID, `KEY`),
 	constraint store_config_stores_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID)
+			on delete cascade
 );
 
 create table store_languages
@@ -167,21 +182,24 @@ create table store_languages
 	STORE_ID    bigint null,
 	LANGUAGE_ID bigint null,
 	constraint STORE_LANGUAGE_languages_LANGUAGE_ID_fk
-		foreign key (LANGUAGE_ID) references languages (LANGUAGE_ID),
+		foreign key (LANGUAGE_ID) references languages (LANGUAGE_ID)
+			on delete cascade,
 	constraint STORE_LANGUAGE_stores_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID)
+			on delete cascade
 );
 
 create table sub_items
 (
 	MAIN_ITEM_ID bigint not null,
 	SUB_ITEM_ID  bigint not null,
-	constraint UK_2b96x3q13nt9u9bmb9ug0jn04
-		unique (SUB_ITEM_ID),
-	constraint FKk6pfbc7yumixkvqfwlw2t60sw
-		foreign key (SUB_ITEM_ID) references items (ITEM_ID),
-	constraint FKs26m23h1yrh7ku91jmw4n9grx
+	primary key (MAIN_ITEM_ID, SUB_ITEM_ID),
+	constraint sub_items_items_ITEM_ID_fk_2
+		foreign key (SUB_ITEM_ID) references items (ITEM_ID)
+			on delete cascade,
+	constraint sub_items_items_ITEM_ID_fk
 		foreign key (MAIN_ITEM_ID) references items (ITEM_ID)
+			on delete cascade
 );
 
 create table users
@@ -198,6 +216,7 @@ create table users
 		unique (USER_ID, STORE_ID),
 	constraint FKojefi57a28my3srup14jrs2f8
 		foreign key (STORE_ID) references stores (STORE_ID)
+			on delete cascade
 );
 
 create table orders
@@ -210,11 +229,14 @@ create table orders
 	STORE_ID    bigint         null,
 	SERVER_ID   bigint         not null,
 	constraint FKenwru67yr8f0ei6m1bc2xlj4w
-		foreign key (USER_ID) references users (USER_ID),
+		foreign key (USER_ID) references users (USER_ID)
+			on delete cascade,
 	constraint orders_servers_SERVER_ID_fk
-		foreign key (SERVER_ID) references servers (SERVER_ID),
+		foreign key (SERVER_ID) references servers (SERVER_ID)
+			on delete cascade,
 	constraint orders_stores_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID)
+			on delete cascade
 );
 
 create table order_items
@@ -237,13 +259,17 @@ create table order_items
 	constraint order_items_M_CODE_uindex
 		unique (M_CODE),
 	constraint order_items_servers_SERVER_ID_fk
-		foreign key (SERVER_ID) references servers (SERVER_ID),
+		foreign key (SERVER_ID) references servers (SERVER_ID)
+			on delete cascade,
 	constraint FK6sjhssmsryq1o07mqnpky6cny
-		foreign key (USER_ID) references users (USER_ID),
+		foreign key (USER_ID) references users (USER_ID)
+			on delete cascade,
 	constraint FKnnrjyhgtcxoh0eo45qvl41ira
-		foreign key (ORDER_ID) references orders (ORDER_ID),
+		foreign key (ORDER_ID) references orders (ORDER_ID)
+			on delete cascade,
 	constraint FKssyx5rw664bnq7bwtjerw3wwy
 		foreign key (ITEM_ID) references items (ITEM_ID)
+			on delete cascade
 );
 
 create table users_roles
@@ -255,5 +281,6 @@ create table users_roles
 			on delete cascade,
 	constraint users_roles_roles_ROLE_ID_fk
 		foreign key (ROLE_ID) references roles (ROLE_ID)
+			on delete cascade
 );
 
