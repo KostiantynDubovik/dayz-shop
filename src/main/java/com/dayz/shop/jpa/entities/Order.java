@@ -1,5 +1,6 @@
 package com.dayz.shop.jpa.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.hibernate.Hibernate;
@@ -24,6 +25,7 @@ public class Order {
 
 	@OneToMany(mappedBy = "order", cascade = CascadeType.MERGE)
 	@ToString.Exclude
+	@JsonBackReference
 	private List<OrderItem> orderItems;
 
 	@Column(name = "ORDER_TOTAL")
@@ -31,14 +33,17 @@ public class Order {
 
 	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "USER_ID", foreignKey = @ForeignKey(name = "orders_users_STORE_ID_fk"))
+	@JsonBackReference
 	private User user;
 
 	@ManyToOne
 	@JoinColumn(name = "STORE_ID")
+	@JsonBackReference
 	private Store store;
 
 	@ManyToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "SERVER_ID")
+	@JsonBackReference
 	private Server server;
 
 	@Enumerated(EnumType.STRING)

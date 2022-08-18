@@ -1,5 +1,6 @@
 package com.dayz.shop.jpa.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class OrderItem {
 
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "ORDER_ID")
+	@JsonBackReference
 	private Order order;
 
 	@ManyToOne(cascade = CascadeType.MERGE)
