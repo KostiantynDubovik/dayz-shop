@@ -13,7 +13,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Entity
 @Table(name = "SERVERS")
-@JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler", "store"})
 public class Server {
 	@Id
 	@Column(name = "SERVER_ID", nullable = false)
