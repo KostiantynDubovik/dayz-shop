@@ -94,7 +94,7 @@ public class MCodeMapper {
 		m_vehicles.setM_item(orderItem.getItem().getName());
 		List<String> attachments = new ArrayList<>();
 		for (Item subItem : orderItem.getItem().getSubItems()) {
-			attachments.add(subItem.getName());
+			attachments.add(subItem.getInGameId());
 		}
 		m_vehicles.setM_attachments(attachments);
 		mCodeArray.setM_vehicles(m_vehicles);
