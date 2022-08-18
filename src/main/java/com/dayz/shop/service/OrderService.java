@@ -46,6 +46,7 @@ public class OrderService {
 	public Order buyItemNow(Item item, Store store, Server server) throws BalanceTooLowException {
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Order order = OrderUtils.createOrder(user, store);
+		order.setServer(server);
 		orderRepository.save(order);
 		OrderItem orderItem = OrderUtils.createOrderItem(item, user, order);
 		order.addOrderItem(orderItemRepository.save(orderItem));

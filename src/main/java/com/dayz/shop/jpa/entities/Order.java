@@ -22,7 +22,7 @@ public class Order {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Long id;
 
-	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "order", cascade = CascadeType.MERGE)
 	@ToString.Exclude
 	private List<OrderItem> orderItems;
 
@@ -33,11 +33,11 @@ public class Order {
 	@JoinColumn(name = "USER_ID", foreignKey = @ForeignKey(name = "orders_users_STORE_ID_fk"))
 	private User user;
 
-	@ManyToOne(cascade = CascadeType.MERGE)
+	@ManyToOne
 	@JoinColumn(name = "STORE_ID")
 	private Store store;
 
-	@ManyToOne(cascade = CascadeType.MERGE)
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "SERVER_ID")
 	private Server server;
 
