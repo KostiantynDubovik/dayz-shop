@@ -5,6 +5,7 @@ import com.dayz.shop.jpa.entities.Order;
 import com.dayz.shop.jpa.entities.Server;
 import com.dayz.shop.jpa.entities.Store;
 import com.dayz.shop.service.OrderService;
+import com.dayz.shop.utils.OrderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -21,13 +22,19 @@ public class OrderController {
 		this.orderService = orderService;
 	}
 
+	@GetMapping
+	@PreAuthorize("hasAuthority('STORE_READ')")
+	public Order getOrder(@RequestAttribute Store store) {
+		return OrderUtils.getCurrentOrder(store);
+	}
+
 	@PostMapping("add/{item}")
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public Order addOrderItem(@PathVariable Item item, @RequestAttribute Store store) {
 		return orderService.addOrderItem(item, store);
 	}
 
-	@DeleteMapping("add/{item}")
+	@DeleteMapping("delete/{item}")
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public Order deleteOrderItem(@PathVariable Item item,@RequestAttribute Store store) {
 		return orderService.deleteOrderItem(item, store);
