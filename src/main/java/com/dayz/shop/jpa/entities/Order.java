@@ -37,12 +37,10 @@ public class Order {
 
 	@ManyToOne
 	@JoinColumn(name = "STORE_ID")
-	@JsonBackReference
 	private Store store;
 
 	@ManyToOne
 	@JoinColumn(name = "SERVER_ID")
-	@JsonBackReference
 	private Server server;
 
 	@Enumerated(EnumType.STRING)
