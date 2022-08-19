@@ -1,5 +1,6 @@
 package com.dayz.shop.jpa.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.hibernate.Hibernate;
@@ -32,6 +33,7 @@ public class Store implements Serializable {
 
 	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
 	@ToString.Exclude
+	@JsonBackReference
 	private List<StoreConfig> configs;
 
 	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
