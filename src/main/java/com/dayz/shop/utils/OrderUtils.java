@@ -1,7 +1,10 @@
 package com.dayz.shop.utils;
 
 import com.dayz.shop.jpa.entities.*;
+import com.dayz.shop.repository.OrderRepository;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -9,9 +12,17 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+@Service
 public class OrderUtils {
 
-	public static OfferPrice getCurrentOfferPrice(List<OfferPrice> offerPrices) {
+	final private OrderRepository orderRepository;
+
+	@Autowired
+	public OrderUtils(OrderRepository orderRepository) {
+		this.orderRepository = orderRepository;
+	}
+
+	public OfferPrice getCurrentOfferPrice(List<OfferPrice> offerPrices) {
 		OfferPrice result = new OfferPrice();
 		offerPrices.sort(Comparator.comparingInt(OfferPrice::getPriority));
 		for (OfferPrice offerPrice : offerPrices) {
@@ -24,12 +35,12 @@ public class OrderUtils {
 		return result;
 	}
 
-	public static Order getCurrentOrder(Store store) {
+	public Order getCurrentOrder(Store store) {
 		return getCurrentOrder(Utils.getCurrentUser(), store);
 	}
 
-	public static Order getCurrentOrder(User user, Store store) {
-		List<Order> orders = user.getOrders();
+	public Order getCurrentOrder(User user, Store store) {
+		List<Order> orders = orderRepository.findAllByUserAndStore(user, store);
 		if (CollectionUtils.isEmpty(orders)) {
 			orders = new ArrayList<>();
 			user.setOrders(orders);
@@ -39,7 +50,7 @@ public class OrderUtils {
 		return orders.stream().filter(order -> order.getStatus().equals(OrderStatus.PENDING)).findFirst().get();
 	}
 
-	public static Order createOrder(User user, Store store) {
+	public Order createOrder(User user, Store store) {
 		Order order = new Order();
 		order.setOrderItems(new ArrayList<>());
 		order.setStore(store);
@@ -49,7 +60,7 @@ public class OrderUtils {
 		return order;
 	}
 
-	public static OrderItem createOrderItem(Item item, User user, Order order) {
+	public OrderItem createOrderItem(Item item, User user, Order order) {
 		OrderItem orderItem = new OrderItem();
 		orderItem.setUser(user);
 		orderItem.setOrder(order);

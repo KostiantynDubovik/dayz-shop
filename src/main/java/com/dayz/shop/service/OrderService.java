@@ -19,24 +19,26 @@ public class OrderService {
 	private final OrderRepository orderRepository;
 	private final OrderItemRepository orderItemRepository;
 	private final SendToServerService sendToServerService;
+	private final OrderUtils orderUtils;
 
 	@Autowired
-	public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository, SendToServerService sendToServerService) {
+	public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository, SendToServerService sendToServerService, OrderUtils orderUtils) {
 		this.orderRepository = orderRepository;
 		this.orderItemRepository = orderItemRepository;
 		this.sendToServerService = sendToServerService;
+		this.orderUtils = orderUtils;
 	}
 
 	public Order addOrderItem(Item item, Store store) {
 		User user = Utils.getCurrentUser();
-		Order order = OrderUtils.getCurrentOrder(user, store);
-		OrderItem orderItem = OrderUtils.createOrderItem(item, user, order);
+		Order order = orderUtils.getCurrentOrder(user, store);
+		OrderItem orderItem = orderUtils.createOrderItem(item, user, order);
 		order.addOrderItem(orderItemRepository.save(orderItem));
 		return orderRepository.save(order);
 	}
 
 	public Order deleteOrderItem(Item item, Store store) {
-		Order order = OrderUtils.getCurrentOrder(store);
+		Order order = orderUtils.getCurrentOrder(store);
 		OrderItem orderItem = orderItemRepository.findFirstByItemAndOrder(item, order);
 		order.removeOrderItem(orderItem);
 		orderItemRepository.delete(orderItem);
@@ -45,16 +47,16 @@ public class OrderService {
 
 	public Order buyItemNow(Item item, Store store, Server server) throws BalanceTooLowException {
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		Order order = OrderUtils.createOrder(user, store);
+		Order order = orderUtils.createOrder(user, store);
 		order.setServer(server);
 		orderRepository.save(order);
-		OrderItem orderItem = OrderUtils.createOrderItem(item, user, order);
+		OrderItem orderItem = orderUtils.createOrderItem(item, user, order);
 		order.addOrderItem(orderItemRepository.save(orderItem));
 		return placeOrder(order, server);
 	}
 
 	public Order placeOrder(Store store, Server server) throws BalanceTooLowException {
-		return placeOrder(OrderUtils.getCurrentOrder(Utils.getCurrentUser(), store), server);
+		return placeOrder(orderUtils.getCurrentOrder(Utils.getCurrentUser(), store), server);
 	}
 
 	public Order placeOrder(Order order, Server server) throws BalanceTooLowException {

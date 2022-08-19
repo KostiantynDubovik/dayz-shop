@@ -64,8 +64,8 @@ insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (8, 2);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (8, 3);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (8, 7);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (8, 9);
-insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (8, 11);
 
+insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (8, 11);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (8, 12);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (8, 13);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (8, 14);
@@ -126,11 +126,11 @@ INSERT INTO shop.list_price (LISTPRICE, PRICE, CURRENCY, ITEM_ID, STORE_ID) VALU
 INSERT INTO shop.list_price (LISTPRICE, PRICE, CURRENCY, ITEM_ID, STORE_ID) VALUES (29, 100.00, 'RUB', 29, -2);
 
 
+insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (19, 1);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (19, 2);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (19, 3);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (19, 7);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (19, 9);
-insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (19, 11);
 
 
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (19, 20);

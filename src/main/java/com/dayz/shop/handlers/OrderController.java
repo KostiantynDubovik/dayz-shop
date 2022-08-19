@@ -16,16 +16,18 @@ import org.springframework.web.server.ServerErrorException;
 public class OrderController {
 
 	private final OrderService orderService;
+	private final OrderUtils orderUtils;
 
 	@Autowired
-	public OrderController(OrderService orderService) {
+	public OrderController(OrderService orderService, OrderUtils orderUtils) {
 		this.orderService = orderService;
+		this.orderUtils = orderUtils;
 	}
 
 	@GetMapping
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public Order getOrder(@RequestAttribute Store store) {
-		return OrderUtils.getCurrentOrder(store);
+		return orderUtils.getCurrentOrder(store);
 	}
 
 	@PostMapping("add/{item}")
