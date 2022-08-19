@@ -25,7 +25,6 @@ public class Order {
 
 	@OneToMany(mappedBy = "order", cascade = CascadeType.MERGE)
 	@ToString.Exclude
-	@JsonBackReference
 	private List<OrderItem> orderItems;
 
 	@Column(name = "ORDER_TOTAL")
