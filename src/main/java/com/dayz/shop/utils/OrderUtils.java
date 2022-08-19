@@ -40,14 +40,15 @@ public class OrderUtils {
 	}
 
 	public Order getCurrentOrder(User user, Store store) {
-		List<Order> orders = orderRepository.findAllByUserAndStore(user, store);
+		List<Order> orders = orderRepository.findAllByUserAndStoreAndStatus(user, store, OrderStatus.PENDING);
 		if (CollectionUtils.isEmpty(orders)) {
 			orders = new ArrayList<>();
 			user.setOrders(orders);
 			Order order = createOrder(user, store);
 			orders.add(order);
+			orderRepository.save(order);
 		}
-		return orders.stream().filter(order -> order.getStatus().equals(OrderStatus.PENDING)).findFirst().get();
+		return orders.stream().findFirst().get();
 	}
 
 	public Order createOrder(User user, Store store) {

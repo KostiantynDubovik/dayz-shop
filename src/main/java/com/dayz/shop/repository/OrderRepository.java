@@ -1,6 +1,7 @@
 package com.dayz.shop.repository;
 
 import com.dayz.shop.jpa.entities.Order;
+import com.dayz.shop.jpa.entities.OrderStatus;
 import com.dayz.shop.jpa.entities.Store;
 import com.dayz.shop.jpa.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,5 +10,5 @@ import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 	List<Order> findAllByUserId(Long userId);
-	List<Order> findAllByUserAndStore(User user, Store store);
+	List<Order> findAllByUserAndStoreAndStatus(User user, Store store, OrderStatus status);
 }

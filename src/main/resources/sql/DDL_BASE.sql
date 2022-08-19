@@ -227,7 +227,7 @@ create table orders
 	STATUS      varchar(255)   null,
 	USER_ID     bigint         null,
 	STORE_ID    bigint         null,
-	SERVER_ID   bigint         not null,
+	SERVER_ID   bigint         null,
 	constraint FKenwru67yr8f0ei6m1bc2xlj4w
 		foreign key (USER_ID) references users (USER_ID)
 			on delete cascade,

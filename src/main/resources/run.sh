@@ -3,9 +3,9 @@ curl --request GET -sL -o nul\
 			--max-time 30 \
 			--url 'http://root.dayz-shop.com/shutdown'
 cd ../react || return
-git pull
+git pull --rebase
 npm run build
 cd ../../../
-git pull
+git pull --rebase
 ./gradlew clean
 ./gradlew bootRun

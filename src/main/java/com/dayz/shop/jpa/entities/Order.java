@@ -31,7 +31,7 @@ public class Order {
 	@Column(name = "ORDER_TOTAL")
 	private BigDecimal orderTotal;
 
-	@ManyToOne(cascade = CascadeType.MERGE)
+	@ManyToOne
 	@JoinColumn(name = "USER_ID", foreignKey = @ForeignKey(name = "orders_users_STORE_ID_fk"))
 	@JsonBackReference
 	private User user;
@@ -41,7 +41,7 @@ public class Order {
 	@JsonBackReference
 	private Store store;
 
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@ManyToOne
 	@JoinColumn(name = "SERVER_ID")
 	@JsonBackReference
 	private Server server;
