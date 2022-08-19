@@ -1,6 +1,7 @@
 package com.dayz.shop.jpa.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.hibernate.Hibernate;
 
@@ -23,6 +24,7 @@ public class Server {
 	@JoinColumn(name = "STORE_ID")
 	private Store store;
 
+	@JsonProperty("name")
 	@Column(name = "SERVER_NAME")
 	private String serverName;
 
