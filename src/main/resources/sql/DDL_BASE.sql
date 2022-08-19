@@ -250,7 +250,7 @@ create table order_items
 	ITEM_ID       bigint         null,
 	USER_ID       bigint         null,
 	ORDER_ID      bigint         null,
-	SERVER_ID     bigint         not null,
+	SERVER_ID     bigint         null,
 	M_CODE        varchar(20)    not null,
 	STATUS        varchar(20)    not null,
 	COUNT         int default 1  not null,
