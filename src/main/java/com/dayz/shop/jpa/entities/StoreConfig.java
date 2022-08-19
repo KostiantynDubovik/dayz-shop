@@ -1,5 +1,6 @@
 package com.dayz.shop.jpa.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.hibernate.Hibernate;
@@ -20,6 +21,7 @@ public class StoreConfig {
 
 	@Id
 	@ManyToOne
+	@JsonBackReference
 	private Store store;
 
 	@Id
@@ -50,6 +52,8 @@ public class StoreConfig {
 class StoreConfigKey implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "STORE_ID", nullable = false, insertable = false, updatable = false)
+
+	@JsonBackReference
 	private Store store;
 
 	@Column(name = "KEY", nullable = false, insertable = false, updatable = false)
