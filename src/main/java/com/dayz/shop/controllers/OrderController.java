@@ -1,4 +1,4 @@
-package com.dayz.shop.handlers;
+package com.dayz.shop.controllers;
 
 import com.dayz.shop.jpa.entities.Item;
 import com.dayz.shop.jpa.entities.Order;

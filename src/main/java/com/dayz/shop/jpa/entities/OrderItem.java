@@ -62,6 +62,6 @@ public class OrderItem {
 	private OrderStatus status;
 
 	@Column(name = "COUNT")
-	private int count;
+	private Integer count;
 
 }
