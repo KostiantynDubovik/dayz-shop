@@ -153,3 +153,15 @@ INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'SSH_IP', '19
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'SSH_PWD', 'bulkasmaslom227#');
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'SSH_USR', 'Constantine');
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'steam.api.key', 'DF21B88E007F7F971EE63BFA733BB812');
+
+
+INSERT INTO shop.categories (CATEGORY_ID, CATEGORY_NAME)
+VALUES (102, 'containers'),
+       (103, 'vehiclesparts'),
+       (104, 'explosives'),
+       (105, 'weapons'),
+       (106, 'tools'),
+       (107, 'food'),
+       (108, 'clothes'),
+       (109, 'vehicles')
+;

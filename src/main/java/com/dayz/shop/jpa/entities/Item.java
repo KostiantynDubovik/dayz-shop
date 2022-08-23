@@ -71,7 +71,7 @@ public class Item {
 	private boolean deletable;
 
 	@Column(name = "COUNT")
-	private int count;
+	private Integer count = 1;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "ITEM_TYPE")
