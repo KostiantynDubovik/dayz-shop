@@ -33,14 +33,16 @@ public class OrderService {
 		User user = Utils.getCurrentUser();
 		Order order = orderUtils.getCurrentOrder(user, store);
 		OrderItem orderItem = orderUtils.createOrderItem(item, user, order);
-		order.addOrderItem(orderItemRepository.save(orderItem));
+		orderItemRepository.save(orderItem);
+		orderUtils.recalculateOrder(order);
 		return orderRepository.save(order);
 	}
 
 	public Order deleteOrderItem(Item item, Store store) {
 		Order order = orderUtils.getCurrentOrder(store);
 		OrderItem orderItem = orderItemRepository.findFirstByItemAndOrder(item, order);
-		order.removeOrderItem(orderItem);
+		order.getOrderItems().remove(orderItem);
+		orderUtils.recalculateOrder(order);
 		orderItemRepository.delete(orderItem);
 		return orderRepository.save(order);
 	}
@@ -51,7 +53,7 @@ public class OrderService {
 		order.setServer(server);
 		orderRepository.save(order);
 		OrderItem orderItem = orderUtils.createOrderItem(item, user, order);
-		order.addOrderItem(orderItemRepository.save(orderItem));
+		order.getOrderItems().add(orderItemRepository.save(orderItem));
 		return placeOrder(order, server);
 	}
 

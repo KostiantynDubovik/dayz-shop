@@ -3,6 +3,8 @@ package com.dayz.shop.utils;
 import com.dayz.shop.jpa.entities.*;
 import com.dayz.shop.repository.OrderRepository;
 import org.apache.commons.collections4.CollectionUtils;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+@Aspect
 @Service
 public class OrderUtils {
 
@@ -73,6 +76,21 @@ public class OrderUtils {
 		orderItem.setItem(item);
 		List<OfferPrice> offerPrices = item.getOfferPrices();
 		orderItem.setPrice(CollectionUtils.isEmpty(offerPrices) ? item.getListPrice() : getCurrentOfferPrice(offerPrices).getPrice());
+		order.getOrderItems().add(orderItem);
 		return orderItem;
+	}
+
+	public void recalculateOrder(Order order) {
+		List<OrderItem> orderItems = order.getOrderItems();
+		BigDecimal total = BigDecimal.ZERO;
+		for (OrderItem orderItem : orderItems) {
+			recalculateOrderItem(orderItem);
+			total = total.add(orderItem.getTotalPrice());
+		}
+		order.setOrderTotal(total);
+	}
+
+	public void recalculateOrderItem(OrderItem orderItem) {
+		orderItem.setTotalPrice(orderItem.getPrice().multiply(BigDecimal.valueOf(orderItem.getCount())));
 	}
 }

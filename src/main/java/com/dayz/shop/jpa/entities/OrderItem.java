@@ -1,5 +1,6 @@
 package com.dayz.shop.jpa.entities;
 
+import com.dayz.shop.listeners.OrderItemListener;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "ORDER_ITEMS")
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
+@EntityListeners(OrderItemListener.class)
 public class OrderItem {
 
 	@Id
@@ -54,6 +56,9 @@ public class OrderItem {
 
 	@Column(name = "PRICE")
 	private BigDecimal price;
+
+	@Column(name = "TOTAL_PRICE")
+	private BigDecimal totalPrice;
 
 	@Column(name = "M_CODE")
 	@JsonIgnore

@@ -4,9 +4,11 @@ import com.dayz.shop.jpa.entities.Role;
 import com.dayz.shop.jpa.entities.Store;
 import com.dayz.shop.jpa.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 	User getBySteamId(String steamId);
 	User getBySteamIdAndStore(String steamId, Store store);

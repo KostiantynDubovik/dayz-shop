@@ -6,10 +6,12 @@ import com.dayz.shop.jpa.entities.Store;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.List;
 
+@Repository
 public interface ItemRepository extends PagingAndSortingRepository<Item, Long> {
 	Item findByName(String name);
 	List<Item> findAllByCategoriesId(Long categoryId, Pageable pageable);

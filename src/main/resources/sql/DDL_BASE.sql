@@ -241,19 +241,20 @@ create table orders
 
 create table order_items
 (
-	ORDER_ITEM_ID bigint         not null
+	ORDER_ITEM_ID bigint                      not null
 		primary key,
-	BOUGHT_TIME   datetime(6)    null,
-	RECEIVED      bit            null,
-	RECEIVE_TIME  datetime(6)    null,
-	PRICE         decimal(19, 2) null,
-	ITEM_ID       bigint         null,
-	USER_ID       bigint         null,
-	ORDER_ID      bigint         null,
-	SERVER_ID     bigint         null,
-	M_CODE        varchar(20)    not null,
-	STATUS        varchar(20)    not null,
-	COUNT         int default 1  not null,
+	BOUGHT_TIME   datetime(6)                 null,
+	RECEIVED      bit                         null,
+	RECEIVE_TIME  datetime(6)                 null,
+	PRICE         decimal(19, 2)              null,
+	TOTAL_PRICE   decimal(19, 2) default 0.00 null,
+	ITEM_ID       bigint                      null,
+	USER_ID       bigint                      null,
+	ORDER_ID      bigint                      null,
+	SERVER_ID     bigint                      null,
+	M_CODE        varchar(20)                 not null,
+	STATUS        varchar(20)                 not null,
+	COUNT         int            default 1    not null,
 	constraint order_items_M_CODE_uindex
 		unique (M_CODE),
 	constraint order_items_servers_SERVER_ID_fk
