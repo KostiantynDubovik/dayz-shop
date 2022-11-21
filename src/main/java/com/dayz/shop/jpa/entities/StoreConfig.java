@@ -19,6 +19,9 @@ import java.util.Objects;
 @IdClass(StoreConfigKey.class)
 public class StoreConfig {
 
+	@EmbeddedId
+	private StoreConfigKey primaryKey;
+
 	@Id
 	@ManyToOne
 	@JsonBackReference
@@ -26,9 +29,6 @@ public class StoreConfig {
 
 	@Id
 	private String key;
-
-	@EmbeddedId
-	private StoreConfigKey primaryKey;
 
 	@Column(name = "VALUE", nullable = false)
 	private String value;
@@ -52,7 +52,6 @@ public class StoreConfig {
 class StoreConfigKey implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "STORE_ID", nullable = false, insertable = false, updatable = false)
-
 	@JsonBackReference
 	private Store store;
 

@@ -37,30 +37,29 @@ public class ItemController {
 			@RequestParam(defaultValue = "9") int pageSize,
 			@RequestAttribute Store store) {
 		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 3 ? 3 : pageSize, Sort.by(sortBy));
-		return itemRepository.findAllByStoreAndBuyable(store, pageable, true);
+		return itemRepository.findAllByStoreAndBuyable(store, "true", pageable);
 	}
 
-	@GetMapping("{categoryName}/{page}")
-	public Page<Item> getAllItemsByCategory(
-			@PathVariable int page,
-			@PathVariable String categoryName,
-			@RequestParam(defaultValue = "name") String sortBy,
-			@RequestParam(defaultValue = "9") int pageSize,
-			@RequestAttribute Store store) {
-		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 3 ? 3 : pageSize, Sort.by(sortBy));
-		return itemService.findAllByCategoryNameAndStore(categoryName, store, pageable);
-	}
-
-	@GetMapping("app/{categoryName}/{page}")
-	@PreAuthorize("hasAuthority('APP_WRITE')")
-	public Page<Item> getAllItemsByCategoryAcrossStores(
-			@PathVariable int page,
-			@PathVariable String categoryName,
-			@RequestParam(defaultValue = "name") String sortBy,
-			@RequestParam(defaultValue = "9") int pageSize) {
-		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(sortBy));
-		return itemService.findAllByCategory(categoryName, pageable);
-	}
+//	@GetMapping("{categoryName}/{page}")
+//	public Page<Item> getAllItemsByCategory(
+//			@PathVariable int page,
+//			@PathVariable String categoryName,
+//			@RequestParam(defaultValue = "name") String sortBy,
+//			@RequestParam(defaultValue = "9") int pageSize,
+//			@RequestAttribute Store store) {
+//		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 3 ? 3 : pageSize, Sort.by(sortBy));
+//		return itemService.findAllByCategoryNameAndStore(categoryName, store, pageable);
+//	}
+//
+//	@GetMapping("app/{categoryName}/{page}")
+//	public Page<Item> getAllItemsByCategoryAcrossStores(
+//			@PathVariable int page,
+//			@PathVariable String categoryName,
+//			@RequestParam(defaultValue = "name") String sortBy,
+//			@RequestParam(defaultValue = "9") int pageSize) {
+//		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(sortBy));
+//		return itemService.findAllByCategory(categoryName, pageable);
+//	}
 
 	@PostMapping()
 	@PreAuthorize("hasAuthority('STORE_WRITE')")

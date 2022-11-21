@@ -54,9 +54,6 @@ public class Item {
 	@ToString.Exclude
 	private List<OfferPrice> offerPrices;
 
-	@Column(name = "BUYABLE", nullable = false)
-	private boolean buyable;
-
 	@Column(name = "IMAGE_URL")
 	private String imageUrl;
 
@@ -67,9 +64,6 @@ public class Item {
 	@ToString.Exclude
 	private List<Item> subItems;
 
-	@Column(name = "DELETABLE")
-	private boolean deletable;
-
 	@Column(name = "COUNT")
 	private Integer count = 1;
 
@@ -77,20 +71,25 @@ public class Item {
 	@Column(name = "ITEM_TYPE")
 	private ItemType itemType;
 
+	@OneToMany(mappedBy = "item")
+	@ToString.Exclude
+	@JsonIgnore
+	private List<ItemAttribute> attributes;
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Item item = (Item) o;
-		return buyable == item.buyable && deletable == item.deletable && count == item.count && id.equals(item.id)
+		return Objects.equals(count, item.count) && id.equals(item.id)
 				&& name.equals(item.name) && inGameId.equals(item.inGameId) && store.equals(item.store)
 				&& Objects.equals(categories, item.categories) && listPrice.equals(item.listPrice)
 				&& Objects.equals(offerPrices, item.offerPrices) && Objects.equals(imageUrl, item.imageUrl)
-				&& subItems.equals(item.subItems) && itemType == item.itemType;
+				&& subItems.equals(item.subItems) && itemType == item.itemType && attributes.equals(item.getAttributes());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, name, inGameId, store, categories, listPrice, offerPrices, buyable, imageUrl, subItems, deletable, count, itemType);
+		return Objects.hash(id, name, inGameId, store, categories, listPrice, offerPrices, imageUrl, subItems, count, itemType, attributes);
 	}
 }

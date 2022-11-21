@@ -65,9 +65,10 @@ create table roles_privileges
 
 create table stores
 (
-	STORE_ID   bigint       not null
+	STORE_ID        bigint       not null
 		primary key,
-	STORE_NAME varchar(255) not null,
+	STORE_NAME      varchar(255) not null,
+	PARENT_STORE_ID bigint       null,
 	constraint UK_b95rcr8yybvka6xv44j8f5avu
 		unique (STORE_NAME)
 );
@@ -79,9 +80,7 @@ create table items
 	ITEM_NAME  varchar(255) not null,
 	IN_GAME_ID varchar(255) not null,
 	IMAGE_URL  varchar(255) null,
-	DELETABLE  bit          not null,
 	STORE_ID   bigint       null,
-	BUYABLE    bit          not null,
 	ITEM_TYPE  varchar(20)  not null,
 	COUNT      bigint       null,
 	constraint items_stores_STORE_ID_fk
@@ -281,5 +280,19 @@ create table users_roles
 	constraint users_roles_roles_ROLE_ID_fk
 		foreign key (ROLE_ID) references roles (ROLE_ID)
 			on delete cascade
+);
+
+create table ITEM_ATTRIBUTES
+(
+	ITEM_ID BIGINT not null,
+	STORE_ID BIGINT not null,
+	ATTRIBUTE_NAME VARCHAR(20) not null,
+	ATTRIBUTE_VALUE VARCHAR(255) null,
+	constraint ITEM_ATTRIBUTES_pk
+		primary key (ITEM_ID, STORE_ID, ATTRIBUTE_NAME),
+	constraint ITEM_ATTRIBUTES_items_ITEM_ID_fk
+		foreign key (ITEM_ID) references items (ITEM_ID),
+	constraint ITEM_ATTRIBUTES_stores_STORE_ID_fk
+		foreign key (STORE_ID) references stores (STORE_ID)
 );
 

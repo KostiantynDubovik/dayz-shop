@@ -63,7 +63,7 @@ public class OrderService {
 
 	public Order placeOrder(Order order, Server server) throws BalanceTooLowException {
 		User user = order.getUser();
-		if (user.getBalance().compareTo(order.getOrderTotal()) < 0) {
+		if (user.getBalance().compareTo(order.getOrderTotal()) < 0) { //TODO
 			throw new BalanceTooLowException(user.getBalance(), order.getOrderTotal());
 		}
 		try {

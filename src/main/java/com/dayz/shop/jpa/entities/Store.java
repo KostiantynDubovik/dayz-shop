@@ -40,6 +40,10 @@ public class Store implements Serializable {
 	@ToString.Exclude
 	private List<Server> servers;
 
+	@OneToOne
+	@JoinColumn(name = "PARENT_STORE_ID")
+	private Store parentStore;
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;

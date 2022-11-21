@@ -39,25 +39,25 @@ INSERT INTO shop.users (USER_ID, STEAM_ID, BALANCE, STEAM_NICKNAME, STEAM_AVATAR
 INSERT INTO shop.users_roles (USER_ID, ROLE_ID) VALUES (-1, -4);
 INSERT INTO shop.users_roles (USER_ID, ROLE_ID) VALUES (-2, -4);
 
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID, ITEM_TYPE, COUNT) VALUES (1, 'Радиатор', 'CarRadiator', true, 'https://cdn.discordapp.com/attachments/820626215756234774/933383809511079936/radik.png', true, -2, 'ITEM', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID, ITEM_TYPE, COUNT) VALUES (2, 'Свеча', 'SparkPlug', true, 'https://media.discordapp.net/attachments/934733103589654558/934733221357289472/svechya.png', true, -2, 'ITEM', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID, ITEM_TYPE, COUNT) VALUES (3, 'Аккумулятор', 'CarBattery', true, 'https://media.discordapp.net/attachments/820626215756234774/933383809737588756/akum.png', true, -2, 'ITEM', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID, ITEM_TYPE, COUNT) VALUES (4, 'Колючая проволока', 'BarbedWire', true, 'https://media.discordapp.net/attachments/952625703558475846/995779130882785471/wiretrap.png', true, -2, 'ITEM', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID, ITEM_TYPE, COUNT) VALUES (5, 'Пачка гвоздей', 'NailBox', true, 'https://media.discordapp.net/attachments/952625703558475846/960491005604413440/nail.png', true, -2, 'ITEM', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID, ITEM_TYPE, COUNT) VALUES (6, 'Оружейная стойка', 'Skyline_Kit_Gun_Rack', true, 'https://media.discordapp.net/attachments/934733103589654558/934890665970643044/gunrack.png', true, -2, 'ITEM', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID, ITEM_TYPE, COUNT) VALUES (7, 'Автомобильная лампа', 'HeadlightH7', true, 'https://static.wikia.nocookie.net/dayz_gamepedia/images/0/08/HeadlampBulb.png/revision/latest?cb=20160829123308', true, -2, 'ITEM', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID, ITEM_TYPE, COUNT) VALUES (9, 'Автомобильная лампа', 'HeadlightH7', false, 'https://static.wikia.nocookie.net/dayz_gamepedia/images/0/08/HeadlampBulb.png/revision/latest?cb=20160829123308', true, -2, 'ITEM', 1);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (1, 'Радиатор', 'CarRadiator', 'https://cdn.discordapp.com/attachments/820626215756234774/933383809511079936/radik.png', -1, 'ITEM', 1);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (2, 'Свеча', 'SparkPlug', 'https://media.discordapp.net/attachments/934733103589654558/934733221357289472/svechya.png', -1, 'ITEM', 1);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (3, 'Аккумулятор', 'CarBattery', 'https://media.discordapp.net/attachments/820626215756234774/933383809737588756/akum.png', -1, 'ITEM', 1);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (4, 'Колючая проволока', 'BarbedWire', 'https://media.discordapp.net/attachments/952625703558475846/995779130882785471/wiretrap.png', -1, 'ITEM', 1);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (5, 'Пачка гвоздей', 'NailBox', 'https://media.discordapp.net/attachments/952625703558475846/960491005604413440/nail.png', -1, 'ITEM', 1);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (6, 'Оружейная стойка', 'Skyline_Kit_Gun_Rack', 'https://media.discordapp.net/attachments/934733103589654558/934890665970643044/gunrack.png', -1, 'ITEM', 1);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (7, 'Автомобильная лампа', 'HeadlightH7', 'https://static.wikia.nocookie.net/dayz_gamepedia/images/0/08/HeadlampBulb.png/revision/latest?cb=20160829123308', -1, 'ITEM', 1);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (9, 'Автомобильная лампа', 'HeadlightH7', 'https://static.wikia.nocookie.net/dayz_gamepedia/images/0/08/HeadlampBulb.png/revision/latest?cb=20160829123308', -1, 'ITEM', 1);
 
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID, ITEM_TYPE, COUNT) VALUES (8, 'Нива', 'OffroadHatchback', true, 'https://media.discordapp.net/attachments/820626215756234774/939629084764418109/admagazskrini_3.png', true, -2, 'VEHICLE', 1);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (8, 'Нива', 'OffroadHatchback', 'https://media.discordapp.net/attachments/820626215756234774/939629084764418109/admagazskrini_3.png', -1, 'VEHICLE', 1);
 
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID, ITEM_TYPE, COUNT) VALUES (11, 'Дверь на Ниву', 'HatchbackDoors_CoDriver', false, '', true, -2, 'VEHICLE', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID, ITEM_TYPE, COUNT) VALUES (12, 'Дверь на Ниву', 'HatchbackDoors_Driver', false, '', true, -2, 'VEHICLE', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID, ITEM_TYPE, COUNT) VALUES (13, 'Капот на Ниву', 'HatchbackHood', false, '', true, -2, 'VEHICLE', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID, ITEM_TYPE, COUNT) VALUES (14, 'Ляда на Ниву', 'HatchbackTrunk', false, '', true, -2, 'VEHICLE', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID, ITEM_TYPE, COUNT) VALUES (15, 'Колесо на Ниву', 'HatchbackWheel', true, 'https://cdn.discordapp.com/attachments/820626215756234774/933383808986787850/niva.png', true, -2, 'VEHICLE', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID, ITEM_TYPE, COUNT) VALUES (16, 'Колесо на Ниву', 'HatchbackWheel', false, 'https://cdn.discordapp.com/attachments/820626215756234774/933383808986787850/niva.png', true, -2, 'VEHICLE', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID, ITEM_TYPE, COUNT) VALUES (17, 'Колесо на Ниву', 'HatchbackWheel', false, 'https://cdn.discordapp.com/attachments/820626215756234774/933383808986787850/niva.png', true, -2, 'VEHICLE', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID, ITEM_TYPE, COUNT) VALUES (18, 'Колесо на Ниву', 'HatchbackWheel', false, 'https://cdn.discordapp.com/attachments/820626215756234774/933383808986787850/niva.png', true, -2, 'VEHICLE', 1);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (11, 'Дверь на Ниву', 'HatchbackDoors_CoDriver', '', -1, 'VEHICLE', 1);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (12, 'Дверь на Ниву', 'HatchbackDoors_Driver', '', -1, 'VEHICLE', 1);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (13, 'Капот на Ниву', 'HatchbackHood', '', -1, 'VEHICLE', 1);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (14, 'Ляда на Ниву', 'HatchbackTrunk', '', -1, 'VEHICLE', 1);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (15, 'Колесо на Ниву', 'HatchbackWheel', 'https://cdn.discordapp.com/attachments/820626215756234774/933383808986787850/niva.png', -1, 'VEHICLE', 1);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (16, 'Колесо на Ниву', 'HatchbackWheel', 'https://cdn.discordapp.com/attachments/820626215756234774/933383808986787850/niva.png', -1, 'VEHICLE', 1);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (17, 'Колесо на Ниву', 'HatchbackWheel', 'https://cdn.discordapp.com/attachments/820626215756234774/933383808986787850/niva.png', -1, 'VEHICLE', 1);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (18, 'Колесо на Ниву', 'HatchbackWheel', 'https://cdn.discordapp.com/attachments/820626215756234774/933383808986787850/niva.png', -1, 'VEHICLE', 1);
 
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (8, 1);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (8, 2);
@@ -99,20 +99,18 @@ INSERT INTO shop.list_price (LISTPRICE, PRICE, CURRENCY, ITEM_ID, STORE_ID) VALU
 
 
 
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (19, 'Gunter', 'Hatchback_02', 'https://media.discordapp.net/attachments/820626215756234774/939629002073702440/admagazskrini_1.png', -1, 'VEHICLE', 1);
 
-
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID, ITEM_TYPE, COUNT) VALUES (19, 'Gunter', 'Hatchback_02', true, 'https://media.discordapp.net/attachments/820626215756234774/939629002073702440/admagazskrini_1.png', true, -2, 'VEHICLE', 1);
-
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID, ITEM_TYPE, COUNT) VALUES (20, 'Дверь на Гольф', 'Hatchback_02_Door_2_1', false, '', true, -2, 'VEHICLE', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID, ITEM_TYPE, COUNT) VALUES (21, 'Дверь на Гольф', 'Hatchback_02_Door_2_2', false, '', true, -2, 'VEHICLE', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID, ITEM_TYPE, COUNT) VALUES (22, 'Дверь на Гольф', 'Hatchback_02_Door_1_1', false, '', true, -2, 'VEHICLE', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID, ITEM_TYPE, COUNT) VALUES (23, 'Дверь на Гольф', 'Hatchback_02_Door_1_2', false, '', true, -2, 'VEHICLE', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID, ITEM_TYPE, COUNT) VALUES (24, 'Ляда на Гольф', 'Hatchback_02_Trunk', false, '', true, -2, 'VEHICLE', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID, ITEM_TYPE, COUNT) VALUES (25, 'Капот на Гольф', 'Hatchback_02_Hood', false, '', true, -2, 'VEHICLE', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID, ITEM_TYPE, COUNT) VALUES (26, 'Колесо на Гольф', 'Hatchback_02_Wheel', true, 'https://cdn.discordapp.com/attachments/820626215756234774/933383808588349490/golf.png', true, -2, 'VEHICLE', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID, ITEM_TYPE, COUNT) VALUES (27, 'Колесо на Гольф', 'Hatchback_02_Wheel', false, 'https://cdn.discordapp.com/attachments/820626215756234774/933383808588349490/golf.png', true, -2, 'VEHICLE', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID, ITEM_TYPE, COUNT) VALUES (28, 'Колесо на Гольф', 'Hatchback_02_Wheel', false, 'https://cdn.discordapp.com/attachments/820626215756234774/933383808588349490/golf.png', true, -2, 'VEHICLE', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, BUYABLE, IMAGE_URL, DELETABLE, STORE_ID, ITEM_TYPE, COUNT) VALUES (29, 'Колесо на Гольф', 'Hatchback_02_Wheel', false, 'https://cdn.discordapp.com/attachments/820626215756234774/933383808588349490/golf.png', true, -2, 'VEHICLE', 1);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (20, 'Дверь на Гольф', 'Hatchback_02_Door_2_1', '', -1, 'VEHICLE', 1);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (21, 'Дверь на Гольф', 'Hatchback_02_Door_2_2', '', -1, 'VEHICLE', 1);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (22, 'Дверь на Гольф', 'Hatchback_02_Door_1_1', '', -1, 'VEHICLE', 1);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (23, 'Дверь на Гольф', 'Hatchback_02_Door_1_2', '', -1, 'VEHICLE', 1);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (24, 'Ляда на Гольф', 'Hatchback_02_Trunk', '', -1, 'VEHICLE', 1);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (25, 'Капот на Гольф', 'Hatchback_02_Hood', '', -1, 'VEHICLE', 1);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (26, 'Колесо на Гольф', 'Hatchback_02_Wheel', 'https://cdn.discordapp.com/attachments/820626215756234774/933383808588349490/golf.png', -1, 'VEHICLE', 1);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (27, 'Колесо на Гольф', 'Hatchback_02_Wheel', 'https://cdn.discordapp.com/attachments/820626215756234774/933383808588349490/golf.png', -1, 'VEHICLE', 1);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (28, 'Колесо на Гольф', 'Hatchback_02_Wheel', 'https://cdn.discordapp.com/attachments/820626215756234774/933383808588349490/golf.png', -1, 'VEHICLE', 1);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (29, 'Колесо на Гольф', 'Hatchback_02_Wheel', 'https://cdn.discordapp.com/attachments/820626215756234774/933383808588349490/golf.png', -1, 'VEHICLE', 1);
 
 INSERT INTO shop.list_price (LISTPRICE, PRICE, CURRENCY, ITEM_ID, STORE_ID) VALUES (19, 250.00, 'RUB', 19, -2);
 INSERT INTO shop.list_price (LISTPRICE, PRICE, CURRENCY, ITEM_ID, STORE_ID) VALUES (21, 100.00, 'RUB', 21, -2);
@@ -150,9 +148,12 @@ insert into shop.servers (SERVER_NAME, STORE_ID, SERVER_ID) VALUES ('CASUAL', -2
 
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'PATH_TO_JSON', 'servers/%s/profiles/HotlineTrade/%s.json');
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'SSH_IP', '195.18.27.91');
-INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'SSH_PWD', 'bulkasmaslom227#');
+INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'SSH_PWD', 'Alcatrazshop1221@@');
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'SSH_USR', 'Constantine');
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'steam.api.key', 'DF21B88E007F7F971EE63BFA733BB812');
+INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'yoomoney.client_id', '283B42B550A5600978948FF5B6F48F1980E8C374C8B1F9F42FD867F80D0BE356');
+INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'yoomoney.client_secret', '5CD09F538D6F2D0C43A0B389A252B835C67109174C778C709ED7AC306C3B824B2F5945880B3B6381C4D51B0A3967D49639D45C4A0D0D42CD7ED54145EA8245D9');
+INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'yoomoney.app_name', 'Alcatraz Donation');
 
 
 INSERT INTO shop.categories (CATEGORY_ID, CATEGORY_NAME)
@@ -165,3 +166,15 @@ VALUES (102, 'containers'),
        (108, 'clothes'),
        (109, 'vehicles')
 ;
+
+INSERT INTO item_attributes (ITEM_ID, STORE_ID, ATTRIBUTE_NAME, ATTRIBUTE_VALUE)
+VALUES
+       (1, -2, 'buyable', 'true'),
+       (2, -2, 'buyable', 'true'),
+       (3, -2, 'buyable', 'true'),
+       (4, -2, 'buyable', 'true'),
+       (5, -2, 'buyable', 'true'),
+       (6, -2, 'buyable', 'true'),
+       (7, -2, 'buyable', 'true'),
+       (8, -2, 'buyable', 'true'),
+       (26, -2, 'buyable', 'true');
