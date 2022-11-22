@@ -26,7 +26,7 @@ public class OfferPrice {
 	@Column(name = "OFFER_ID", nullable = false)
 	private Long id;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "ITEM_ID")
 	private Item item;
 

@@ -32,7 +32,7 @@ public class OrderItem {
 	@JoinColumn(name = "ITEM_ID")
 	private Item item;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "ORDER_ID")
 	@JsonIgnore
 	private Order order;

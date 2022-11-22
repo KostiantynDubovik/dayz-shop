@@ -25,18 +25,18 @@ public class Store implements Serializable {
 	@Column(name = "STORE_NAME", nullable = false, unique = true)
 	private String storeName;
 
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.MERGE)
 	@JoinTable(name = "STORE_LANGUAGES", joinColumns = @JoinColumn(name = "STORE_ID"), inverseJoinColumns = @JoinColumn(name = "LANGUAGE_ID"))
 	@ToString.Exclude
 	private List<Language> languages;
 
 
-	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "store", cascade = CascadeType.MERGE)
 	@ToString.Exclude
 	@JsonBackReference
 	private List<StoreConfig> configs;
 
-	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "store", cascade = CascadeType.MERGE)
 	@ToString.Exclude
 	private List<Server> servers;
 

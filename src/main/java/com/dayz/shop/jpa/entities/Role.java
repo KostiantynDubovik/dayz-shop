@@ -26,7 +26,7 @@ public class Role {
 	private String name;
 
 	@JsonIgnore
-	@ManyToMany(mappedBy = "roles", cascade = CascadeType.ALL)
+	@ManyToMany(mappedBy = "roles", cascade = CascadeType.MERGE)
 	@ToString.Exclude
 	private List<User> users;
 

@@ -25,7 +25,7 @@ public class Category {
 	@Column(name = "CATEGORY_NAME", nullable = false, unique = true)
 	private String categoryName;
 
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.MERGE)
 	@JoinTable(name = "CATEGORY_RELATIONS",
 			joinColumns = @JoinColumn(name = "PARENT_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"),
 			inverseJoinColumns = @JoinColumn(name = "CHILD_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
