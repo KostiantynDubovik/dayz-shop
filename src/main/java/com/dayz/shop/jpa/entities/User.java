@@ -54,7 +54,7 @@ public class User implements UserDetails {
 	private Boolean active;
 
 	@LazyCollection(LazyCollectionOption.FALSE)
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
 	@JoinTable(
 			name = "USERS_ROLES",
 			joinColumns = @JoinColumn(
