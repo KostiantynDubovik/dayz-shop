@@ -33,7 +33,7 @@ public class User implements UserDetails {
 	@Column(name = "USER_ID")
 	private Long id;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.MERGE)
 	@JsonIgnore
 	@JoinColumn(name = "STORE_ID")
 	private Store store;
