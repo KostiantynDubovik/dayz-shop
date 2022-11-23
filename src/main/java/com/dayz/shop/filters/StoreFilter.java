@@ -35,7 +35,7 @@ public class StoreFilter implements Filter {
 				User user = (User) authentication.getPrincipal();
 				if (!Utils.isAppAdmin(user)) {
 					Store userStore = user.getStore();
-					if (!userStore.getId().equals(requestedStore.getId()) || !Utils.isAppAdmin(user)) {
+					if (!userStore.getId().equals(requestedStore.getId()) && !Utils.isAppAdmin(user)) {
 						SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
 						logoutHandler.setClearAuthentication(true);
 						logoutHandler.setInvalidateHttpSession(true);
