@@ -1,9 +1,6 @@
 package com.dayz.shop.controllers;
 
-import com.dayz.shop.jpa.entities.Item;
-import com.dayz.shop.jpa.entities.Order;
-import com.dayz.shop.jpa.entities.Server;
-import com.dayz.shop.jpa.entities.Store;
+import com.dayz.shop.jpa.entities.*;
 import com.dayz.shop.service.OrderService;
 import com.dayz.shop.utils.OrderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,11 +49,11 @@ public class OrderController {
 		}
 	}
 
-	@PostMapping("/{server}")
+	@PostMapping("")
 	@PreAuthorize("hasAuthority('STORE_READ')")
-	public Order placeOrder(@RequestAttribute Store store, @PathVariable Server server) {
+	public Order placeOrder(@RequestAttribute Store store) {
 		try {
-			return orderService.placeOrder(store, server);
+			return orderService.placeOrder(store);
 		} catch (Exception e) {
 			throw new ServerErrorException(e.getMessage(), e);
 		}

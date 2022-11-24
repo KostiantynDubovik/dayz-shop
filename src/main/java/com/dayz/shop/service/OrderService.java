@@ -54,14 +54,14 @@ public class OrderService {
 		orderRepository.save(order);
 		OrderItem orderItem = orderUtils.createOrderItem(item, user, order);
 		order.getOrderItems().add(orderItemRepository.save(orderItem));
-		return placeOrder(order, server);
+		return placeOrder(order);
 	}
 
-	public Order placeOrder(Store store, Server server) throws BalanceTooLowException {
-		return placeOrder(orderUtils.getCurrentOrder(Utils.getCurrentUser(), store), server);
+	public Order placeOrder(Store store) throws BalanceTooLowException {
+		return placeOrder(orderUtils.getCurrentOrder(Utils.getCurrentUser(), store));
 	}
 
-	public Order placeOrder(Order order, Server server) throws BalanceTooLowException {
+	public Order placeOrder(Order order) throws BalanceTooLowException {
 		User user = order.getUser();
 		if (user.getBalance().compareTo(order.getOrderTotal()) < 0) { //TODO
 			throw new BalanceTooLowException(user.getBalance(), order.getOrderTotal());

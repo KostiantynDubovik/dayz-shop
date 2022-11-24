@@ -296,3 +296,25 @@ create table ITEM_ATTRIBUTES
 		foreign key (STORE_ID) references stores (STORE_ID)
 );
 
+create table payments
+(
+	PAYMENT_ID   bigint       not null
+		primary key,
+	AMOUNT       decimal      not null,
+	CHARGE_TIME  timestamp    null,
+	USER_ID      bigint       null,
+	PAYMENT_TYPE varchar(255) not null,
+	PAYMENT_STATUS varchar(20) not null,
+	CURRENCY VARCHAR(3) not null,
+	constraint PAYMENTS_users_null_fk
+		foreign key (USER_ID) references users (USER_ID)
+);
+
+create table PAYMENT_PROPERTIES
+(
+	PAYMENT_ID bigint       not null,
+	NAME       varchar(255) not null,
+	VALUE      varchar(255) null,
+	constraint PAYMENT_PROPERTIES_payments_null_fk
+		foreign key (PAYMENT_ID) references payments (PAYMENT_ID)
+);

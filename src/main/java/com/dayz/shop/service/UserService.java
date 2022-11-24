@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -75,6 +76,11 @@ public class UserService {
 		user.setSteamNickName(stringObjectMap.get("personaname"));
 		user.setSteamAvatarUrl(stringObjectMap.get("avatar"));
 		user.setActive(true);
+	}
+
+	public User updateUserBalance(User user, BigDecimal amount) {
+		user.setBalance(user.getBalance().add(amount));
+		return userRepository.save(user);
 	}
 
 	public User findOne(Long id) {

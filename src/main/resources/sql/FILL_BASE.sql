@@ -2,7 +2,6 @@ INSERT INTO shop.hibernate_sequence (next_val) VALUES (1);
 
 INSERT INTO shop.stores (STORE_ID, STORE_NAME) VALUES (-1, 'root');
 INSERT INTO shop.stores (STORE_ID, STORE_NAME) VALUES (-2, 'alcatraz');
-INSERT INTO shop.stores (STORE_ID, STORE_NAME) VALUES (-3, 'midnight');
 
 INSERT INTO shop.languages (LANGUAGE_ID, LANGUAGE, COUNTRY, LOCALE) VALUES (-1, 'uk', 'UA', 'uk_UA');
 INSERT INTO shop.languages (LANGUAGE_ID, LANGUAGE, COUNTRY, LOCALE) VALUES (-2, 'en', 'US', 'en_US');
@@ -145,6 +144,8 @@ insert into shop.servers (SERVER_NAME, STORE_ID, SERVER_ID) VALUES ('1PP', -2, 1
 insert into shop.servers (SERVER_NAME, STORE_ID, SERVER_ID) VALUES ('LITE', -2, 2);
 insert into shop.servers (SERVER_NAME, STORE_ID, SERVER_ID) VALUES ('3PP', -2, 3);
 insert into shop.servers (SERVER_NAME, STORE_ID, SERVER_ID) VALUES ('CASUAL', -2, 4);
+insert into shop.servers (SERVER_NAME, STORE_ID, SERVER_ID) VALUES ('CASUAL_24/7', -2, 5);
+insert into shop.servers (SERVER_NAME, STORE_ID, SERVER_ID) VALUES ('LITE_WINTER', -2, 6);
 
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'PATH_TO_JSON', 'servers/%s/profiles/HotlineTrade/%s.json');
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'SSH_IP', '195.18.27.91');
@@ -154,6 +155,11 @@ INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'steam.api.ke
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'yoomoney.client_id', '283B42B550A5600978948FF5B6F48F1980E8C374C8B1F9F42FD867F80D0BE356');
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'yoomoney.client_secret', '5CD09F538D6F2D0C43A0B389A252B835C67109174C778C709ED7AC306C3B824B2F5945880B3B6381C4D51B0A3967D49639D45C4A0D0D42CD7ED54145EA8245D9');
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'yoomoney.app_name', 'Alcatraz Donation');
+INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'freekassa.api_key', '72df36d8fb63ce5f7b0ff34cb80af4dd');
+INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'freekassa.secret', '/9MDtlBtKKo(Blj');
+INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'freekassa.secret2', '0eOO7nL4rRi{G(l');
+INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'freekassa.merchantId', '25427');
+INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'freekassa.baseUrl', 'https://pay.freekassa.ru/');
 
 
 INSERT INTO shop.categories (CATEGORY_ID, CATEGORY_NAME)

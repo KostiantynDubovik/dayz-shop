@@ -39,7 +39,6 @@ public class CustomUserDetailsService implements AuthenticationUserDetailsServic
 	private RoleRepository roleRepository;
 	private ConsumerManager manager;
 	private UserService userService;
-	@Autowired
 	private HttpServletRequest request;
 
 	public UserService getUserService() {
@@ -59,6 +58,11 @@ public class CustomUserDetailsService implements AuthenticationUserDetailsServic
 	@Autowired
 	public void setRoleRepository(RoleRepository roleRepository) {
 		this.roleRepository = roleRepository;
+	}
+
+	@Autowired
+	public void setRequest(HttpServletRequest request) {
+		this.request = request;
 	}
 
 	@Override
