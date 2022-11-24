@@ -37,7 +37,7 @@ public class FreeKassaService {
 	}
 
 	private String buildRedirectUrl(Payment payment) { //TODO
-		Store store = payment.getUser().getStore();
+		Store store = payment.getStore();
 		String merchantId = getStoreConfigValue("freekassa.merchantId", store);
 		String secret = getStoreConfigValue("frekassa.secret", store);
 		MessageDigest md;

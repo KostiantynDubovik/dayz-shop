@@ -298,16 +298,19 @@ create table ITEM_ATTRIBUTES
 
 create table payments
 (
-	PAYMENT_ID   bigint       not null
+	PAYMENT_ID     bigint       not null
 		primary key,
-	AMOUNT       decimal      not null,
-	CHARGE_TIME  timestamp    null,
-	USER_ID      bigint       null,
-	PAYMENT_TYPE varchar(255) not null,
-	PAYMENT_STATUS varchar(20) not null,
-	CURRENCY VARCHAR(3) not null,
+	AMOUNT         decimal      not null,
+	CHARGE_TIME    timestamp    null,
+	USER_ID        bigint       null,
+	STORE_ID       bigint       not null,
+	PAYMENT_TYPE   varchar(255) not null,
+	PAYMENT_STATUS varchar(20)  not null,
+	CURRENCY       VARCHAR(3)   not null,
 	constraint PAYMENTS_users_null_fk
-		foreign key (USER_ID) references users (USER_ID)
+		foreign key (USER_ID) references users (USER_ID),
+	constraint payments_stores_STORE_ID_fk
+		foreign key (STORE_ID) references stores (STORE_ID)
 );
 
 create table PAYMENT_PROPERTIES

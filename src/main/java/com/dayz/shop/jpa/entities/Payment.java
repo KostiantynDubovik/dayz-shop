@@ -33,6 +33,10 @@ public class Payment {
 	@ManyToOne
 	private User user;
 
+	@JoinColumn(name = "STORE_ID")
+	@ManyToOne
+	private Store store;
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "PAYMENT_TYPE")
 	private PaymentType paymentType;
