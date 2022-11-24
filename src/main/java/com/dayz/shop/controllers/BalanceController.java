@@ -25,8 +25,10 @@ public class BalanceController {
 	private AdminChargeService adminChargeService;
 
 	@Autowired
-	public BalanceController(UserService userService) {
+	public BalanceController(UserService userService, FreeKassaService freeKassaService, AdminChargeService adminChargeService) {
 		this.userService = userService;
+		this.freeKassaService = freeKassaService;
+		this.adminChargeService = adminChargeService;
 	}
 
 	@PostMapping("confirm")
