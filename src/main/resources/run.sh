@@ -1,8 +1,8 @@
 #!/bin/bash
-debug = ''
+DEBUG=''
 case $1 in
 'd')
-  debug = '--debug-jvm'
+  DEBUG='--debug-jvm'
   ;;
 esac
 curl --request GET -sL -o nul\
@@ -14,4 +14,4 @@ npm run build
 cd ../../../
 git pull
 ./gradlew clean
-./gradlew bootRun $debug
+./gradlew bootRun $DEBUG
