@@ -1,4 +1,10 @@
 #!/bin/bash
+debug = ''
+case $1 in
+'d')
+  debug = '--debug-jvm'
+  ;;
+esac
 curl --request GET -sL -o nul\
 			--max-time 30 \
 			--url 'http://root.dayz-shop.com/shutdown'
@@ -8,4 +14,4 @@ npm run build
 cd ../../../
 git pull
 ./gradlew clean
-./gradlew bootRun $1
+./gradlew bootRun $debug
