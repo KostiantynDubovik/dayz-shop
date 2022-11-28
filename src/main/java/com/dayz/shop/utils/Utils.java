@@ -1,21 +1,18 @@
 package com.dayz.shop.utils;
 
-import com.dayz.shop.jpa.entities.*;
+import com.dayz.shop.jpa.entities.Store;
+import com.dayz.shop.jpa.entities.User;
 import com.dayz.shop.repository.RoleRepository;
 import com.dayz.shop.repository.StoreRepository;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.openid.OpenIDAuthenticationToken;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletRequest;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 
 @Component
@@ -53,5 +50,14 @@ public class Utils {
 
 	public static User getCurrentUser() {
 		return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	}
+
+	public static String getClientIpAddress(HttpServletRequest request) {
+		String xForwardedForHeader = request.getHeader("X-Forwarded-For");
+		if (xForwardedForHeader == null) {
+			return request.getRemoteAddr();
+		} else {
+			return new StringTokenizer(xForwardedForHeader, ",").nextToken().trim();
+		}
 	}
 }

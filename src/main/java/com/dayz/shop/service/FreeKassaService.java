@@ -3,14 +3,17 @@ package com.dayz.shop.service;
 import com.dayz.shop.jpa.entities.*;
 import com.dayz.shop.repository.PaymentRepository;
 import com.dayz.shop.repository.StoreConfigRepository;
+import com.dayz.shop.utils.Utils;
+import com.google.common.base.Splitter;
 import nonapi.io.github.classgraph.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.UriBuilder;
 import java.math.RoundingMode;
-import java.net.URI;
 
 @Service
 public class FreeKassaService {
@@ -28,14 +31,14 @@ public class FreeKassaService {
 		this.paymentRepository = paymentRepository;
 	}
 
-	public URI initPayment(Payment payment) {
+	public String initPayment(Payment payment) {
 		payment.setPaymentStatus(OrderStatus.PENDING);
 		payment.setPaymentType(PaymentType.FREEKASSA);
 		payment = paymentRepository.save(payment);
 		return buildRedirectUrl(payment);
 	}
 
-	private URI buildRedirectUrl(Payment payment) { //TODO
+	private String buildRedirectUrl(Payment payment) { //TODO
 		Store store = payment.getStore();
 		String merchantId = getStoreConfigValue("freekassa.merchantId", store);
 		String secret = getStoreConfigValue("freekassa.secret", store);
@@ -53,10 +56,27 @@ public class FreeKassaService {
 				.queryParam(CURRENCY_KEY, currency)
 				.queryParam(PAYMENT_ID_KEY, paymentId)
 				.queryParam(SIGNATURE_KEY, signHashed)
-				.build();
+				.build().toString();
 	}
 
 	private String getStoreConfigValue(String key, Store store) {
 		return storeConfigRepository.findByKeyAndStore(key, store).getValue();
+	}
+
+	public String notify(HttpServletRequest request, HttpServletResponse response, Store store) {
+		String result = "YES";
+		try {
+			if (isFreeKassaIp(request, store)) {
+
+			}
+		} catch (Exception e) {
+			result = "NO";
+		}
+		return result;
+	}
+
+	public boolean isFreeKassaIp(HttpServletRequest request, Store store) {
+		String reqIp = Utils.getClientIpAddress(request);
+		return Splitter.on(',').splitToList(storeConfigRepository.findByKeyAndStore("freekassa.ips", store).getValue()).contains(reqIp);
 	}
 }
