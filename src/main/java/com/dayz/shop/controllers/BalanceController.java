@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Map;
@@ -44,6 +46,7 @@ public class BalanceController {
 	}
 
 	@PostMapping("notify")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String notify(HttpServletRequest request, HttpServletResponse response, @RequestAttribute("store") Store store) {
 		return freeKassaService.notify(request, response, store);
 	}
