@@ -6,12 +6,11 @@ import com.dayz.shop.repository.StoreConfigRepository;
 import nonapi.io.github.classgraph.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 
 import javax.ws.rs.core.UriBuilder;
-import javax.xml.bind.DatatypeConverter;
 import java.math.RoundingMode;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.net.URI;
 
 @Service
 public class FreeKassaService {
@@ -20,8 +19,8 @@ public class FreeKassaService {
 	public static final String SIGNATURE_KEY = "s";
 	public static final String PAYMENT_ID_KEY = "o";
 	public static final String CURRENCY_KEY = "currency";
-	private StoreConfigRepository storeConfigRepository;
-	private PaymentRepository paymentRepository;
+	private final StoreConfigRepository storeConfigRepository;
+	private final PaymentRepository paymentRepository;
 
 	@Autowired
 	public FreeKassaService(StoreConfigRepository storeConfigRepository, PaymentRepository paymentRepository) {
@@ -29,38 +28,32 @@ public class FreeKassaService {
 		this.paymentRepository = paymentRepository;
 	}
 
-	public String initPayment(Payment payment) {
+	public URI initPayment(Payment payment) {
 		payment.setPaymentStatus(OrderStatus.PENDING);
 		payment.setPaymentType(PaymentType.FREEKASSA);
 		payment = paymentRepository.save(payment);
 		return buildRedirectUrl(payment);
 	}
 
-	private String buildRedirectUrl(Payment payment) { //TODO
+	private URI buildRedirectUrl(Payment payment) { //TODO
 		Store store = payment.getStore();
 		String merchantId = getStoreConfigValue("freekassa.merchantId", store);
 		String secret = getStoreConfigValue("freekassa.secret", store);
-		MessageDigest md;
-		try {
-			md = MessageDigest.getInstance("MD5");
-		} catch (NoSuchAlgorithmException e) {
-			throw new RuntimeException(e);
-		}
+
 		String amount = payment.getAmount().setScale(2, RoundingMode.UNNECESSARY).toString();
 		Long paymentId = payment.getId();
 		Currency currency = payment.getCurrency();
 		String sign = StringUtils.join(":", merchantId, amount, secret, currency, paymentId);
-		md.update(sign.getBytes());
-		byte[] digest = md.digest();
-		String signHashed = DatatypeConverter
-				.printHexBinary(digest).toUpperCase();
 
-		return UriBuilder.fromUri(getStoreConfigValue("freekassa.baseUrl", store)).queryParam(MERCHAND_ID_KEY, merchantId)
+		String signHashed = DigestUtils.md5DigestAsHex(sign.getBytes());
+
+		return UriBuilder.fromUri(getStoreConfigValue("freekassa.baseUrl", store))
+				.queryParam(MERCHAND_ID_KEY, merchantId)
 				.queryParam(AMOUNT_KEY, amount)
-				.queryParam(SIGNATURE_KEY, signHashed)
 				.queryParam(CURRENCY_KEY, currency)
 				.queryParam(PAYMENT_ID_KEY, paymentId)
-				.build().toString();
+				.queryParam(SIGNATURE_KEY, signHashed)
+				.build();
 	}
 
 	private String getStoreConfigValue(String key, Store store) {

@@ -13,14 +13,15 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URI;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/balance")
 public class BalanceController {
-	private UserService userService;
-	private FreeKassaService freeKassaService;
-	private AdminChargeService adminChargeService;
+	private final UserService userService;
+	private final FreeKassaService freeKassaService;
+	private final AdminChargeService adminChargeService;
 
 	@Autowired
 	public BalanceController(UserService userService, FreeKassaService freeKassaService, AdminChargeService adminChargeService) {
@@ -57,7 +58,9 @@ public class BalanceController {
 				redirectUrl = adminChargeService.initPayment(payment);
 				break;
 			case FREEKASSA:
-				redirectUrl = freeKassaService.initPayment(payment);
+				URI redirectUri = freeKassaService.initPayment(payment);
+				redirectUrl = redirectUri.toString();
+				response.addHeader("Access-Control-Allow-Origin", "https://freekassa.ru");
 				break;
 			default:
 				redirectUrl = "/profile";
