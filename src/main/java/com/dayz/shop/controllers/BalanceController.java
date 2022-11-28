@@ -3,7 +3,6 @@ package com.dayz.shop.controllers;
 import com.dayz.shop.jpa.entities.Currency;
 import com.dayz.shop.jpa.entities.Payment;
 import com.dayz.shop.jpa.entities.Store;
-import com.dayz.shop.jpa.entities.User;
 import com.dayz.shop.service.AdminChargeService;
 import com.dayz.shop.service.FreeKassaService;
 import com.dayz.shop.service.UserService;
@@ -17,7 +16,6 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/balance")
@@ -34,12 +32,13 @@ public class BalanceController {
 	}
 
 	@PostMapping("confirm")
-	public void confirmPayment(HttpServletResponse response) throws IOException {
+	public void confirmPayment(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		userService.updateUserBalance(Utils.getCurrentUser(), BigDecimal.valueOf(100));
 		response.sendRedirect("/profile");
 	}
 
 	@PostMapping("cancel")
-	public void cancelPayment(HttpServletResponse response) throws IOException {
+	public void cancelPayment(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		response.sendRedirect("/profile");
 	}
 
