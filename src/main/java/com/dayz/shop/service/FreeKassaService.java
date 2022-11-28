@@ -12,6 +12,7 @@ import org.springframework.util.DigestUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.UriBuilder;
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Map;
 import java.util.Optional;
@@ -26,11 +27,13 @@ public class FreeKassaService {
 	public static final String CURRENCY_KEY = "currency";
 	private final StoreConfigRepository storeConfigRepository;
 	private final PaymentRepository paymentRepository;
+	private final UserService userService;
 
 	@Autowired
-	public FreeKassaService(StoreConfigRepository storeConfigRepository, PaymentRepository paymentRepository) {
+	public FreeKassaService(StoreConfigRepository storeConfigRepository, PaymentRepository paymentRepository, UserService userService) {
 		this.storeConfigRepository = storeConfigRepository;
 		this.paymentRepository = paymentRepository;
+		this.userService = userService;
 	}
 
 	public String initPayment(Payment payment) {
@@ -74,6 +77,8 @@ public class FreeKassaService {
 				if (paymentOptional.isPresent()) {
 					Payment payment = paymentOptional.get();
 					payment.getProperties().putAll(parameterMap);
+					userService.updateUserBalance(Utils.getCurrentUser(), new BigDecimal(parameterMap.get("AMOUNT")));
+					payment.setPaymentStatus(OrderStatus.COMPLETE);
 				}
 				result = "YES";
 			}

@@ -15,31 +15,17 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
-import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/api/balance")
 public class BalanceController {
-	private final UserService userService;
 	private final FreeKassaService freeKassaService;
 	private final AdminChargeService adminChargeService;
 
 	@Autowired
-	public BalanceController(UserService userService, FreeKassaService freeKassaService, AdminChargeService adminChargeService) {
-		this.userService = userService;
+	public BalanceController(FreeKassaService freeKassaService, AdminChargeService adminChargeService) {
 		this.freeKassaService = freeKassaService;
 		this.adminChargeService = adminChargeService;
-	}
-
-	@PostMapping("confirm")
-	public void confirmPayment(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		userService.updateUserBalance(Utils.getCurrentUser(), BigDecimal.valueOf(100));
-		response.sendRedirect("/profile");
-	}
-
-	@PostMapping("cancel")
-	public void cancelPayment(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		response.sendRedirect("/profile");
 	}
 
 	@PostMapping("notify")
