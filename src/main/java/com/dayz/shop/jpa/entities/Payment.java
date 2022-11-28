@@ -8,6 +8,7 @@ import lombok.ToString;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 
 @Getter
@@ -54,5 +55,5 @@ public class Payment {
 			joinColumns = {@JoinColumn(name = "PAYMENT_ID", referencedColumnName = "PAYMENT_ID")})
 	@MapKeyColumn(name="name")
 	@Column(name="VALUE")
-	private Map<String, String> properties;
+	private Map<String, String> properties = new HashMap<>();
 }

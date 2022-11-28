@@ -34,7 +34,7 @@ public class ItemController {
 	public Page<Item> getAllItems(
 			@PathVariable int page,
 			@RequestParam(defaultValue = "name") String sortBy,
-			@RequestParam(defaultValue = "9") int pageSize,
+			@RequestParam(defaultValue = "100") int pageSize,
 			@RequestAttribute Store store) {
 		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 3 ? 3 : pageSize, Sort.by(sortBy));
 		return itemRepository.findAllByStoreAndBuyable(store, "true", pageable);

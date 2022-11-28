@@ -4,7 +4,6 @@ import com.dayz.shop.jpa.entities.*;
 import com.dayz.shop.repository.PaymentRepository;
 import com.dayz.shop.repository.StoreConfigRepository;
 import com.dayz.shop.utils.Utils;
-import com.google.common.base.Splitter;
 import nonapi.io.github.classgraph.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.UriBuilder;
 import java.math.RoundingMode;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FreeKassaService {
@@ -38,7 +40,7 @@ public class FreeKassaService {
 		return buildRedirectUrl(payment);
 	}
 
-	private String buildRedirectUrl(Payment payment) { //TODO
+	private String buildRedirectUrl(Payment payment) {
 		Store store = payment.getStore();
 		String merchantId = getStoreConfigValue("freekassa.merchantId", store);
 		String secret = getStoreConfigValue("freekassa.secret", store);
@@ -64,19 +66,25 @@ public class FreeKassaService {
 	}
 
 	public String notify(HttpServletRequest request, HttpServletResponse response, Store store) {
-		String result = "YES";
+		String result = "NO";
 		try {
 			if (isFreeKassaIp(request, store)) {
-
+				Map<String, String> parameterMap = request.getParameterMap().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, (e)-> e.getValue()[0]));
+				Optional<Payment> paymentOptional = paymentRepository.findById(Long.valueOf(parameterMap.get("MERCHANT_ORDER_ID")));
+				if (paymentOptional.isPresent()) {
+					Payment payment = paymentOptional.get();
+					payment.getProperties().putAll(parameterMap);
+				}
+				result = "YES";
 			}
 		} catch (Exception e) {
-			result = "NO";
+			return "NO";
 		}
 		return result;
 	}
 
 	public boolean isFreeKassaIp(HttpServletRequest request, Store store) {
 		String reqIp = Utils.getClientIpAddress(request);
-		return Splitter.on(',').splitToList(storeConfigRepository.findByKeyAndStore("freekassa.ips", store).getValue()).contains(reqIp);
+		return storeConfigRepository.findByKeyAndStore("freekassa.ips", store).getValue().contains(reqIp);
 	}
 }

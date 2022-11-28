@@ -34,15 +34,13 @@ public class BalanceController {
 	}
 
 	@PostMapping("confirm")
-	public User confirmPayment(@RequestBody Map<String, Object> request) {
-		BigDecimal amount = BigDecimal.TEN;
-		return userService.updateUserBalance(Utils.getCurrentUser(), amount);
+	public void confirmPayment(HttpServletResponse response) throws IOException {
+		response.sendRedirect("/profile");
 	}
 
 	@PostMapping("cancel")
-	public User cancelPayment(@RequestBody Map<String, Object> request) {
-		BigDecimal amount = BigDecimal.TEN;
-		return userService.updateUserBalance(Utils.getCurrentUser(), amount);
+	public void cancelPayment(HttpServletResponse response) throws IOException {
+		response.sendRedirect("/profile");
 	}
 
 	@PostMapping("notify")
