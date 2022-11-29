@@ -54,7 +54,7 @@ public class FreeKassaService {
 		String sign = StringUtils.join(":", merchantId, amount, secret, currency, paymentId);
 
 		String signHashed = DigestUtils.md5DigestAsHex(sign.getBytes());
-
+		paymentRepository.save(payment);
 		return UriBuilder.fromUri(getStoreConfigValue("freekassa.baseUrl", store))
 				.queryParam(MERCHAND_ID_KEY, merchantId)
 				.queryParam(AMOUNT_KEY, amount)
