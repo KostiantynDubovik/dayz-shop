@@ -77,8 +77,9 @@ public class FreeKassaService {
 				if (paymentOptional.isPresent()) {
 					Payment payment = paymentOptional.get();
 					payment.getProperties().putAll(parameterMap);
-					userService.updateUserBalance(Utils.getCurrentUser(), new BigDecimal(parameterMap.get("AMOUNT")));
 					payment.setPaymentStatus(OrderStatus.COMPLETE);
+					paymentRepository.save(payment);
+					userService.updateUserBalance(Utils.getCurrentUser(), new BigDecimal(parameterMap.get("AMOUNT")));
 				}
 				result = "YES";
 			}
