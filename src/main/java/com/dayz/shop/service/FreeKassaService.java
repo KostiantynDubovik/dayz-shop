@@ -79,7 +79,7 @@ public class FreeKassaService {
 					payment.getProperties().putAll(parameterMap);
 					payment.setPaymentStatus(OrderStatus.COMPLETE);
 					paymentRepository.save(payment);
-					userService.updateUserBalance(Utils.getCurrentUser(), new BigDecimal(parameterMap.get("AMOUNT")));
+					userService.updateUserBalance(payment.getUser(), new BigDecimal(parameterMap.get("AMOUNT")));
 				}
 				result = "YES";
 			}
