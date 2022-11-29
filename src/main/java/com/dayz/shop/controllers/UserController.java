@@ -27,7 +27,7 @@ public class UserController {
 	@GetMapping("/self")
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public User getSelf(OpenIDAuthenticationToken principal) {
-		return (User) principal.getPrincipal();
+		return userRepository.getBySteamId(((User) principal.getPrincipal()).getSteamId());
 	}
 
 	@Transactional
