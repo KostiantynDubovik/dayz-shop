@@ -333,7 +333,7 @@ create table PAYMENT_PROPERTIES
 			ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-create table if not exists store_config
+create table if not exists server_config
 (
 	SERVER_ID bigint       not null,
 	`KEY`    varchar(255) not null,
