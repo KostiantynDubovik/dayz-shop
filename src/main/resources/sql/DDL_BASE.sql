@@ -2,7 +2,8 @@ create table categories
 (
 	CATEGORY_ID   bigint	   not null
 		primary key,
-	CATEGORY_NAME varchar(255) not null
+	CATEGORY_NAME varchar(255) not null,
+	DISPlAY_NAME varchar(255) not null DEFAULT ''
 );
 
 create table category_relations

@@ -151,16 +151,16 @@ INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'freekassa.ba
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'freekassa.ips', '168.119.157.136,168.119.60.227,138.201.88.124,178.154.197.79');
 
 
-INSERT INTO shop.categories (CATEGORY_ID, CATEGORY_NAME)
-VALUES (102, 'containers'),
-       (103, 'vehiclesparts'),
-       (104, 'explosives'),
-       (105, 'weapons'),
-       (106, 'tools'),
-       (107, 'food'),
-       (108, 'clothes'),
-       (109, 'vehicles'),
-       (110, 'building')
+INSERT INTO shop.categories (CATEGORY_ID, CATEGORY_NAME, DISPLAY_NAME)
+VALUES (102, 'containers', 'Контейнеры'),
+       (103, 'vehiclesparts', 'Запчасти'),
+       (104, 'explosives', 'Взрывчатка'),
+       (105, 'weapons', 'Оружие'),
+       (106, 'tools', 'Инструменты'),
+       (107, 'food', 'Еда'),
+       (108, 'clothes', 'Одежда'),
+       (109, 'vehicles', 'Транспорт'),
+       (110, 'building', 'Стойматериалы')
 ;
 
 
