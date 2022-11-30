@@ -1,5 +1,6 @@
 package com.dayz.shop.repository;
 
+import com.dayz.shop.jpa.entities.Category;
 import com.dayz.shop.jpa.entities.Item;
 import com.dayz.shop.jpa.entities.Store;
 import org.springframework.data.domain.Page;
@@ -25,4 +26,8 @@ public interface ItemRepository extends PagingAndSortingRepository<Item, Long> {
 	@Query(value = "SELECT I FROM Item I JOIN I.attributes IA WHERE IA.store = :store and IA.attributeName = 'buyable' and IA.attributeValue=:buyable AND (IA.store = I.store OR IA.store.parentStore = I.store)",
 			countQuery = "SELECT COUNT(I) FROM Item I JOIN I.attributes IA WHERE IA.store = :store and IA.attributeName = 'buyable' and IA.attributeValue=:buyable AND (IA.store = I.store OR IA.store.parentStore = I.store)")
 	Page<Item> findAllByStoreAndBuyable(Store store, String buyable, Pageable pageable);
+
+	@Query(value = "SELECT I FROM Item I JOIN I.attributes IA WHERE IA.store = :store and IA.attributeName = 'buyable' and IA.attributeValue=:buyable AND (IA.store = I.store OR IA.store.parentStore = I.store) AND :category member I.categories",
+			countQuery = "SELECT COUNT(I) FROM Item I JOIN I.attributes IA WHERE IA.store = :store and IA.attributeName = 'buyable' and IA.attributeValue=:buyable AND (IA.store = I.store OR IA.store.parentStore = I.store) AND :category member I.categories")
+	Page<Item> findAllByStoreAndBuyableAndCategory(Store store, String buyable, Category category, Pageable pageable);
 }

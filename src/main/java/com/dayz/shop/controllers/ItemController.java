@@ -2,6 +2,7 @@ package com.dayz.shop.controllers;
 
 import com.dayz.shop.jpa.entities.Item;
 import com.dayz.shop.jpa.entities.Store;
+import com.dayz.shop.repository.CategoryRepository;
 import com.dayz.shop.repository.ItemRepository;
 import com.dayz.shop.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +18,14 @@ import org.springframework.web.bind.annotation.*;
 public class ItemController {
 
 	private final ItemRepository itemRepository;
+	private final CategoryRepository categoryRepository;
 	private final ItemService itemService;
 
 	@Autowired
-	public ItemController(ItemRepository itemRepository, ItemService itemService) {
+	public ItemController(ItemRepository itemRepository, ItemService itemService, CategoryRepository categoryRepository) {
 		this.itemRepository = itemRepository;
 		this.itemService = itemService;
+		this.categoryRepository = categoryRepository;
 	}
 
 	@GetMapping("{itemId}")
@@ -40,16 +43,15 @@ public class ItemController {
 		return itemRepository.findAllByStoreAndBuyable(store, "true", pageable);
 	}
 
-//	@GetMapping("{categoryName}/{page}")
-//	public Page<Item> getAllItemsByCategory(
-//			@PathVariable int page,
-//			@PathVariable String categoryName,
-//			@RequestParam(defaultValue = "name") String sortBy,
-//			@RequestParam(defaultValue = "9") int pageSize,
-//			@RequestAttribute Store store) {
-//		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 3 ? 3 : pageSize, Sort.by(sortBy));
-//		return itemService.findAllByCategoryNameAndStore(categoryName, store, pageable);
-//	}
+	@GetMapping("{categoryName}/{page}")
+	public Page<Item> getByCategory(@PathVariable("categoryName") String categoryName,
+									@PathVariable int page,
+									@RequestParam(defaultValue = "name") String sortBy,
+									@RequestParam(defaultValue = "100") int pageSize,
+									@RequestAttribute Store store) {
+		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 3 ? 3 : pageSize, Sort.by(sortBy));
+		return itemRepository.findAllByStoreAndBuyableAndCategory(store, "true", categoryRepository.findByCategoryName(categoryName), pageable);
+	}
 //
 //	@GetMapping("app/{categoryName}/{page}")
 //	public Page<Item> getAllItemsByCategoryAcrossStores(
