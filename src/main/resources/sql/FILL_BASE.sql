@@ -128,17 +128,15 @@ insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (19, 26);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (19, 26);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (19, 26);
 
-insert into shop.servers (SERVER_NAME, STORE_ID, SERVER_ID) VALUES ('1PP', -2, 1);
-insert into shop.servers (SERVER_NAME, STORE_ID, SERVER_ID) VALUES ('LITE', -2, 2);
-insert into shop.servers (SERVER_NAME, STORE_ID, SERVER_ID) VALUES ('3PP', -2, 3);
-insert into shop.servers (SERVER_NAME, STORE_ID, SERVER_ID) VALUES ('CASUAL', -2, 4);
-insert into shop.servers (SERVER_NAME, STORE_ID, SERVER_ID) VALUES ('CASUAL_24/7', -2, 5);
-insert into shop.servers (SERVER_NAME, STORE_ID, SERVER_ID) VALUES ('LITE_WINTER', -2, 6);
+INSERT INTO shop.servers (SERVER_ID, STORE_ID, SERVER_NAME) VALUES (1, -2, '1PP');
+INSERT INTO shop.servers (SERVER_ID, STORE_ID, SERVER_NAME) VALUES (2, -2, 'LITE');
+INSERT INTO shop.servers (SERVER_ID, STORE_ID, SERVER_NAME) VALUES (3, -2, '3PP');
+INSERT INTO shop.servers (SERVER_ID, STORE_ID, SERVER_NAME) VALUES (4, -2, 'CASUAL');
+INSERT INTO shop.servers (SERVER_ID, STORE_ID, SERVER_NAME) VALUES (5, -2, 'CASUAL_24/7');
+INSERT INTO shop.servers (SERVER_ID, STORE_ID, SERVER_NAME) VALUES (6, -2, 'LITE_WINTER');
+INSERT INTO shop.servers (SERVER_ID, STORE_ID, SERVER_NAME) VALUES (7, -2, 'LIVONIA');
 
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'PATH_TO_JSON', 'servers/%s/profiles/HotlineTrade/%s.json');
-INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'SSH_IP', '195.18.27.91');
-INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'SSH_PWD', 'Alcatrazshop1221@@');
-INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'SSH_USR', 'Constantine');
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'steam.api.key', 'DF21B88E007F7F971EE63BFA733BB812');
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'yoomoney.client_id', '283B42B550A5600978948FF5B6F48F1980E8C374C8B1F9F42FD867F80D0BE356');
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'yoomoney.client_secret', '5CD09F538D6F2D0C43A0B389A252B835C67109174C778C709ED7AC306C3B824B2F5945880B3B6381C4D51B0A3967D49639D45C4A0D0D42CD7ED54145EA8245D9');
@@ -149,6 +147,29 @@ INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'freekassa.se
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'freekassa.merchantId', '25427');
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'freekassa.baseUrl', 'https://pay.freekassa.ru/');
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'freekassa.ips', '168.119.157.136,168.119.60.227,138.201.88.124,178.154.197.79');
+
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (1, 'SSH_IP', '195.18.27.92', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (1, 'SSH_PWD', 'Alcatrazshop1221', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (1, 'SSH_USR', 'Constantine', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (2, 'SSH_IP', '195.18.27.92', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (2, 'SSH_PWD', 'Alcatrazshop1221', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (2, 'SSH_USR', 'Constantine', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (3, 'SSH_IP', '195.18.27.91', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (3, 'SSH_PWD', 'Alcatrazshop1221@@', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (3, 'SSH_USR', 'Constantine', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (4, 'SSH_IP', '195.18.27.91', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (4, 'SSH_PWD', 'Alcatrazshop1221@@', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (4, 'SSH_USR', 'Constantine', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (5, 'SSH_IP', '185.189.255.245', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (5, 'SSH_PWD', 'Alcatrazshop1221', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (5, 'SSH_USR', 'Constantine', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (6, 'SSH_IP', '185.189.255.245', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (6, 'SSH_PWD', 'Alcatrazshop1221', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (6, 'SSH_USR', 'Constantine', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (7, 'SSH_IP', '195.18.27.91', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (7, 'SSH_PWD', 'Alcatrazshop1221@@', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (7, 'SSH_USR', 'Constantine', -2);
+
 
 
 INSERT INTO shop.categories (CATEGORY_ID, CATEGORY_NAME, DISPLAY_NAME)

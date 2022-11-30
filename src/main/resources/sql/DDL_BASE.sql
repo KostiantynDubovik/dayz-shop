@@ -332,3 +332,19 @@ create table PAYMENT_PROPERTIES
 		foreign key (PAYMENT_ID) references payments (PAYMENT_ID)
 			ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+create table if not exists store_config
+(
+	SERVER_ID bigint       not null,
+	`KEY`    varchar(255) not null,
+	VALUE    varchar(255) not null,
+	STORE_ID bigint       not null,
+	primary key (SERVER_ID, `KEY`),
+	constraint server_config_stores_STORE_ID_fk
+		foreign key (STORE_ID) references stores (STORE_ID),
+	constraint server_config_servers_SERVER_ID_fk
+		foreign key (SERVER_ID) references servers (SERVER_ID)
+			on delete cascade on update cascade
+);
+
+

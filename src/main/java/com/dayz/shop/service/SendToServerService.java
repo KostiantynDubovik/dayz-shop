@@ -3,6 +3,7 @@ package com.dayz.shop.service;
 import com.dayz.shop.jpa.entities.Order;
 import com.dayz.shop.json.MCodeArray;
 import com.dayz.shop.json.Root;
+import com.dayz.shop.repository.ServerConfigRepository;
 import com.dayz.shop.repository.StoreConfigRepository;
 import com.dayz.shop.utils.MCodeMapper;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -11,7 +12,10 @@ import com.jcraft.jsch.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 @Service
 public class SendToServerService {
@@ -19,11 +23,13 @@ public class SendToServerService {
 	public static final String SSH_KNOWN_HOSTS = "~/.ssh/known_hosts";
 	public static final String SFTP_TYPE = "sftp";
 	final StoreConfigRepository storeConfigRepository;
+	final ServerConfigRepository serverConfigRepository;
 	final MCodeMapper mCodeMapper;
 
 	@Autowired
-	public SendToServerService(StoreConfigRepository storeConfigRepository, MCodeMapper mCodeMapper) {
+	public SendToServerService(StoreConfigRepository storeConfigRepository, ServerConfigRepository serverConfigRepository, MCodeMapper mCodeMapper) {
 		this.storeConfigRepository = storeConfigRepository;
+		this.serverConfigRepository = serverConfigRepository;
 		this.mCodeMapper = mCodeMapper;
 	}
 
@@ -70,15 +76,15 @@ public class SendToServerService {
 	}
 
 	private String getUsr(Order order) {
-		return storeConfigRepository.findByKeyAndStore("SSH_USR", order.getStore()).getValue();
+		return serverConfigRepository.findByKeyAndServer("SSH_USR", order.getServer()).getValue();
 	}
 
 	private String getPwd(Order order) {
-		return storeConfigRepository.findByKeyAndStore("SSH_PWD", order.getStore()).getValue();
+		return serverConfigRepository.findByKeyAndServer("SSH_PWD", order.getServer()).getValue();
 	}
 
 	private String getIp(Order order) {
-		return storeConfigRepository.findByKeyAndStore("SSH_IP", order.getStore()).getValue();
+		return serverConfigRepository.findByKeyAndServer("SSH_IP", order.getServer()).getValue();
 	}
 
 	private void getFile(String username, String password, String host, String path, File file) throws
