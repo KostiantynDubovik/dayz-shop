@@ -153,11 +153,11 @@ INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'freekassa.ip
 
 INSERT INTO shop.categories (CATEGORY_ID, CATEGORY_NAME, DISPLAY_NAME)
 VALUES (1, 'all', 'Все'),
-       (2, 'containers', 'Контейнеры'),
-       (3, 'vehiclesparts', 'Запчасти'),
-       (4, 'tools', 'Инструменты'),
-       (5, 'vehicles', 'Транспорт'),
-       (6, 'building', 'Стойматериалы')
+       (102, 'containers', 'Контейнеры'),
+       (103, 'vehiclesparts', 'Запчасти'),
+       (106, 'tools', 'Инструменты'),
+       (109, 'vehicles', 'Транспорт'),
+       (110, 'building', 'Стойматериалы')
 ;
 
 
