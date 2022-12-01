@@ -1,14 +1,15 @@
 package com.dayz.shop.service;
 
+import com.dayz.shop.jpa.entities.ItemType;
 import com.dayz.shop.jpa.entities.Order;
 import com.dayz.shop.json.MCodeArray;
 import com.dayz.shop.json.Root;
 import com.dayz.shop.repository.ServerConfigRepository;
-import com.dayz.shop.repository.StoreConfigRepository;
 import com.dayz.shop.utils.MCodeMapper;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jcraft.jsch.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,31 +17,112 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class SendToServerService {
-	public static final int PORT = 22;
 	public static final String SSH_KNOWN_HOSTS = "~/.ssh/known_hosts";
 	public static final String SFTP_TYPE = "sftp";
-	final StoreConfigRepository storeConfigRepository;
+	public static final String PIPE = "|";
+	public static final String SEMICOLON = ";";
+	public static final String ZERO = "0";
+	public static final String TEMP_FILE_PUT_PATH = "put/";
+	public static final String TEMP_FILE_GET_PATH = "get/";
 	final ServerConfigRepository serverConfigRepository;
 	final MCodeMapper mCodeMapper;
 
 	@Autowired
-	public SendToServerService(StoreConfigRepository storeConfigRepository, ServerConfigRepository serverConfigRepository, MCodeMapper mCodeMapper) {
-		this.storeConfigRepository = storeConfigRepository;
+	public SendToServerService(ServerConfigRepository serverConfigRepository, MCodeMapper mCodeMapper) {
 		this.serverConfigRepository = serverConfigRepository;
 		this.mCodeMapper = mCodeMapper;
 	}
 
-	public void sendOrder(Order order) throws JSchException, InterruptedException, IOException, SftpException {
+	public void sendOrder(Order order, Map<ItemType, Order> separatedTypes) throws JSchException, InterruptedException, IOException, SftpException {
 		String username = getUsr(order);
 		String password = getPwd(order);
 		String host = getIp(order);
-		String pathToJson = getPathToJson(order);
 		String steamId = order.getUser().getSteamId();
+		for (ItemType itemType : separatedTypes.keySet()) {
+			switch (itemType) {
+				case ITEM:
+				case VEHICLE:
+					sendSpawningItems(order, username, password, host, steamId);
+					break;
+				case VIP:
+					sendSet(order, username, password, host, steamId);
+					break;
+				case SET:
+					sendVip(order, username, password, host, steamId);
+			}
+		}
+	}
+
+	private void sendVip(Order order, String username, String password, String host, String steamId) throws IOException, JSchException, SftpException {
+		String pathToVip = getPathToSpawningItemsJson(order);
+		String vipFile = "priority.txt";
+		String completePath = String.format(pathToVip, order.getServer().getServerName(), steamId);
+		File existingVipFile = new File(TEMP_FILE_GET_PATH + vipFile);
+		try (Scanner scanner = new Scanner(existingVipFile)) {
+			if (existingVipFile.createNewFile()) {
+				getFile(username, password, host, completePath, existingVipFile);
+				List<String> existingSteamIds = new ArrayList<>();
+				scanner.useDelimiter(SEMICOLON);
+				while (scanner.hasNext()) {
+					String existingSteamId = scanner.next();
+					if (Objects.equals(existingSteamId, steamId)) {
+						return;
+					} else {
+						existingSteamIds.add(existingSteamId);
+					}
+				}
+				existingSteamIds.add(steamId);
+				File newVipFile = new File(TEMP_FILE_PUT_PATH + vipFile);
+				try {
+					if (newVipFile.createNewFile()) {
+						Files.write(newVipFile.toPath(), StringUtils.joinWith(SEMICOLON, existingSteamIds).getBytes());
+						updateFile(username, password, host, completePath, newVipFile);
+					}
+				} finally {
+					newVipFile.delete();
+				}
+			}
+			System.out.println();
+		} finally {
+			existingVipFile.delete();
+		}
+	}
+
+	private void sendSet(Order order, String username, String password, String host, String steamId) throws IOException, JSchException, SftpException {
+		String pathToSet = getPathToSet(order);
+		String setsFile = "CustomSpawnPlayerConfig.txt";
+		String completePath = String.format(pathToSet, order.getServer().getServerName(), steamId);
+		File existingSetFile = new File(TEMP_FILE_GET_PATH + setsFile);
+		try {
+			if (existingSetFile.createNewFile()) {
+				getFile(username, password, host, completePath, existingSetFile);
+				Map<String, String> setMap = Files.readAllLines(existingSetFile.toPath()).stream().collect(Collectors.toMap(input -> StringUtils.split(input, PIPE)[0], input -> input));
+				setMap.put(steamId, StringUtils.joinWith(PIPE, steamId, ZERO, order.getOrderItems().get(0).getItem().getInGameId(), ZERO));
+				File newSetsFile = new File(TEMP_FILE_PUT_PATH + setsFile);
+				try {
+					if (newSetsFile.createNewFile()) {
+						Files.write(newSetsFile.toPath(), setMap.keySet());
+						updateFile(username, password, host, completePath, newSetsFile);
+					}
+				} finally {
+					newSetsFile.delete();
+				}
+			}
+		} finally {
+			existingSetFile.delete();
+		}
+	}
+
+	private void sendSpawningItems(Order order, String username, String password, String host, String steamId) throws IOException, JSchException, SftpException {
+		String pathToJson = getPathToSpawningItemsJson(order);
 		String completePath = String.format(pathToJson, order.getServer().getServerName(), steamId);
-		File existingFile = new File("get/" + steamId + ".json");
+		File existingFile = new File(TEMP_FILE_GET_PATH + steamId + ".json");
 		try {
 			if (existingFile.createNewFile()) {
 				getFile(username, password, host, completePath, existingFile);
@@ -56,7 +138,7 @@ public class SendToServerService {
 				root.getM_CodeArray().addAll(mCodeMapper.mapOrderToRoot(order).getM_CodeArray());
 				//TODO dir *.json /b
 
-				File mCode = new File("put/" + steamId + ".json");
+				File mCode = new File(TEMP_FILE_PUT_PATH + steamId + ".json");
 				try {
 					if (mCode.createNewFile()) {
 						om.writerWithDefaultPrettyPrinter().writeValue(mCode, root);
@@ -71,8 +153,16 @@ public class SendToServerService {
 		}
 	}
 
-	private String getPathToJson(Order order) {
-		return storeConfigRepository.findByKeyAndStore("PATH_TO_JSON", order.getStore()).getValue();
+	private String getPathToSpawningItemsJson(Order order) {
+		return serverConfigRepository.findByKeyAndServer("PATH_TO_JSON", order.getServer()).getValue();
+	}
+
+	private String getPathToSet(Order order) {
+		return serverConfigRepository.findByKeyAndServer("PATH_TO_SET", order.getServer()).getValue();
+	}
+
+	private String getPathToVip(Order order) {
+		return serverConfigRepository.findByKeyAndServer("PATH_TO_VIP", order.getServer()).getValue();
 	}
 
 	private String getUsr(Order order) {

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @SpringBootTest
@@ -35,7 +36,7 @@ public class SendToServerServiceTest {
 		User user = new User();
 		user.setSteamId("76561198107293144");
 		order.setUser(user);
-		sendToServerService.sendOrder(order);
+		sendToServerService.sendOrder(order, new HashMap<>());
 	}
 
 	private ArrayList<OrderItem> getOrderItems(Order order) {

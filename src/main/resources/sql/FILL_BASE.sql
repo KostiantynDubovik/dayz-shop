@@ -136,7 +136,6 @@ INSERT INTO shop.servers (SERVER_ID, STORE_ID, SERVER_NAME) VALUES (5, -2, 'CASU
 INSERT INTO shop.servers (SERVER_ID, STORE_ID, SERVER_NAME) VALUES (6, -2, 'LITE_WINTER');
 INSERT INTO shop.servers (SERVER_ID, STORE_ID, SERVER_NAME) VALUES (7, -2, 'LIVONIA');
 
-INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'PATH_TO_JSON', 'servers/%s/profiles/HotlineTrade/%s.json');
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'steam.api.key', 'DF21B88E007F7F971EE63BFA733BB812');
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'yoomoney.client_id', '283B42B550A5600978948FF5B6F48F1980E8C374C8B1F9F42FD867F80D0BE356');
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'yoomoney.client_secret', '5CD09F538D6F2D0C43A0B389A252B835C67109174C778C709ED7AC306C3B824B2F5945880B3B6381C4D51B0A3967D49639D45C4A0D0D42CD7ED54145EA8245D9');
@@ -148,24 +147,45 @@ INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'freekassa.me
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'freekassa.baseUrl', 'https://pay.freekassa.ru/');
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'freekassa.ips', '168.119.157.136,168.119.60.227,138.201.88.124,178.154.197.79');
 
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (1, 'PATH_TO_JSON', 'servers/%s/profiles/HotlineTrade/%s.json', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (1, 'PATH_TO_SET', 'servers/%s/profiles/%s', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (1, 'PATH_TO_VIP', 'servers/%s/%s', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (1, 'SSH_IP', '195.18.27.92', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (1, 'SSH_PWD', 'Alcatrazshop1221', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (1, 'SSH_USR', 'Constantine', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (2, 'PATH_TO_JSON', 'servers/%s/profiles/HotlineTrade/%s.json', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (2, 'PATH_TO_SET', 'servers/%s/profiles/%s', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (2, 'PATH_TO_VIP', 'servers/%s/%s', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (2, 'SSH_IP', '195.18.27.92', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (2, 'SSH_PWD', 'Alcatrazshop1221', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (2, 'SSH_USR', 'Constantine', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (3, 'PATH_TO_JSON', 'servers/%s/profiles/HotlineTrade/%s.json', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (3, 'PATH_TO_SET', 'servers/%s/profiles/%s', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (3, 'PATH_TO_VIP', 'servers/%s/%s', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (3, 'SSH_IP', '195.18.27.91', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (3, 'SSH_PWD', 'Alcatrazshop1221@@', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (3, 'SSH_USR', 'Constantine', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (4, 'PATH_TO_JSON', 'servers/%s/profiles/HotlineTrade/%s.json', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (4, 'PATH_TO_SET', 'servers/%s/profiles/%s', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (4, 'PATH_TO_VIP', 'servers/%s/%s', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (4, 'SSH_IP', '195.18.27.91', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (4, 'SSH_PWD', 'Alcatrazshop1221@@', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (4, 'SSH_USR', 'Constantine', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (5, 'PATH_TO_JSON', 'servers/%s/profiles/HotlineTrade/%s.json', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (5, 'PATH_TO_SET', 'servers/%s/profiles/%s', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (5, 'PATH_TO_VIP', 'servers/%s/%s', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (5, 'SSH_IP', '185.189.255.245', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (5, 'SSH_PWD', 'Alcatrazshop1221', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (5, 'SSH_USR', 'Constantine', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (6, 'PATH_TO_JSON', 'servers/%s/profiles/HotlineTrade/%s.json', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (6, 'PATH_TO_SET', 'servers/%s/profiles/%s', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (6, 'PATH_TO_VIP', 'servers/%s/%s', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (6, 'SSH_IP', '185.189.255.245', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (6, 'SSH_PWD', 'Alcatrazshop1221', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (6, 'SSH_USR', 'Constantine', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (7, 'PATH_TO_JSON', 'servers/%s/profiles/HotlineTrade/%s.json', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (7, 'PATH_TO_SET', 'servers/%s/profiles/%s', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (7, 'PATH_TO_VIP', 'servers/%s/%s', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (7, 'SSH_IP', '195.18.27.91', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (7, 'SSH_PWD', 'Alcatrazshop1221@@', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (7, 'SSH_USR', 'Constantine', -2);
@@ -176,112 +196,11 @@ INSERT INTO shop.categories (CATEGORY_ID, CATEGORY_NAME, DISPLAY_NAME)
 VALUES (1, 'all', 'Все'),
        (102, 'containers', 'Контейнеры'),
        (103, 'vehiclesparts', 'Запчасти'),
-       (106, 'tools', 'Инструменты'),
+       (107, 'vip', 'Приоритет'),
+       (108, 'clothes', 'Сеты'),
        (109, 'vehicles', 'Транспорт'),
        (110, 'building', 'Стойматериалы')
 ;
-
-
-
-INSERT INTO shop.item_category (ITEM_ID, CATEGORY_ID)
-VALUES (1, 103),
-(2, 103),
-(3, 103),
-(4, 110),
-(5, 110),
-(6, 102),
-(7, 103),
-(8, 109),
-(9, 103),
-(11, 103),
-(12, 103),
-(13, 103),
-(14, 103),
-(15, 103),
-(19, 109),
-(20, 103),
-(21, 103),
-(22, 103),
-(23, 103),
-(24, 103),
-(25, 103),
-(26, 103),
-(27, 109),
-(28, 103),
-(29, 103),
-(30, 103),
-(31, 103),
-(32, 109),
-(33, 103),
-(34, 103),
-(35, 103),
-(36, 103),
-(37, 103),
-(38, 103),
-(39, 103),
-(40, 109),
-(41, 103),
-(42, 103),
-(43, 103),
-(44, 103),
-(45, 103),
-(46, 103),
-(47, 103),
-(48, 109),
-(49, 103),
-(50, 103),
-(51, 103),
-(52, 103),
-(53, 103),
-(1, 1),
-(2, 1),
-(3, 1),
-(4, 1),
-(5, 1),
-(6, 1),
-(7, 1),
-(8, 1),
-(9, 1),
-(11, 1),
-(12, 1),
-(13, 1),
-(14, 1),
-(15, 1),
-(19, 1),
-(20, 1),
-(21, 1),
-(22, 1),
-(23, 1),
-(24, 1),
-(25, 1),
-(26, 1),
-(27, 1),
-(28, 1),
-(29, 1),
-(30, 1),
-(31, 1),
-(32, 1),
-(33, 1),
-(34, 1),
-(35, 1),
-(36, 1),
-(37, 1),
-(38, 1),
-(39, 1),
-(40, 1),
-(41, 1),
-(42, 1),
-(43, 1),
-(44, 1),
-(45, 1),
-(46, 1),
-(47, 1),
-(48, 1),
-(49, 1),
-(50, 1),
-(51, 1),
-(52, 1),
-(53, 1);
 
 
 
@@ -467,3 +386,169 @@ INSERT INTO shop.list_price (LISTPRICE, PRICE, CURRENCY, ITEM_ID, STORE_ID) VALU
 INSERT INTO item_attributes (ITEM_ID, STORE_ID, ATTRIBUTE_NAME, ATTRIBUTE_VALUE)
 VALUES
 	(48, -2, 'buyable', 'true');
+
+
+
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (54, 'Приоритет на 30 дней', '', 'https://cdn.discordapp.com/attachments/934733103589654558/1037151804904980500/unknown.png', -2, 'VIP', 1, '30');
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (55, 'Приоритет на 60 дней', '', 'https://cdn.discordapp.com/attachments/934733103589654558/1037151804904980500/unknown.png', -2, 'VIP', 1, '60');
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (56, 'Set 101', '101', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30');
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (57, 'Set 102', '102', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30');
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (58, 'Set 103', '103', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30');
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (59, 'Set 104', '104', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30');
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (60, 'Set 105', '105', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30');
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (61, 'Set 106', '106', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30');
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (62, 'Set 107', '107', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30');
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (63, 'Set 108', '108', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30');
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (64, 'Set 109', '109', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30');
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (65, 'Set 110', '110', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30');
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (66, 'Set 111', '111', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30');
+
+
+
+INSERT INTO item_attributes (ITEM_ID, STORE_ID, ATTRIBUTE_NAME, ATTRIBUTE_VALUE)
+VALUES
+	(54, -2, 'buyable', 'true'),
+	(55, -2, 'buyable', 'true'),
+	(56, -2, 'buyable', 'true'),
+	(57, -2, 'buyable', 'true'),
+	(58, -2, 'buyable', 'true'),
+	(59, -2, 'buyable', 'true'),
+	(60, -2, 'buyable', 'true'),
+	(61, -2, 'buyable', 'true'),
+	(62, -2, 'buyable', 'true'),
+	(63, -2, 'buyable', 'true'),
+	(64, -2, 'buyable', 'true'),
+	(65, -2, 'buyable', 'true'),
+	(66, -2, 'buyable', 'true')
+	;
+
+
+
+INSERT INTO shop.list_price (LISTPRICE, PRICE, CURRENCY, ITEM_ID, STORE_ID)
+VALUES (54, 300.00, 'RUB', 54, -2),
+       (55, 600.00, 'RUB', 55, -2),
+       (56, 250.00, 'RUB', 56, -2),
+       (57, 250.00, 'RUB', 57, -2),
+       (58, 250.00, 'RUB', 58, -2),
+       (59, 300.00, 'RUB', 59, -2),
+       (60, 300.00, 'RUB', 60, -2),
+       (61, 500.00, 'RUB', 61, -2),
+       (62, 500.00, 'RUB', 62, -2),
+       (63, 500.00, 'RUB', 63, -2),
+       (64, 600.00, 'RUB', 64, -2),
+       (65, 600.00, 'RUB', 65, -2),
+       (66, 600.00, 'RUB', 66, -2)
+;
+
+INSERT INTO shop.item_category (ITEM_ID, CATEGORY_ID)
+VALUES (1, 103),
+       (54, 107),
+       (55, 107),
+       (56, 108),
+       (57, 108),
+       (58, 108),
+       (59, 108),
+       (60, 108),
+       (61, 108),
+       (62, 108),
+       (63, 108),
+       (64, 108),
+       (65, 108),
+       (66, 108),
+       (2, 103),
+       (3, 103),
+       (4, 110),
+       (5, 110),
+       (6, 102),
+       (7, 103),
+       (8, 109),
+       (9, 103),
+       (11, 103),
+       (12, 103),
+       (13, 103),
+       (14, 103),
+       (15, 103),
+       (19, 109),
+       (20, 103),
+       (21, 103),
+       (22, 103),
+       (23, 103),
+       (24, 103),
+       (25, 103),
+       (26, 103),
+       (27, 109),
+       (28, 103),
+       (29, 103),
+       (30, 103),
+       (31, 103),
+       (32, 109),
+       (33, 103),
+       (34, 103),
+       (35, 103),
+       (36, 103),
+       (37, 103),
+       (38, 103),
+       (39, 103),
+       (40, 109),
+       (41, 103),
+       (42, 103),
+       (43, 103),
+       (44, 103),
+       (45, 103),
+       (46, 103),
+       (47, 103),
+       (48, 109),
+       (49, 103),
+       (50, 103),
+       (51, 103),
+       (52, 103),
+       (53, 103),
+       (1, 1),
+       (2, 1),
+       (3, 1),
+       (4, 1),
+       (5, 1),
+       (6, 1),
+       (7, 1),
+       (8, 1),
+       (9, 1),
+       (11, 1),
+       (12, 1),
+       (13, 1),
+       (14, 1),
+       (15, 1),
+       (19, 1),
+       (20, 1),
+       (21, 1),
+       (22, 1),
+       (23, 1),
+       (24, 1),
+       (25, 1),
+       (26, 1),
+       (27, 1),
+       (28, 1),
+       (29, 1),
+       (30, 1),
+       (31, 1),
+       (32, 1),
+       (33, 1),
+       (34, 1),
+       (35, 1),
+       (36, 1),
+       (37, 1),
+       (38, 1),
+       (39, 1),
+       (40, 1),
+       (41, 1),
+       (42, 1),
+       (43, 1),
+       (44, 1),
+       (45, 1),
+       (46, 1),
+       (47, 1),
+       (48, 1),
+       (49, 1),
+       (50, 1),
+       (51, 1),
+       (52, 1),
+       (53, 1);

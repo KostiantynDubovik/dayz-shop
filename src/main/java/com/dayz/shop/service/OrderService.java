@@ -1,9 +1,11 @@
 package com.dayz.shop.service;
 
 import com.dayz.shop.exception.BalanceTooLowException;
+import com.dayz.shop.jpa.entities.UserService;
 import com.dayz.shop.jpa.entities.*;
 import com.dayz.shop.repository.OrderItemRepository;
 import com.dayz.shop.repository.OrderRepository;
+import com.dayz.shop.repository.UserServiceRepository;
 import com.dayz.shop.utils.OrderUtils;
 import com.dayz.shop.utils.Utils;
 import com.jcraft.jsch.JSchException;
@@ -13,6 +15,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class OrderService {
@@ -20,13 +26,17 @@ public class OrderService {
 	private final OrderItemRepository orderItemRepository;
 	private final SendToServerService sendToServerService;
 	private final OrderUtils orderUtils;
+	private final UserServiceRepository userServiceRepository;
 
 	@Autowired
-	public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository, SendToServerService sendToServerService, OrderUtils orderUtils) {
+	public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository,
+						SendToServerService sendToServerService, OrderUtils orderUtils,
+						UserServiceRepository userServiceRepository) {
 		this.orderRepository = orderRepository;
 		this.orderItemRepository = orderItemRepository;
 		this.sendToServerService = sendToServerService;
 		this.orderUtils = orderUtils;
+		this.userServiceRepository = userServiceRepository;
 	}
 
 	public Order addOrderItem(Item item, Store store) {
@@ -67,7 +77,9 @@ public class OrderService {
 			throw new BalanceTooLowException(user.getBalance(), order.getOrderTotal());
 		}
 		try {
-			sendToServerService.sendOrder(order);
+			Map<ItemType, Order> separatedTypes = splitTypes(order);
+			saveServices(separatedTypes);
+			sendToServerService.sendOrder(order, separatedTypes);
 			user.setBalance(user.getBalance().subtract(order.getOrderTotal()));
 			order.setStatus(OrderStatus.COMPLETE);
 			order.getOrderItems().forEach(orderItem -> orderItem.setStatus(OrderStatus.COMPLETE));
@@ -75,5 +87,39 @@ public class OrderService {
 			e.printStackTrace();
 		}
 		return orderRepository.save(order);
+	}
+
+	private void saveServices(Map<ItemType, Order> separatedTypes) {
+		for (Map.Entry<ItemType, Order> itemTypeOrderEntry : separatedTypes.entrySet()) {
+			switch (itemTypeOrderEntry.getKey()) {
+				case SET:
+				case VIP:
+					OrderItem orderItem = itemTypeOrderEntry.getValue().getOrderItems().get(0);
+					User user = orderItem.getUser();
+					Item item = orderItem.getItem();
+					ItemType itemType = item.getItemType();
+					Server server = orderItem.getServer();
+					UserService userService = userServiceRepository.findByUserAndItemTypeAndServer(user, itemType, server);
+					LocalDateTime endDate;
+					if (userService != null) {
+						endDate = userService.getEndDate();
+					} else {
+						userService = new UserService();
+						userService.setUser(itemTypeOrderEntry.getValue().getUser());
+						userService.setItemType(itemType);
+						endDate = LocalDateTime.now();
+					}
+					userService.setEndDate(endDate.plus(Period.ofDays(Integer.parseInt(item.getColor()))));
+					userServiceRepository.save(userService);
+			}
+		}
+	}
+
+	private Map<ItemType, Order> splitTypes(Order order) {
+		Map<ItemType, Order> separatedItems = new HashMap<>();
+		for (OrderItem orderItem : order.getOrderItems()) {
+			separatedItems.getOrDefault(orderItem.getItem().getItemType(), new Order()).getOrderItems().add(orderItem);
+		}
+		return separatedItems;
 	}
 }

@@ -9,6 +9,7 @@ import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -29,7 +30,7 @@ public class Order {
 
 	@OneToMany(mappedBy = "order")
 	@ToString.Exclude
-	private List<OrderItem> orderItems;
+	private List<OrderItem> orderItems = new ArrayList<>();
 
 	@Column(name = "ORDER_TOTAL")
 	private BigDecimal orderTotal;

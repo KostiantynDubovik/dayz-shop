@@ -14,7 +14,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Entity
 @Table(name = "SERVER_CONFIG")
-@JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 @IdClass(ServerConfigKey.class)
 public class ServerConfig {
 
@@ -33,6 +33,7 @@ public class ServerConfig {
 	private String value;
 
 	@ManyToOne
+	@JoinColumn(name = "STORE_ID")
 	@JsonBackReference
 	private Store store;
 

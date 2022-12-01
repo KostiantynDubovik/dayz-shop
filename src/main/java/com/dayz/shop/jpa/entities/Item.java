@@ -78,20 +78,31 @@ public class Item {
 	@JsonIgnore
 	private List<ItemAttribute> attributes;
 
+	@Column(name = "COLOR")
+	private String color;
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Item item = (Item) o;
-		return Objects.equals(count, item.count) && id.equals(item.id)
-				&& name.equals(item.name) && inGameId.equals(item.inGameId) && store.equals(item.store)
-				&& Objects.equals(categories, item.categories) && listPrice.equals(item.listPrice)
-				&& Objects.equals(offerPrices, item.offerPrices) && Objects.equals(imageUrl, item.imageUrl)
-				&& subItems.equals(item.subItems) && itemType == item.itemType && attributes.equals(item.getAttributes());
+		return Objects.equals(id, item.id)
+				&& Objects.equals(name, item.name)
+				&& Objects.equals(inGameId, item.inGameId)
+				&& Objects.equals(store, item.store)
+				&& Objects.equals(categories, item.categories)
+				&& Objects.equals(listPrice, item.listPrice)
+				&& Objects.equals(offerPrices, item.offerPrices)
+				&& Objects.equals(imageUrl, item.imageUrl)
+				&& Objects.equals(subItems, item.subItems)
+				&& Objects.equals(count, item.count)
+				&& itemType == item.itemType
+				&& Objects.equals(attributes, item.attributes)
+				&& Objects.equals(color, item.color);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, name, inGameId, store, categories, listPrice, offerPrices, imageUrl, subItems, count, itemType, attributes);
+		return Objects.hash(id, name, inGameId, store, categories, listPrice, offerPrices, imageUrl, subItems, count, itemType, attributes, color);
 	}
 }
