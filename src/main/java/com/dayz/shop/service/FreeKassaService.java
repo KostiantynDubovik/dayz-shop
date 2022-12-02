@@ -78,6 +78,10 @@ public class FreeKassaService {
 					Payment payment = paymentOptional.get();
 					payment.getProperties().putAll(parameterMap);
 					payment.setPaymentStatus(OrderStatus.COMPLETE);
+					BigDecimal amount = payment.getAmount();
+					if (amount.compareTo(BigDecimal.valueOf(3000)) > 0) {
+						payment.setAmount(amount.multiply(BigDecimal.valueOf(1.33)));
+					}
 					paymentRepository.save(payment);
 					userService.updateUserBalance(payment.getUser(), new BigDecimal(parameterMap.get("AMOUNT")));
 				}

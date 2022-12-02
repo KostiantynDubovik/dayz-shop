@@ -19,15 +19,21 @@ import java.util.Objects;
 @IdClass(UserServiceKey.class)
 public class UserService {
 
-	@EmbeddedId
-	private UserServiceKey userServiceKey;
+	@Id
+	@Column(name = "USER_ID", nullable = false, insertable = false, updatable = false)
+	private Long userId;
 
 	@Id
+	@Column(name = "ITEM_TYPE", nullable = false, insertable = false, updatable = false)
+	private String itemTypeStr;
+
 	@ManyToOne
 	@JsonBackReference
+	@JoinColumn(name = "USER_ID", nullable = false, insertable = false, updatable = false)
 	private User user;
 
-	@Id
+	@Enumerated(EnumType.STRING)
+	@Column(name = "ITEM_TYPE", nullable = false, insertable = false, updatable = false)
 	private ItemType itemType;
 
 	@Column(name = "END_DATE")
@@ -42,35 +48,18 @@ public class UserService {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-
 		UserService that = (UserService) o;
-
-		if (!Objects.equals(userServiceKey, that.userServiceKey))
-			return false;
-		if (!Objects.equals(user, that.user)) return false;
-		if (itemType != that.itemType) return false;
-		return Objects.equals(endDate, that.endDate);
+		return Objects.equals(user, that.user) && itemType == that.itemType && Objects.equals(endDate, that.endDate) && Objects.equals(server, that.server);
 	}
 
 	@Override
 	public int hashCode() {
-		int result = userServiceKey != null ? userServiceKey.hashCode() : 0;
-		result = 31 * result + (user != null ? user.hashCode() : 0);
-		result = 31 * result + (itemType != null ? itemType.hashCode() : 0);
-		result = 31 * result + (endDate != null ? endDate.hashCode() : 0);
-		return result;
+		return Objects.hash(user, itemType, endDate, server);
 	}
 }
 
-@Embeddable
 @Data
 class UserServiceKey implements Serializable {
-	@ManyToOne
-	@JsonBackReference
-	@JoinColumn(name = "USER_ID", nullable = false, insertable = false, updatable = false)
-	private User user;
-
-	@Enumerated(EnumType.STRING)
-	@Column(name = "ITEM_TYPE", nullable = false, insertable = false, updatable = false)
-	private ItemType itemType;
+	private Long userId;
+	private String itemTypeStr;
 }

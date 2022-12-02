@@ -76,7 +76,6 @@ public class OrderUtils {
 		orderItem.setItem(item);
 		List<OfferPrice> offerPrices = item.getOfferPrices();
 		orderItem.setPrice(CollectionUtils.isEmpty(offerPrices) ? item.getListPrice() : getCurrentOfferPrice(offerPrices).getPrice());
-		order.getOrderItems().add(orderItem);
 		return orderItem;
 	}
 

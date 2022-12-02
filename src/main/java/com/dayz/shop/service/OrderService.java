@@ -107,6 +107,8 @@ public class OrderService {
 						userService = new UserService();
 						userService.setUser(itemTypeOrderEntry.getValue().getUser());
 						userService.setItemType(itemType);
+						userService.setServer(server);
+						userService.setUser(user);
 						endDate = LocalDateTime.now();
 					}
 					userService.setEndDate(endDate.plus(Period.ofDays(Integer.parseInt(item.getColor()))));
@@ -118,7 +120,10 @@ public class OrderService {
 	private Map<ItemType, Order> splitTypes(Order order) {
 		Map<ItemType, Order> separatedItems = new HashMap<>();
 		for (OrderItem orderItem : order.getOrderItems()) {
-			separatedItems.getOrDefault(orderItem.getItem().getItemType(), new Order()).getOrderItems().add(orderItem);
+			ItemType itemType = orderItem.getItem().getItemType();
+			Order splitOrder = separatedItems.getOrDefault(itemType, new Order());
+			splitOrder.getOrderItems().add(orderItem);
+			separatedItems.put(itemType, splitOrder);
 		}
 		return separatedItems;
 	}
