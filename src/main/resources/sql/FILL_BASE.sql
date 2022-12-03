@@ -165,13 +165,13 @@ INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (3, 'P
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (3, 'PATH_TO_SET', 'servers/%s/profiles/%s', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (3, 'PATH_TO_VIP', 'servers/%s/%s', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (3, 'SSH_IP', '195.18.27.91', -2);
-INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (3, 'SSH_PWD', 'Alcatrazshop1221@@', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (3, 'SSH_PWD', 'Alcatrazshop1221', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (3, 'SSH_USR', 'Constantine', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (4, 'PATH_TO_JSON', 'servers/%s/profiles/HotlineTrade/%s.json', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (4, 'PATH_TO_SET', 'servers/%s/profiles/%s', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (4, 'PATH_TO_VIP', 'servers/%s/%s', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (4, 'SSH_IP', '195.18.27.91', -2);
-INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (4, 'SSH_PWD', 'Alcatrazshop1221@@', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (4, 'SSH_PWD', 'Alcatrazshop1221', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (4, 'SSH_USR', 'Constantine', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (5, 'PATH_TO_JSON', 'servers/%s/profiles/HotlineTrade/%s.json', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (5, 'PATH_TO_SET', 'servers/%s/profiles/%s', -2);
@@ -189,7 +189,7 @@ INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (7, 'P
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (7, 'PATH_TO_SET', 'servers/%s/profiles/%s', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (7, 'PATH_TO_VIP', 'servers/%s/%s', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (7, 'SSH_IP', '195.18.27.91', -2);
-INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (7, 'SSH_PWD', 'Alcatrazshop1221@@', -2);
+INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (7, 'SSH_PWD', 'Alcatrazshop1221', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (7, 'SSH_USR', 'Constantine', -2);
 
 
