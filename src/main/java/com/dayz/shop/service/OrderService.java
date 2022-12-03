@@ -5,6 +5,7 @@ import com.dayz.shop.jpa.entities.UserService;
 import com.dayz.shop.jpa.entities.*;
 import com.dayz.shop.repository.OrderItemRepository;
 import com.dayz.shop.repository.OrderRepository;
+import com.dayz.shop.repository.UserRepository;
 import com.dayz.shop.repository.UserServiceRepository;
 import com.dayz.shop.utils.OrderUtils;
 import com.dayz.shop.utils.Utils;
@@ -17,7 +18,9 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -27,16 +30,18 @@ public class OrderService {
 	private final SendToServerService sendToServerService;
 	private final OrderUtils orderUtils;
 	private final UserServiceRepository userServiceRepository;
+	private final UserRepository userRepository;
 
 	@Autowired
 	public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository,
 						SendToServerService sendToServerService, OrderUtils orderUtils,
-						UserServiceRepository userServiceRepository) {
+						UserServiceRepository userServiceRepository, UserRepository userRepository) {
 		this.orderRepository = orderRepository;
 		this.orderItemRepository = orderItemRepository;
 		this.sendToServerService = sendToServerService;
 		this.orderUtils = orderUtils;
 		this.userServiceRepository = userServiceRepository;
+		this.userRepository = userRepository;
 	}
 
 	public Order addOrderItem(Item item, Store store) {
@@ -63,8 +68,10 @@ public class OrderService {
 		order.setServer(server);
 		orderRepository.save(order);
 		OrderItem orderItem = orderUtils.createOrderItem(item, user, order);
-		order.getOrderItems().add(orderItemRepository.save(orderItem));
-		return placeOrder(order);
+		List<OrderItem> orderItems = new ArrayList<>(order.getOrderItems());
+		orderItems.add(orderItemRepository.save(orderItem));
+		order.setOrderItems(orderItems);
+		return placeOrder(orderRepository.save(order));
 	}
 
 	public Order placeOrder(Store store) throws BalanceTooLowException {
@@ -72,8 +79,8 @@ public class OrderService {
 	}
 
 	public Order placeOrder(Order order) throws BalanceTooLowException {
-		User user = order.getUser();
-		if (user.getBalance().compareTo(order.getOrderTotal()) < 0) { //TODO
+		User user = userRepository.getById(order.getUser().getId());
+		if (user.getBalance().compareTo(order.getOrderTotal()) < 0) {
 			throw new BalanceTooLowException(user.getBalance(), order.getOrderTotal());
 		}
 		try {
@@ -107,8 +114,10 @@ public class OrderService {
 						userService = new UserService();
 						userService.setUser(itemTypeOrderEntry.getValue().getUser());
 						userService.setItemType(itemType);
+						userService.setItemTypeStr(itemType.toString());
 						userService.setServer(server);
 						userService.setUser(user);
+						userService.setUserId(user.getId());
 						endDate = LocalDateTime.now();
 					}
 					userService.setEndDate(endDate.plus(Period.ofDays(Integer.parseInt(item.getColor()))));

@@ -13,10 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -51,22 +48,27 @@ public class SendToServerService {
 					sendSpawningItems(order, username, password, host, steamId);
 					break;
 				case VIP:
-					sendSet(order, username, password, host, steamId);
+					sendVip(order, username, password, host, steamId);
 					break;
 				case SET:
-					sendVip(order, username, password, host, steamId);
+					sendSet(order, username, password, host, steamId);
 			}
 		}
 	}
 
 	private void sendVip(Order order, String username, String password, String host, String steamId) throws IOException, JSchException, SftpException {
-		String pathToVip = getPathToSpawningItemsJson(order);
+		String pathToVip = getPathToVip(order);
 		String vipFile = "priority.txt";
-		String completePath = String.format(pathToVip, order.getServer().getServerName(), steamId);
+		String completePath = String.format(pathToVip, order.getServer().getServerName(), vipFile);
 		File existingVipFile = new File(TEMP_FILE_GET_PATH + vipFile);
-		try (Scanner scanner = new Scanner(existingVipFile)) {
-			if (existingVipFile.createNewFile()) {
+		Scanner scanner;
+		try {
+			if (existingVipFile.exists()) {
+				new FileWriter(existingVipFile, false).close();
+			}
+			if (existingVipFile.createNewFile() || existingVipFile.exists()) {
 				getFile(username, password, host, completePath, existingVipFile);
+				scanner = new Scanner(existingVipFile);
 				List<String> existingSteamIds = new ArrayList<>();
 				scanner.useDelimiter(SEMICOLON);
 				while (scanner.hasNext()) {
@@ -81,7 +83,7 @@ public class SendToServerService {
 				File newVipFile = new File(TEMP_FILE_PUT_PATH + vipFile);
 				try {
 					if (newVipFile.createNewFile()) {
-						Files.write(newVipFile.toPath(), StringUtils.joinWith(SEMICOLON, existingSteamIds).getBytes());
+						Files.write(newVipFile.toPath(), String.join(SEMICOLON, existingSteamIds).getBytes());
 						updateFile(username, password, host, completePath, newVipFile);
 					}
 				} finally {
@@ -97,17 +99,20 @@ public class SendToServerService {
 	private void sendSet(Order order, String username, String password, String host, String steamId) throws IOException, JSchException, SftpException {
 		String pathToSet = getPathToSet(order);
 		String setsFile = "CustomSpawnPlayerConfig.txt";
-		String completePath = String.format(pathToSet, order.getServer().getServerName(), steamId);
+		String completePath = String.format(pathToSet, order.getServer().getServerName(), setsFile);
 		File existingSetFile = new File(TEMP_FILE_GET_PATH + setsFile);
 		try {
-			if (existingSetFile.createNewFile()) {
+			if (existingSetFile.exists()) {
+				new FileWriter(existingSetFile, false).close();
+			}
+			if (existingSetFile.createNewFile() || existingSetFile.exists()) {
 				getFile(username, password, host, completePath, existingSetFile);
 				Map<String, String> setMap = Files.readAllLines(existingSetFile.toPath()).stream().collect(Collectors.toMap(input -> StringUtils.split(input, PIPE)[0], input -> input));
-				setMap.put(steamId, StringUtils.joinWith(PIPE, steamId, ZERO, order.getOrderItems().get(0).getItem().getInGameId(), ZERO));
+				setMap.put(steamId, String.join(PIPE, steamId, ZERO, order.getOrderItems().get(0).getItem().getInGameId(), ZERO));
 				File newSetsFile = new File(TEMP_FILE_PUT_PATH + setsFile);
 				try {
 					if (newSetsFile.createNewFile()) {
-						Files.write(newSetsFile.toPath(), setMap.keySet());
+						Files.write(newSetsFile.toPath(), setMap.values());
 						updateFile(username, password, host, completePath, newSetsFile);
 					}
 				} finally {
@@ -185,6 +190,12 @@ public class SendToServerService {
 
 		try (FileOutputStream dst = new FileOutputStream(file)) {
 			channelSftp.get(path, dst);
+		} catch (SftpException e) {
+			if ("No such file".equals(e.getMessage())) {
+				System.out.println("Creating new file: " + path);
+			} else {
+				throw e;
+			}
 		}
 		channelSftp.exit();
 		session.disconnect();
