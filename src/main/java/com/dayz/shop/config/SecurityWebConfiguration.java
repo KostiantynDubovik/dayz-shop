@@ -38,6 +38,7 @@ public class SecurityWebConfiguration extends WebSecurityConfigurerAdapter {
 				.expressionHandler(webSecurityExpressionHandler())
 				.antMatchers("/shutdown").hasIpAddress("127.0.0.1")
 				.antMatchers("/").permitAll()
+				.antMatchers("/fk-verify.html").permitAll()
 				.antMatchers("/js/**", "/img/**", "/fonts/**","/css/**", "/bower_components/**").permitAll()
 				.antMatchers("/api/**").permitAll()
 				.antMatchers(HttpMethod.POST, "/api/**").permitAll()
