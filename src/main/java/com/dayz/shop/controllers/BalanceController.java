@@ -6,6 +6,7 @@ import com.dayz.shop.jpa.entities.Store;
 import com.dayz.shop.repository.PaymentRepository;
 import com.dayz.shop.service.AdminChargeService;
 import com.dayz.shop.service.FreeKassaService;
+import com.dayz.shop.service.FriendChargeService;
 import com.dayz.shop.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,14 +25,17 @@ import java.util.Optional;
 public class BalanceController {
 	private final FreeKassaService freeKassaService;
 	private final AdminChargeService adminChargeService;
+	private final FriendChargeService friendChargeService;
 
 	private final PaymentRepository paymentRepository;
 
 	@Autowired
-	public BalanceController(FreeKassaService freeKassaService, AdminChargeService adminChargeService, PaymentRepository paymentRepository) {
+	public BalanceController(FreeKassaService freeKassaService, AdminChargeService adminChargeService,
+							 PaymentRepository paymentRepository, FriendChargeService friendChargeService) {
 		this.freeKassaService = freeKassaService;
 		this.adminChargeService = adminChargeService;
 		this.paymentRepository = paymentRepository;
+		this.friendChargeService = friendChargeService;
 	}
 
 	@PostMapping("notify")
@@ -52,14 +56,20 @@ public class BalanceController {
 	}
 
 	@PostMapping("init")
+	@PreAuthorize("hasAuthority('STORE_READ')")
 	public void initPayment(HttpServletResponse response, @ModelAttribute Payment payment, @RequestAttribute("store") Store store) throws IOException {
-		payment.setUser(Utils.getCurrentUser());
+		if (payment.getUser() == null) {
+			payment.setUser(Utils.getCurrentUser());
+		}
 		payment.setStore(store);
 		payment.setCurrency(Currency.RUB);
 		String redirectUrl;
 		switch (payment.getPaymentType()) {
 			case ADMIN:
 				redirectUrl = adminChargeService.initPayment(payment);
+				break;
+			case FRIEND:
+				redirectUrl = friendChargeService.initPayment(payment);
 				break;
 			case FREEKASSA:
 				redirectUrl = freeKassaService.initPayment(payment);

@@ -71,6 +71,7 @@ insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (8, 15);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (8, 15);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (8, 15);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (8, 15);
+insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (8, 15);
 
 
 INSERT INTO shop.list_price (LISTPRICE, PRICE, CURRENCY, ITEM_ID, STORE_ID) VALUES (1, 50.00, 'RUB', 1, -2);
@@ -123,6 +124,7 @@ insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (19, 22);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (19, 23);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (19, 24);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (19, 25);
+insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (19, 26);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (19, 26);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (19, 26);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (19, 26);
@@ -237,6 +239,7 @@ insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (27, 15);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (27, 15);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (27, 15);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (27, 15);
+insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (27, 15);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (27, 28);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (27, 29);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (27, 30);
@@ -280,6 +283,7 @@ insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (32, 35);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (32, 36);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (32, 37);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (32, 38);
+insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (32, 39);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (32, 39);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (32, 39);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (32, 39);
@@ -330,6 +334,7 @@ insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (40, 47);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (40, 47);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (40, 47);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (40, 47);
+insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (40, 47);
 
 
 
@@ -367,6 +372,8 @@ insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (48, 9);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (48, 49);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (48, 50);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (48, 51);
+insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (48, 52);
+insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (48, 52);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (48, 52);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (48, 52);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (48, 53);
@@ -553,4 +560,37 @@ VALUES (1, 103),
        (50, 1),
        (51, 1),
        (52, 1),
-       (53, 1);
+       (53, 1),
+       (54, 1),
+       (55, 1),
+       (56, 1),
+       (57, 1),
+       (58, 1),
+       (59, 1),
+       (60, 1),
+       (61, 1),
+       (62, 1),
+       (63, 1),
+       (64, 1),
+       (65, 1),
+       (66, 1);
+
+
+
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (67, 'Стройка', '', 'https://cdn.discordapp.com/attachments/952625703558475846/1037178953154166824/unknown.png', -2, 'ITEM', 1, null);
+
+INSERT INTO item_attributes (ITEM_ID, STORE_ID, ATTRIBUTE_NAME, ATTRIBUTE_VALUE)
+VALUES
+	(67, -2, 'buyable', 'true');
+
+INSERT INTO shop.item_category (ITEM_ID, CATEGORY_ID)
+VALUES
+	(67, 110),
+	(67, 1);
+
+INSERT INTO shop.list_price (LISTPRICE, PRICE, CURRENCY, ITEM_ID, STORE_ID)
+VALUES
+	(67, 200.00, 'RUB', 67, -2);
+
+insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (67, 5);
+insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (67, 4);

@@ -9,25 +9,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AdminChargeService {
-	private StoreConfigRepository storeConfigRepository;
-	private PaymentRepository paymentRepository;
+public class FriendChargeService {
+	private final StoreConfigRepository storeConfigRepository;
+	private final PaymentRepository paymentRepository;
+	private final UserService userService;
 
 	@Autowired
-	public AdminChargeService(StoreConfigRepository storeConfigRepository, PaymentRepository paymentRepository) {
+	public FriendChargeService(StoreConfigRepository storeConfigRepository, PaymentRepository paymentRepository, UserService userService) {
 		this.storeConfigRepository = storeConfigRepository;
 		this.paymentRepository = paymentRepository;
+		this.userService = userService;
 	}
 
 	public String initPayment(Payment payment) {
 		payment.setPaymentStatus(OrderStatus.PENDING);
-		payment.setPaymentType(PaymentType.ADMIN);
+		payment.setPaymentType(PaymentType.FRIEND);
 		payment = paymentRepository.save(payment);
 		return buildRedirectUrl(payment);
 	}
 
 	private String buildRedirectUrl(Payment payment) {
-		String url = ""; //TODO
-		return url;
+		return ""; //TODO
 	}
 }
