@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(value = "userId")
@@ -19,6 +20,6 @@ public class Root {
 	String userId;
 
 	@JsonProperty("m_CodeArray")
-	List<MCodeArray> m_CodeArray;
+	List<MCodeArray> m_CodeArray = new ArrayList<>();
 }
 
