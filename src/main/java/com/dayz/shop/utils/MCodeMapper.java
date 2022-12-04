@@ -91,7 +91,7 @@ public class MCodeMapper {
 	private void fillVehicle(OrderItem orderItem, MCodeArray mCodeArray) {
 		mCodeArray.setM_itemsArray(new ArrayList<>());
 		MVehicles m_vehicles = new MVehicles();
-		m_vehicles.setM_item(orderItem.getItem().getName());
+		m_vehicles.setM_item(orderItem.getItem().getInGameId());
 		List<String> attachments = new ArrayList<>();
 		for (Item subItem : orderItem.getItem().getSubItems()) {
 			attachments.add(subItem.getInGameId());
