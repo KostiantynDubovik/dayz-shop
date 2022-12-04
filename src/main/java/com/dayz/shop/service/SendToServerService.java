@@ -129,7 +129,10 @@ public class SendToServerService {
 		String completePath = String.format(pathToJson, order.getServer().getServerName(), steamId);
 		File existingFile = new File(TEMP_FILE_GET_PATH + steamId + ".json");
 		try {
-			if (existingFile.createNewFile()) {
+			if (existingFile.exists()) {
+				new FileWriter(existingFile, false).close();
+			}
+			if (existingFile.createNewFile() || existingFile.exists()) {
 				getFile(username, password, host, completePath, existingFile);
 				Root root = new Root();
 				ObjectMapper om = new ObjectMapper();
