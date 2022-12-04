@@ -83,7 +83,7 @@ public class SendToServerService {
 				File newVipFile = new File(TEMP_FILE_PUT_PATH + vipFile);
 				try {
 					if (newVipFile.createNewFile()) {
-						Files.write(newVipFile.toPath(), String.join(SEMICOLON, existingSteamIds).getBytes());
+						Files.write(newVipFile.toPath(), String.join(SEMICOLON, existingSteamIds).concat(SEMICOLON).getBytes());
 						updateFile(username, password, host, completePath, newVipFile);
 					}
 				} finally {
