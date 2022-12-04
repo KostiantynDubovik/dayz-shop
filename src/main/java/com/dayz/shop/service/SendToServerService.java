@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class SendToServerService {
-	public static final String SSH_KNOWN_HOSTS = "C:\\Users\\Constantine\\.ssh";
+	public static final String SSH_KNOWN_HOSTS = "~/.ssh/known_hosts";
 	public static final String SFTP_TYPE = "sftp";
 	public static final String PIPE = "|";
 	public static final String SEMICOLON = ";";
