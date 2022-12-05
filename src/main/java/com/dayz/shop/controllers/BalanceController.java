@@ -1,12 +1,10 @@
 package com.dayz.shop.controllers;
 
-import com.dayz.shop.jpa.entities.Currency;
-import com.dayz.shop.jpa.entities.Payment;
-import com.dayz.shop.jpa.entities.Store;
+import com.dayz.shop.jpa.entities.*;
 import com.dayz.shop.repository.PaymentRepository;
-import com.dayz.shop.service.AdminChargeService;
+import com.dayz.shop.repository.UserRepository;
+import com.dayz.shop.service.BalanceTransferService;
 import com.dayz.shop.service.FreeKassaService;
-import com.dayz.shop.service.FriendChargeService;
 import com.dayz.shop.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,24 +16,26 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/balance")
 public class BalanceController {
 	private final FreeKassaService freeKassaService;
-	private final AdminChargeService adminChargeService;
-	private final FriendChargeService friendChargeService;
+	private final BalanceTransferService balanceTransferService;
 
 	private final PaymentRepository paymentRepository;
+	private final UserRepository userRepository;
 
 	@Autowired
-	public BalanceController(FreeKassaService freeKassaService, AdminChargeService adminChargeService,
-							 PaymentRepository paymentRepository, FriendChargeService friendChargeService) {
+	public BalanceController(FreeKassaService freeKassaService,
+	                         PaymentRepository paymentRepository, BalanceTransferService balanceTransferService,
+	                         UserRepository userRepository) {
 		this.freeKassaService = freeKassaService;
-		this.adminChargeService = adminChargeService;
 		this.paymentRepository = paymentRepository;
-		this.friendChargeService = friendChargeService;
+		this.balanceTransferService = balanceTransferService;
+		this.userRepository = userRepository;
 	}
 
 	@PostMapping("notify")
@@ -44,7 +44,46 @@ public class BalanceController {
 		return freeKassaService.notify(request, response, store);
 	}
 
+	@PostMapping("init")
+	@PreAuthorize("hasAuthority('STORE_READ')")
+	public void initPayment(HttpServletResponse response, @ModelAttribute Payment payment, @RequestAttribute("store") Store store, String steamId) throws IOException {
+		if (payment.getUser() == null) {
+			payment.setUser(Utils.getCurrentUser());
+		}
+		payment.setStore(store);
+		payment.setCurrency(Currency.RUB);
+		String redirectUrl;
+		switch (payment.getPaymentType()) {
+			case FREEKASSA:
+				redirectUrl = freeKassaService.initPayment(payment);
+				break;
+			default:
+				redirectUrl = "/profile";
+		}
+		response.sendRedirect(redirectUrl);
+	}
+
+	@PostMapping("transfer")
+	@PreAuthorize("hasAuthority('STORE_READ')")
+	public Payment transferBalance(@ModelAttribute Payment payment, @RequestAttribute("store") Store store, String steamId) throws IOException {
+		payment.setStore(store);
+		payment.setCurrency(Currency.RUB);
+		payment.setPaymentType(PaymentType.TRANSFER);
+		if (payment.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+			User user = userRepository.getBySteamId(steamId);
+			if (user != null) {
+				payment.setUser(user);
+				balanceTransferService.doTransfer(payment);
+			} else {
+				payment.setPaymentStatus(OrderStatus.FAILED);
+				payment.getProperties().put("reason", "Пользователь не существует в системе");
+			}
+		}
+		return payment;
+	}
+
 	@GetMapping("{paymentId}")
+	@SuppressWarnings("deprecation")
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public Payment getOrderById(@PathVariable("paymentId") Long paymentId, OpenIDAuthenticationToken principal) {
 		Payment result = null;
@@ -53,30 +92,5 @@ public class BalanceController {
 			result = fromRepo.get();
 		}
 		return result;
-	}
-
-	@PostMapping("init")
-	@PreAuthorize("hasAuthority('STORE_READ')")
-	public void initPayment(HttpServletResponse response, @ModelAttribute Payment payment, @RequestAttribute("store") Store store) throws IOException {
-		if (payment.getUser() == null) {
-			payment.setUser(Utils.getCurrentUser());
-		}
-		payment.setStore(store);
-		payment.setCurrency(Currency.RUB);
-		String redirectUrl;
-		switch (payment.getPaymentType()) {
-			case ADMIN:
-				redirectUrl = adminChargeService.initPayment(payment);
-				break;
-			case FRIEND:
-				redirectUrl = friendChargeService.initPayment(payment);
-				break;
-			case FREEKASSA:
-				redirectUrl = freeKassaService.initPayment(payment);
-				break;
-			default:
-				redirectUrl = "/profile";
-		}
-		response.sendRedirect(redirectUrl);
 	}
 }

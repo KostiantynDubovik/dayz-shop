@@ -31,7 +31,11 @@ public class Utils {
 	}
 
 	public static boolean isAppAdmin(User user) {
-		return Utils.isRootStore((user).getStore()) && user.getRoles().contains(roleRepository.findByName("APP_ADMIN"));
+		return Utils.isRootStore(user.getStore()) && user.getRoles().contains(roleRepository.findByName("APP_ADMIN"));
+	}
+
+	public static boolean isStoreAdmin(User user) {
+		return Utils.isRootStore(user.getStore()) && user.getRoles().contains(roleRepository.findByName("STORE_ADMIN"));
 	}
 
 	public static boolean isRootStore(Store store) {

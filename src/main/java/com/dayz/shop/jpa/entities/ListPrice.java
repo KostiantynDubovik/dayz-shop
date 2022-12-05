@@ -20,7 +20,7 @@ public class ListPrice {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
-	@Column(name = "LISTPRICE", nullable = false)
+	@Column(name = "LISTPRICE_ID", nullable = false)
 	private Long id;
 
 	@Column(name = "PRICE", nullable = false)

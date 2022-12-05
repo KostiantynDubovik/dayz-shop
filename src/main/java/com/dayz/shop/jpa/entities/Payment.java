@@ -15,7 +15,7 @@ import java.util.Map;
 @Setter
 @ToString
 @Entity
-@JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler", "store"})
 @Table(name = "PAYMENTS")
 public class Payment {
 
@@ -53,7 +53,7 @@ public class Payment {
 	@ElementCollection
 	@CollectionTable(name = "PAYMENT_PROPERTIES",
 			joinColumns = {@JoinColumn(name = "PAYMENT_ID", referencedColumnName = "PAYMENT_ID")})
-	@MapKeyColumn(name="name")
-	@Column(name="VALUE")
+	@MapKeyColumn(name = "name")
+	@Column(name = "VALUE")
 	private Map<String, String> properties = new HashMap<>();
 }
