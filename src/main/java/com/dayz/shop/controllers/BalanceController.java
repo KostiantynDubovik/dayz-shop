@@ -63,12 +63,13 @@ public class BalanceController {
 		response.sendRedirect(redirectUrl);
 	}
 
-	@PostMapping("transfer")
+	@PostMapping(value = "transfer/{steamId}")
 	@PreAuthorize("hasAuthority('STORE_READ')")
-	public Payment transferBalance(@ModelAttribute Payment payment, @RequestAttribute("store") Store store, String steamId) throws IOException {
+	public Payment transferBalance(@RequestBody Payment payment, @RequestAttribute("store") Store store, @PathVariable(name = "steamId") String steamId) throws IOException {
 		payment.setStore(store);
 		payment.setCurrency(Currency.RUB);
 		payment.setPaymentType(PaymentType.TRANSFER);
+		payment.setPaymentStatus(OrderStatus.PENDING);
 		if (payment.getAmount().compareTo(BigDecimal.ZERO) > 0) {
 			User user = userRepository.getBySteamId(steamId);
 			if (user != null) {

@@ -594,3 +594,7 @@ VALUES
 
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (67, 5);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (67, 4);
+
+insert into shop.store_config
+values (-2, 'checkRealCharges', true),
+       (-2, 'realChargesThreshold', 1)
