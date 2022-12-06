@@ -44,11 +44,11 @@ public class Payment {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "PAYMENT_TYPE")
-	private PaymentType paymentType;
+	private PaymentType type;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "PAYMENT_STATUS")
-	private OrderStatus paymentStatus;
+	private OrderStatus status;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "CURRENCY")
