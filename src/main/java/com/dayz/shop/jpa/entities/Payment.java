@@ -44,7 +44,7 @@ public class Payment {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "PAYMENT_TYPE")
-	private PaymentType type;
+	private Type type;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "PAYMENT_STATUS")

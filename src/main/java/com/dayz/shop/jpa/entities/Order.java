@@ -54,6 +54,9 @@ public class Order {
 	@Column(name = "STATUS")
 	private OrderStatus status;
 
+	@Transient
+	private Type type = Type.ORDER;
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;

@@ -53,7 +53,7 @@ public class BalanceController {
 		payment.setStore(store);
 		payment.setCurrency(Currency.RUB);
 		String redirectUrl;
-		switch (payment.getPaymentType()) {
+		switch (payment.getType()) {
 			case FREEKASSA:
 				redirectUrl = freeKassaService.initPayment(payment);
 				break;
@@ -68,7 +68,7 @@ public class BalanceController {
 	public Payment transferBalance(@RequestBody Payment payment, @RequestAttribute("store") Store store, @PathVariable(name = "steamId") String steamId) throws IOException {
 		payment.setStore(store);
 		payment.setCurrency(Currency.RUB);
-		payment.setPaymentType(PaymentType.TRANSFER);
+		payment.setType(Type.TRANSFER);
 		payment.setPaymentStatus(OrderStatus.PENDING);
 		if (payment.getAmount().compareTo(BigDecimal.ZERO) > 0) {
 			User user = userRepository.getBySteamId(steamId);
