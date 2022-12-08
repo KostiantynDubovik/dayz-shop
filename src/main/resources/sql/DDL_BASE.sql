@@ -288,7 +288,7 @@ create table users_roles
 			ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-create table ITEM_ATTRIBUTES
+create table item_attributes
 (
 	ITEM_ID         BIGINT       not null,
 	STORE_ID        BIGINT       not null,
@@ -323,7 +323,7 @@ create table payments
 			ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-create table PAYMENT_PROPERTIES
+create table payment_properties
 (
 	PAYMENT_ID bigint       not null,
 	NAME       varchar(255) not null,

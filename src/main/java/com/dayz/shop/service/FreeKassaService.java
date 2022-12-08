@@ -37,8 +37,8 @@ public class FreeKassaService {
 	}
 
 	public String initPayment(Payment payment) {
-		payment.setPaymentStatus(OrderStatus.PENDING);
-		payment.setPaymentType(PaymentType.FREEKASSA);
+		payment.setStatus(OrderStatus.PENDING);
+		payment.setType(Type.FREEKASSA);
 		payment = paymentRepository.save(payment);
 		return buildRedirectUrl(payment);
 	}
@@ -77,7 +77,7 @@ public class FreeKassaService {
 				if (paymentOptional.isPresent()) {
 					Payment payment = paymentOptional.get();
 					payment.getProperties().putAll(parameterMap);
-					payment.setPaymentStatus(OrderStatus.COMPLETE);
+					payment.setStatus(OrderStatus.COMPLETE);
 					BigDecimal amount = payment.getAmount();
 					if (amount.compareTo(BigDecimal.valueOf(3000)) > 0) {
 						payment.setAmount(amount.multiply(BigDecimal.valueOf(1.33)));

@@ -69,14 +69,14 @@ public class BalanceController {
 		payment.setStore(store);
 		payment.setCurrency(Currency.RUB);
 		payment.setType(Type.TRANSFER);
-		payment.setPaymentStatus(OrderStatus.PENDING);
+		payment.setStatus(OrderStatus.PENDING);
 		if (payment.getAmount().compareTo(BigDecimal.ZERO) > 0) {
 			User user = userRepository.getBySteamId(steamId);
 			if (user != null) {
 				payment.setUser(user);
 				balanceTransferService.doTransfer(payment);
 			} else {
-				payment.setPaymentStatus(OrderStatus.FAILED);
+				payment.setStatus(OrderStatus.FAILED);
 				payment.getProperties().put("reason", "Пользователь не существует в системе");
 			}
 		}

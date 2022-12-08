@@ -27,7 +27,7 @@ public class BalanceTransferService {
 	}
 
 	public void doTransfer(Payment payment) {
-		payment.setPaymentStatus(OrderStatus.PENDING);
+		payment.setStatus(OrderStatus.PENDING);
 		User currentUser = Utils.getCurrentUser();
 		if (Utils.isStoreAdmin(currentUser) || (currentUser.getBalance().compareTo(payment.getAmount()) > 0 && doesHaveRealCharges(currentUser, payment.getStore()))) {
 			User paymentUser = payment.getUser();
@@ -37,11 +37,11 @@ public class BalanceTransferService {
 				userRepository.save(currentUser);
 			}
 			userRepository.save(paymentUser);
-			payment.setPaymentStatus(OrderStatus.COMPLETE);
+			payment.setStatus(OrderStatus.COMPLETE);
 			payment.setChargeTime(LocalDateTime.now());
 			paymentRepository.save(payment);
 		} else {
-			payment.setPaymentStatus(OrderStatus.FAILED);
+			payment.setStatus(OrderStatus.FAILED);
 			payment.getProperties().put("reason", "Не хватает средств на счету для совершения операции");
 		}
 	}
@@ -49,7 +49,7 @@ public class BalanceTransferService {
 	private boolean doesHaveRealCharges(User currentUser, Store store) {
 		boolean result = true;
 		if (Boolean.parseBoolean(storeConfigRepository.findByKeyAndStore("checkRealCharges", store).getValue())) {
-			List<Payment> payments = paymentRepository.findAllByUserAndPaymentTypeNotIn(currentUser, Collections.singletonList(PaymentType.TRANSFER));
+			List<Payment> payments = paymentRepository.findAllByUserAndTypeNotIn(currentUser, Collections.singletonList(Type.TRANSFER));
 			int threshold = Integer.parseInt(storeConfigRepository.findByKeyAndStore("realChargesThreshold", store).getValue());
 			result = threshold <= payments.size();
 		}
