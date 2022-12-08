@@ -16,7 +16,7 @@ import java.util.Objects;
 @ToString
 @Entity
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
-@Table(name = "PRIVILEGES")
+@Table(name = "privileges")
 public class Privilege {
 
 	@Id

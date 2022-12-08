@@ -15,7 +15,7 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "STORES")
+@Table(name = "stores")
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
 public class Store implements Serializable {
 	@Id

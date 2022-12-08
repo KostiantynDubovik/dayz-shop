@@ -19,7 +19,7 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "ITEMS")
+@Table(name = "items")
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 public class Item {
 	@Id

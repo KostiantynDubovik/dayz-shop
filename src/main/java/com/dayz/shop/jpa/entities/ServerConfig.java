@@ -13,7 +13,7 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "SERVER_CONFIG")
+@Table(name = "server_config")
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 @IdClass(ServerConfigKey.class)
 public class ServerConfig {

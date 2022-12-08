@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @Setter
 @ToString
 @Entity
-@Table(name = "USERS", uniqueConstraints = {@UniqueConstraint(columnNames = {"USER_ID"})})
+@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"USER_ID"})})
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 public class User implements UserDetails {
 

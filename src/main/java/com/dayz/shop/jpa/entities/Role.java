@@ -13,7 +13,7 @@ import java.util.Objects;
 @Setter
 @ToString
 @Entity
-@Table(name = "ROLES")
+@Table(name = "roles")
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
 public class Role {
 

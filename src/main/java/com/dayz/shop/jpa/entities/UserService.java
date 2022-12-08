@@ -14,7 +14,7 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "USER_SERVICES")
+@Table(name = "user_services")
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 @IdClass(UserServiceKey.class)
 public class UserService {

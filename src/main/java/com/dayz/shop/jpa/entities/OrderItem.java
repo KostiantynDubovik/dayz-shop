@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "ORDER_ITEMS")
+@Table(name = "order_items")
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 @EntityListeners(OrderItemListener.class)
 public class OrderItem {

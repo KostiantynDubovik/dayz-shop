@@ -17,7 +17,7 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "OFFER_PRICE")
+@Table(name = "offer_price")
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 public class OfferPrice {
 

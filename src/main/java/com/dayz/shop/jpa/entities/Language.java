@@ -16,7 +16,7 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "LANGUAGES")
+@Table(name = "languages")
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
 public class Language {
 	@Id
