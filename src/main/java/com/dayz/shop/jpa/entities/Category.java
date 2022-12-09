@@ -29,7 +29,7 @@ public class Category {
 	private String displayName;
 
 	@OneToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "CATEGORY_RELATIONS",
+	@JoinTable(name = "category_relations",
 			joinColumns = @JoinColumn(name = "PARENT_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"),
 			inverseJoinColumns = @JoinColumn(name = "CHILD_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
 	@ToString.Exclude

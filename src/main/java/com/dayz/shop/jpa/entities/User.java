@@ -56,7 +56,7 @@ public class User implements UserDetails {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
 	@JoinTable(
-			name = "USERS_ROLES",
+			name = "users_roles",
 			joinColumns = @JoinColumn(
 					name = "USER_ID", referencedColumnName = "USER_ID"),
 			inverseJoinColumns = @JoinColumn(

@@ -33,7 +33,7 @@ public class Role {
 	@JsonIgnore
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
-			name = "ROLES_PRIVILEGES",
+			name = "roles_privileges",
 			joinColumns = @JoinColumn(
 					name = "ROLE_ID", referencedColumnName = "ROLE_ID"),
 			inverseJoinColumns = @JoinColumn(

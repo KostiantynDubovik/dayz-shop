@@ -55,7 +55,7 @@ public class Payment {
 	private Currency currency;
 
 	@ElementCollection
-	@CollectionTable(name = "PAYMENT_PROPERTIES",
+	@CollectionTable(name = "payment_properties",
 			joinColumns = {@JoinColumn(name = "PAYMENT_ID", referencedColumnName = "PAYMENT_ID")})
 	@MapKeyColumn(name = "name")
 	@Column(name = "VALUE")
