@@ -45,11 +45,11 @@ public class Item {
 	@ToString.Exclude
 	private List<Category> categories;
 
-	@Formula("(select lp.PRICE from LIST_PRICE lp where lp.ITEM_ID = ITEM_ID AND lp.STORE_ID = STORE_ID)")
+	@Formula("(select lp.PRICE from list_price lp where lp.ITEM_ID = ITEM_ID AND lp.STORE_ID = STORE_ID)")
 	private BigDecimal listPrice;
 
 	@OneToMany(cascade = CascadeType.MERGE)
-	@JoinTable(name = "OFFER_PRICE",
+	@JoinTable(name = "offer_price",
 			joinColumns = @JoinColumn(name = "ITEM_ID", referencedColumnName = "ITEM_ID"),
 			inverseJoinColumns = @JoinColumn(name = "OFFER_ID", referencedColumnName = "ITEM_ID"))
 	@ToString.Exclude

@@ -26,7 +26,7 @@ public class Store implements Serializable {
 	private String storeName;
 
 	@OneToMany(cascade = CascadeType.MERGE)
-	@JoinTable(name = "STORE_LANGUAGES", joinColumns = @JoinColumn(name = "STORE_ID"), inverseJoinColumns = @JoinColumn(name = "LANGUAGE_ID"))
+	@JoinTable(name = "store_languages", joinColumns = @JoinColumn(name = "STORE_ID"), inverseJoinColumns = @JoinColumn(name = "LANGUAGE_ID"))
 	@ToString.Exclude
 	private List<Language> languages;
 
