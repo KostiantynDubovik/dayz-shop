@@ -59,7 +59,7 @@ public class Item {
 	private String imageUrl;
 
 	@OneToMany(cascade = CascadeType.MERGE)
-	@JoinTable(name = "SUB_ITEMS",
+	@JoinTable(name = "sub_items",
 			joinColumns = @JoinColumn(name = "MAIN_ITEM_ID", referencedColumnName = "ITEM_ID"),
 			inverseJoinColumns = @JoinColumn(name = "SUB_ITEM_ID", referencedColumnName = "ITEM_ID"))
 	@ToString.Exclude
