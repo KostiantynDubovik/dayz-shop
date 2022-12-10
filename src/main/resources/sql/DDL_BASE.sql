@@ -364,3 +364,15 @@ create table if not exists user_services
 );
 
 
+create table item_server_buyable
+(
+	item_id   bigint not null,
+	server_id bigint not null,
+	constraint item_server_buyable_items_null_fk
+		foreign key (item_id) references items (ITEM_ID)
+			on update cascade on delete cascade,
+	constraint item_server_buyable_servers_null_fk
+		foreign key (server_id) references servers (server_id)
+			on update cascade on delete cascade
+);
+

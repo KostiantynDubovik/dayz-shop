@@ -23,11 +23,7 @@ public interface ItemRepository extends PagingAndSortingRepository<Item, Long> {
 
 //	Page<Item> findAllByCategoriesInAndBuyable(Collection<Category> categories, boolean buyable, Pageable pageable);
 
-	@Query(value = "SELECT I FROM Item I JOIN I.attributes IA WHERE IA.store = :store and IA.attributeName = 'buyable' and IA.attributeValue=:buyable AND (IA.store = I.store OR IA.store.parentStore = I.store)",
-			countQuery = "SELECT COUNT(I) FROM Item I JOIN I.attributes IA WHERE IA.store = :store and IA.attributeName = 'buyable' and IA.attributeValue=:buyable AND (IA.store = I.store OR IA.store.parentStore = I.store)")
-	Page<Item> findAllByStoreAndBuyable(Store store, String buyable, Pageable pageable);
-
-	@Query(value = "SELECT I FROM Item I JOIN I.attributes IA WHERE IA.store = :store and IA.attributeName = 'buyable' and IA.attributeValue=:buyable AND (IA.store = I.store OR IA.store.parentStore = I.store) AND :category member I.categories",
-			countQuery = "SELECT COUNT(I) FROM Item I JOIN I.attributes IA WHERE IA.store = :store and IA.attributeName = 'buyable' and IA.attributeValue=:buyable AND (IA.store = I.store OR IA.store.parentStore = I.store) AND :category member I.categories")
-	Page<Item> findAllByStoreAndBuyableAndCategory(Store store, String buyable, Category category, Pageable pageable);
+	@Query(value = "SELECT I FROM Item I where I.servers is not empty AND (I.store = :store OR I.store.parentStore = :store) AND :category member I.categories",
+			countQuery = "SELECT COUNT(I) FROM Item I where I.servers is not empty AND (I.store = :store OR I.store.parentStore = :store) AND :category member I.categories")
+	Page<Item> findAllByStoreAndBuyableAndCategory(Store store, Category category, Pageable pageable);
 }

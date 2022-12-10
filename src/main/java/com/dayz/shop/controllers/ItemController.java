@@ -40,7 +40,7 @@ public class ItemController {
 									@RequestParam(defaultValue = "100") int pageSize,
 									@RequestAttribute Store store) {
 		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 3 ? 3 : pageSize, Sort.by(sortBy));
-		return itemRepository.findAllByStoreAndBuyableAndCategory(store, "true", categoryRepository.findByCategoryName(categoryName), pageable);
+		return itemRepository.findAllByStoreAndBuyableAndCategory(store, categoryRepository.findByCategoryName(categoryName), pageable);
 	}
 //
 //	@GetMapping("app/{categoryName}/{page}")

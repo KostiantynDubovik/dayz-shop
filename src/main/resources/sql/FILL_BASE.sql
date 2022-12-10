@@ -150,6 +150,7 @@ VALUES (-2, 'freekassa.api_key', 'c7d8f2117410ec8d40a00b077d3b9bd9'),
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'freekassa.merchantId', '25427');
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'freekassa.baseUrl', 'https://pay.freekassa.ru/');
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'freekassa.ips', '168.119.157.136,168.119.60.227,138.201.88.124,178.154.197.79');
+INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'known_hosts', '~/.ssh/known_hosts');
 
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (1, 'PATH_TO_JSON', 'servers/%s/profiles/HotlineTrade/%s.json', -2);
 INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID) VALUES (1, 'PATH_TO_SET', 'servers/%s/profiles/%s', -2);
@@ -597,4 +598,8 @@ insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (67, 4);
 
 insert into shop.store_config
 values (-2, 'checkRealCharges', true),
-       (-2, 'realChargesThreshold', 1)
+       (-2, 'realChargesThreshold', 1);
+
+insert into item_server_buyable(item_id, server_id) select item_id, server_id from item_attributes, servers where ATTRIBUTE_NAME = 'buyable' and ATTRIBUTE_VALUE = 'true';
+
+delete from item_attributes where ATTRIBUTE_NAME = 'buyable';

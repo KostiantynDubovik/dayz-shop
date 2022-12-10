@@ -5,15 +5,18 @@ import com.dayz.shop.jpa.entities.Order;
 import com.dayz.shop.json.MCodeArray;
 import com.dayz.shop.json.Root;
 import com.dayz.shop.repository.ServerConfigRepository;
+import com.dayz.shop.repository.StoreConfigRepository;
 import com.dayz.shop.utils.MCodeMapper;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jcraft.jsch.*;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -25,14 +28,14 @@ public class SendToServerService {
 	public static final String PIPE = "|";
 	public static final String SEMICOLON = ";";
 	public static final String ZERO = "0";
-	public static final String TEMP_FILE_PUT_PATH = "put/";
-	public static final String TEMP_FILE_GET_PATH = "get/";
 	final ServerConfigRepository serverConfigRepository;
 	final MCodeMapper mCodeMapper;
+	private StoreConfigRepository storeConfigRepository;
 
 	@Autowired
-	public SendToServerService(ServerConfigRepository serverConfigRepository, MCodeMapper mCodeMapper) {
+	public SendToServerService(ServerConfigRepository serverConfigRepository, StoreConfigRepository storeConfigRepository, MCodeMapper mCodeMapper) {
 		this.serverConfigRepository = serverConfigRepository;
+		this.storeConfigRepository = storeConfigRepository;
 		this.mCodeMapper = mCodeMapper;
 	}
 
@@ -60,105 +63,57 @@ public class SendToServerService {
 		String pathToVip = getPathToVip(order);
 		String vipFile = "priority.txt";
 		String completePath = String.format(pathToVip, order.getServer().getServerName(), vipFile);
-		File existingVipFile = new File(TEMP_FILE_GET_PATH + vipFile);
-		Scanner scanner;
-		try {
-			if (existingVipFile.exists()) {
-				new FileWriter(existingVipFile, false).close();
-			}
-			if (existingVipFile.createNewFile() || existingVipFile.exists()) {
-				getFile(username, password, host, completePath, existingVipFile);
-				scanner = new Scanner(existingVipFile);
-				List<String> existingSteamIds = new ArrayList<>();
-				scanner.useDelimiter(SEMICOLON);
-				while (scanner.hasNext()) {
-					String existingSteamId = scanner.next();
-					if (Objects.equals(existingSteamId, steamId)) {
-						return;
-					} else {
-						existingSteamIds.add(existingSteamId);
-					}
-				}
-				existingSteamIds.add(steamId);
-				File newVipFile = new File(TEMP_FILE_PUT_PATH + vipFile);
-				try {
-					if (newVipFile.createNewFile()) {
-						Files.write(newVipFile.toPath(), String.join(SEMICOLON, existingSteamIds).concat(SEMICOLON).getBytes());
-						updateFile(username, password, host, completePath, newVipFile);
-					}
-				} finally {
-					newVipFile.delete();
+		InputStream fileContent = getFileContent(username, password, host, completePath);
+		if (fileContent != null) {
+			Scanner scanner = new Scanner(fileContent);
+			List<String> existingSteamIds = new ArrayList<>();
+			scanner.useDelimiter(SEMICOLON);
+			while (scanner.hasNext()) {
+				String existingSteamId = scanner.next();
+				if (Objects.equals(existingSteamId, steamId)) {
+					return;
+				} else {
+					existingSteamIds.add(existingSteamId);
 				}
 			}
-			System.out.println();
-		} finally {
-			existingVipFile.delete();
+			existingSteamIds.add(steamId);
+			ByteArrayInputStream contentStream = new ByteArrayInputStream(String.join(SEMICOLON, existingSteamIds).concat(SEMICOLON).getBytes(StandardCharsets.UTF_8));
+			updateFile(username, password, host, completePath, contentStream);
 		}
+
 	}
 
 	private void sendSet(Order order, String username, String password, String host, String steamId) throws IOException, JSchException, SftpException {
 		String pathToSet = getPathToSet(order);
 		String setsFile = "CustomSpawnPlayerConfig.txt";
 		String completePath = String.format(pathToSet, order.getServer().getServerName(), setsFile);
-		File existingSetFile = new File(TEMP_FILE_GET_PATH + setsFile);
-		try {
-			if (existingSetFile.exists()) {
-				new FileWriter(existingSetFile, false).close();
-			}
-			if (existingSetFile.createNewFile() || existingSetFile.exists()) {
-				getFile(username, password, host, completePath, existingSetFile);
-				Map<String, String> setMap = Files.readAllLines(existingSetFile.toPath()).stream().collect(Collectors.toMap(input -> StringUtils.split(input, PIPE)[0], input -> input));
-				setMap.put(steamId, String.join(PIPE, steamId, ZERO, order.getOrderItems().get(0).getItem().getInGameId(), ZERO));
-				File newSetsFile = new File(TEMP_FILE_PUT_PATH + setsFile);
-				try {
-					if (newSetsFile.createNewFile()) {
-						Files.write(newSetsFile.toPath(), setMap.values());
-						updateFile(username, password, host, completePath, newSetsFile);
-					}
-				} finally {
-					newSetsFile.delete();
-				}
-			}
-		} finally {
-			existingSetFile.delete();
+		InputStream existingSets = getFileContent(username, password, host, completePath);
+		if (existingSets != null) {
+			Map<String, String> setMap = IOUtils.readLines(existingSets, StandardCharsets.UTF_8).stream().collect(Collectors.toMap(input -> StringUtils.split(input, PIPE)[0], input -> input));
+			setMap.put(steamId, String.join(PIPE, steamId, ZERO, order.getOrderItems().get(0).getItem().getInGameId(), ZERO));
+			ByteArrayInputStream contentStream = new ByteArrayInputStream(String.join(System.lineSeparator(), setMap.values()).getBytes(StandardCharsets.UTF_8));
+			updateFile(username, password, host, completePath, contentStream);
 		}
 	}
 
 	private void sendSpawningItems(Order order, String username, String password, String host, String steamId) throws IOException, JSchException, SftpException {
 		String pathToJson = getPathToSpawningItemsJson(order);
 		String completePath = String.format(pathToJson, order.getServer().getServerName(), steamId);
-		File existingFile = new File(TEMP_FILE_GET_PATH + steamId + ".json");
-		try {
-			if (existingFile.exists()) {
-				new FileWriter(existingFile, false).close();
-			}
-			if (existingFile.createNewFile() || existingFile.exists()) {
-				getFile(username, password, host, completePath, existingFile);
-				Root root = new Root();
-				ObjectMapper om = new ObjectMapper();
-				om.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-				if (existingFile.length() > 0) {
-					root = om.readValue(existingFile, Root.class);
-				} else {
-					MCodeArray mCodeArray = new MCodeArray();
-					root.getM_CodeArray().add(mCodeArray);
-				}
-				root.getM_CodeArray().addAll(mCodeMapper.mapOrderToRoot(order).getM_CodeArray());
-				//TODO dir *.json /b
-
-				File mCode = new File(TEMP_FILE_PUT_PATH + steamId + ".json");
-				try {
-					if (mCode.createNewFile()) {
-						om.writerWithDefaultPrettyPrinter().writeValue(mCode, root);
-						updateFile(username, password, host, completePath, mCode);
-					}
-				} finally {
-					mCode.delete();
-				}
-			}
-		} finally {
-			existingFile.delete();
+		InputStream existingItems = getFileContent(username, password, host, completePath);
+		Root root = new Root();
+		ObjectMapper om = new ObjectMapper();
+		om.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+		if (existingItems != null) {
+			root = om.readValue(existingItems, Root.class);
+		} else {
+			MCodeArray mCodeArray = new MCodeArray();
+			root.getM_CodeArray().add(mCodeArray);
 		}
+		root.getM_CodeArray().addAll(mCodeMapper.mapOrderToRoot(order).getM_CodeArray());
+		//TODO dir *.json /b
+
+		InputStream content = new ByteArrayInputStream(om.writerWithDefaultPrettyPrinter().writeValueAsString(root).getBytes(StandardCharsets.UTF_8));
+		updateFile(username, password, host, completePath, content);
 	}
 
 	private String getPathToSpawningItemsJson(Order order) {
@@ -185,36 +140,48 @@ public class SendToServerService {
 		return serverConfigRepository.findByKeyAndServer("SSH_IP", order.getServer()).getValue();
 	}
 
-	private void getFile(String username, String password, String host, String path, File file) throws
+	private InputStream getFileContent(String username, String password, String host, String path) throws
 			JSchException, SftpException, IOException {
+		PipedOutputStream outputStream = new PipedOutputStream();
 		Session session = setupJsch(username, password, host);
 		ChannelSftp channelSftp = (ChannelSftp) session.openChannel(SFTP_TYPE);
 		channelSftp.connect();
 
-		try (FileOutputStream dst = new FileOutputStream(file)) {
-			channelSftp.get(path, dst);
+		PipedInputStream result = null;
+
+		try {
+			channelSftp.get(path, outputStream);
+			result = new PipedInputStream(outputStream);
 		} catch (SftpException e) {
 			if ("No such file".equals(e.getMessage())) {
 				System.out.println("Creating new file: " + path);
 			} else {
 				throw e;
 			}
+		} finally {
+			channelSftp.exit();
+			session.disconnect();
 		}
-		channelSftp.exit();
-		session.disconnect();
+		return result;
 	}
 
-	private void updateFile(String username, String password, String host, String path, File file) throws
-			JSchException, SftpException, IOException {
-		Session session = setupJsch(username, password, host);
-		ChannelSftp channelSftp = (ChannelSftp) session.openChannel(SFTP_TYPE);
-		channelSftp.connect();
-
-		try (FileInputStream dst = new FileInputStream(file)) {
-			channelSftp.put(dst, path);
+	private void updateFile(String username, String password, String host, String path, InputStream contentStream)
+			throws JSchException, SftpException, IOException {
+		Session session = null;
+		ChannelSftp channelSftp = null;
+		try {
+			session = setupJsch(username, password, host);
+			channelSftp = (ChannelSftp) session.openChannel(SFTP_TYPE);
+			channelSftp.connect();
+			channelSftp.put(contentStream, path);
+		} finally {
+			if (channelSftp != null) {
+				channelSftp.exit();
+			}
+			if (session != null) {
+				session.disconnect();
+			}
 		}
-		channelSftp.exit();
-		session.disconnect();
 	}
 
 	private Session setupJsch(String username, String password, String host) throws JSchException {

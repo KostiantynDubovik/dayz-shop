@@ -81,28 +81,23 @@ public class Item {
 	@Column(name = "COLOR")
 	private String color;
 
+
+	@ManyToMany()
+	@JoinTable(name = "item_server_buyable",
+			joinColumns = {@JoinColumn(name = "item_id")},
+			inverseJoinColumns = {@JoinColumn(name = "server_id")})
+	private List<Server> servers;
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Item item = (Item) o;
-		return Objects.equals(id, item.id)
-				&& Objects.equals(name, item.name)
-				&& Objects.equals(inGameId, item.inGameId)
-				&& Objects.equals(store, item.store)
-				&& Objects.equals(categories, item.categories)
-				&& Objects.equals(listPrice, item.listPrice)
-				&& Objects.equals(offerPrices, item.offerPrices)
-				&& Objects.equals(imageUrl, item.imageUrl)
-				&& Objects.equals(subItems, item.subItems)
-				&& Objects.equals(count, item.count)
-				&& itemType == item.itemType
-				&& Objects.equals(attributes, item.attributes)
-				&& Objects.equals(color, item.color);
+		return Objects.equals(id, item.id) && Objects.equals(name, item.name) && Objects.equals(inGameId, item.inGameId) && Objects.equals(store, item.store) && Objects.equals(categories, item.categories) && Objects.equals(listPrice, item.listPrice) && Objects.equals(offerPrices, item.offerPrices) && Objects.equals(imageUrl, item.imageUrl) && Objects.equals(subItems, item.subItems) && Objects.equals(count, item.count) && itemType == item.itemType && Objects.equals(attributes, item.attributes) && Objects.equals(color, item.color) && Objects.equals(servers, item.servers);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, name, inGameId, store, categories, listPrice, offerPrices, imageUrl, subItems, count, itemType, attributes, color);
+		return Objects.hash(id, name, inGameId, store, categories, listPrice, offerPrices, imageUrl, subItems, count, itemType, attributes, color, servers);
 	}
 }
