@@ -147,7 +147,7 @@ VALUES (-2, 'freekassa.api_key', 'c7d8f2117410ec8d40a00b077d3b9bd9'),
        (-2, 'freekassa.secret', 'TC*bn0XfesGM8cC'),
        (-2, 'freekassa.secret2', 'toi(/(Ni7LxsCfm');
 
-INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'freekassa.merchantId', '25427');
+INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'freekassa.merchantId', '25874');
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'freekassa.baseUrl', 'https://pay.freekassa.ru/');
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'freekassa.ips', '168.119.157.136,168.119.60.227,138.201.88.124,178.154.197.79');
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'known_hosts', '~/.ssh/known_hosts');
