@@ -81,6 +81,9 @@ public class Item {
 	@Column(name = "COLOR")
 	private String color;
 
+	@Column(name = "SEQUENCE")
+	private Long sequence;
+
 
 	@ManyToMany()
 	@JoinTable(name = "item_server_buyable",

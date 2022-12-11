@@ -85,6 +85,7 @@ create table items
 	ITEM_TYPE  varchar(20)  not null,
 	COUNT      bigint       null,
 	COLOR      varchar(30)  null,
+	SEQUENCE   bigint       not null default 0,
 	constraint items_stores_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID)
 			ON DELETE CASCADE ON UPDATE CASCADE

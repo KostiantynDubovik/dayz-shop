@@ -41,22 +41,68 @@ INSERT INTO shop.users_roles (USER_ID, ROLE_ID) VALUES (174, -6);
 INSERT INTO shop.users_roles (USER_ID, ROLE_ID) VALUES (189, -6);
 INSERT INTO shop.users_roles (USER_ID, ROLE_ID) VALUES (192, -6);
 
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (1, 'Радиатор', 'CarRadiator', 'https://cdn.discordapp.com/attachments/952625703558475846/1037180388038148209/unknown.png', -2, 'ITEM', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (2, 'Свеча', 'SparkPlug', 'https://cdn.discordapp.com/attachments/952625703558475846/1037170548783988756/unknown.png', -2, 'ITEM', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (3, 'Легковой аккумулятор', 'CarBattery', 'https://cdn.discordapp.com/attachments/952625703558475846/1038479094679081000/543534.png', -2, 'ITEM', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (4, 'Колючая проволока', 'BarbedWire', 'https://cdn.discordapp.com/attachments/952625703558475846/1037176324181209098/unknown.png', -2, 'ITEM', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (5, 'Пачка гвоздей', 'NailBox', 'https://cdn.discordapp.com/attachments/952625703558475846/1037178953154166824/unknown.png', -2, 'ITEM', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (6, 'Оружейная стойка', 'Skyline_Kit_Gun_Rack', 'https://cdn.discordapp.com/attachments/952625703558475846/1037180829333454890/unknown.png', -2, 'ITEM', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (7, 'Автомобильная лампа', 'HeadlightH7', 'https://static.wikia.nocookie.net/dayz_gamepedia/images/0/08/HeadlampBulb.png/revision/latest?cb=20160829123308', -2, 'ITEM', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (9, 'Грузовой аккумулятор', 'TruckBattery', 'https://cdn.discordapp.com/attachments/952625703558475846/1037179833274339378/unknown.png', -2, 'ITEM', 1);
-
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (8, 'Зелёная Нива', 'OffroadHatchback', 'https://cdn.discordapp.com/attachments/952625703558475846/1038095378903470100/unknown.png', -2, 'VEHICLE', 1);
-
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (11, 'Дверь на Ниву', 'HatchbackDoors_CoDriver', '', -2, 'VEHICLE', 1, 'green');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (12, 'Дверь на Ниву', 'HatchbackDoors_Driver', '', -2, 'VEHICLE', 1, 'green');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (13, 'Капот на Ниву', 'HatchbackHood', '', -2, 'VEHICLE', 1, 'green');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (14, 'Ляда на Ниву', 'HatchbackTrunk', '', -2, 'VEHICLE', 1, 'green');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (15, 'Колесо на Ниву', 'HatchbackWheel', 'https://cdn.discordapp.com/attachments/952625703558475846/1037183066579402836/unknown.png', -2, 'VEHICLE', 1);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (1, 'Радиатор', 'CarRadiator', 'https://cdn.discordapp.com/attachments/952625703558475846/1037180388038148209/unknown.png', -2, 'ITEM', 1, null, 100);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (2, 'Свеча', 'SparkPlug', 'https://cdn.discordapp.com/attachments/952625703558475846/1037170548783988756/unknown.png', -2, 'ITEM', 1, null, 200);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (3, 'Легковой аккумулятор', 'CarBattery', 'https://cdn.discordapp.com/attachments/952625703558475846/1038479094679081000/543534.png', -2, 'ITEM', 1, null, 300);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (4, 'Колючая проволока', 'BarbedWire', 'https://cdn.discordapp.com/attachments/952625703558475846/1037176324181209098/unknown.png', -2, 'ITEM', 1, null, 400);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (5, 'Пачка гвоздей', 'NailBox', 'https://cdn.discordapp.com/attachments/952625703558475846/1037178953154166824/unknown.png', -2, 'ITEM', 1, null, 500);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (6, 'Оружейная стойка', 'Skyline_Kit_Gun_Rack', 'https://cdn.discordapp.com/attachments/952625703558475846/1037180829333454890/unknown.png', -2, 'ITEM', 1, null, 600);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (7, 'Автомобильная лампа', 'HeadlightH7', 'https://static.wikia.nocookie.net/dayz_gamepedia/images/0/08/HeadlampBulb.png/revision/latest?cb=20160829123308', -2, 'ITEM', 1, null, 700);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (9, 'Грузовой аккумулятор', 'TruckBattery', 'https://cdn.discordapp.com/attachments/952625703558475846/1037179833274339378/unknown.png', -2, 'ITEM', 1, null, 800);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (8, 'Зелёная Нива', 'OffroadHatchback', 'https://cdn.discordapp.com/attachments/952625703558475846/1038095378903470100/unknown.png', -2, 'VEHICLE', 1, null, 900);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (11, 'Дверь на Ниву', 'HatchbackDoors_CoDriver', '', -2, 'VEHICLE', 1, 'green', 1000);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (12, 'Дверь на Ниву', 'HatchbackDoors_Driver', '', -2, 'VEHICLE', 1, 'green', 1100);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (13, 'Капот на Ниву', 'HatchbackHood', '', -2, 'VEHICLE', 1, 'green', 1200);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (14, 'Ляда на Ниву', 'HatchbackTrunk', '', -2, 'VEHICLE', 1, 'green', 1300);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (15, 'Колесо на Ниву', 'HatchbackWheel', 'https://cdn.discordapp.com/attachments/952625703558475846/1037183066579402836/unknown.png', -2, 'VEHICLE', 1, null, 1400);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (19, 'Красный Golf', 'Hatchback_02', 'https://cdn.discordapp.com/attachments/952625703558475846/1037154422641397770/5555555555555555555.png', -2, 'VEHICLE', 1, 'red', 1500);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (20, 'Дверь на Golf', 'Hatchback_02_Door_2_1', '', -2, 'VEHICLE', 1, 'red', 1600);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (21, 'Дверь на Golf', 'Hatchback_02_Door_2_2', '', -2, 'VEHICLE', 1, 'red', 1700);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (22, 'Дверь на Golf', 'Hatchback_02_Door_1_1', '', -2, 'VEHICLE', 1, 'red', 1800);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (23, 'Дверь на Golf', 'Hatchback_02_Door_1_2', '', -2, 'VEHICLE', 1, 'red', 1900);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (24, 'Ляда на Golf', 'Hatchback_02_Trunk', '', -2, 'VEHICLE', 1, null, 2000);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (25, 'Капот на Golf', 'Hatchback_02_Hood', '', -2, 'VEHICLE', 1, 'red', 2100);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (26, 'Колесо на Golf', 'Hatchback_02_Wheel', 'https://cdn.discordapp.com/attachments/952625703558475846/1037182573127938128/unknown.png', -2, 'VEHICLE', 1, null, 2200);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (27, 'Белая нива', 'OffroadHatchback_White', 'https://cdn.discordapp.com/attachments/952625703558475846/1037170785187528724/unknown.png', -2, 'VEHICLE', 1, 'white', 2300);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (28, 'Дверь на Ниву', 'HatchbackDoors_CoDriver_White', '', -2, 'VEHICLE', 1, 'white', 2400);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (29, 'Дверь на Ниву', 'HatchbackDoors_Driver_White', '', -2, 'VEHICLE', 1, 'white', 2500);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (30, 'Капот на Ниву', 'HatchbackHood_White', '', -2, 'VEHICLE', 1, 'white', 2600);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (31, 'Ляда на Ниву', 'HatchbackTrunk_White', '', -2, 'VEHICLE', 1, 'white', 2700);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (32, 'Жёлтая Skoda', 'Sedan_02_Yellow', 'https://cdn.discordapp.com/attachments/952625703558475846/1038085410338902068/unknown.png', -2, 'VEHICLE', 1, 'white', 2800);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (33, 'Дверь на Skoda', 'Sedan_02_Door_2_1', '', -2, 'VEHICLE', 1, 'yellow', 2900);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (34, 'Дверь на Skoda', 'Sedan_02_Door_2_2', '', -2, 'VEHICLE', 1, 'yellow', 3000);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (35, 'Дверь на Skoda', 'Sedan_02_Door_1_1', '', -2, 'VEHICLE', 1, 'yellow', 3100);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (36, 'Дверь на Skoda', 'Sedan_02_Door_1_2', '', -2, 'VEHICLE', 1, 'yellow', 3200);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (37, 'Капот на Skoda', 'Sedan_02_Hood', '', -2, 'VEHICLE', 1, 'yellow', 3300);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (38, 'Ляда на Skoda', 'Sedan_02_Trunk', '', -2, 'VEHICLE', 1, 'yellow', 3400);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (39, 'Колесо на Skoda', 'Sedan_02_Wheel', 'https://cdn.discordapp.com/attachments/952625703558475846/1037181923518328922/unknown.png', -2, 'VEHICLE', 1, null, 3500);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (40, 'Белая Волга', 'CivilianSedan', 'https://cdn.discordapp.com/attachments/952625703558475846/1038104667525218404/unknown.png', -2, 'VEHICLE', 1, 'white', 3600);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (41, 'Дверь на Волгу', 'CivSedanDoors_Driver', '', -2, 'VEHICLE', 1, 'white', 3700);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (42, 'Дверь на Волгу', 'CivSedanDoors_CoDriver', '', -2, 'VEHICLE', 1, 'white', 3800);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (43, 'Дверь на Волгу', 'CivSedanDoors_BackRight', '', -2, 'VEHICLE', 1, 'white', 3900);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (44, 'Дверь на Волгу', 'CivSedanDoors_BackLeft', '', -2, 'VEHICLE', 1, 'white', 4000);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (45, 'Капот на Волгу', 'CivSedanHood', '', -2, 'VEHICLE', 1, 'white', 4100);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (46, 'Ляда на Волгу',  'CivSedanTrunk', '', -2, 'VEHICLE', 1, 'white', 4200);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (47, 'Колесо на Волгу', 'CivSedanWheel', 'https://cdn.discordapp.com/attachments/952625703558475846/1037181447364157550/unknown.png', -2, 'VEHICLE', 1, null, 4300);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (48, 'Хаки V3S', 'Truck_01_Covered', 'https://cdn.discordapp.com/attachments/952625703558475846/1037164091011244092/unknown.png', -2, 'VEHICLE', 1, 'khaki', 4400);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (49, 'Дверь на V3S', 'Truck_01_Door_1_1', '', -2, 'VEHICLE', 1, 'khaki', 4500);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (50, 'Дверь на V3S', 'Truck_01_Door_2_1', '', -2, 'VEHICLE', 1, 'khaki', 4600);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (51, 'Капот на V3S', 'Truck_01_Hood', '', -2, 'VEHICLE', 1, 'khaki', 4700);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (52, 'Колесо на V3S', 'Truck_01_Wheel', '', -2, 'VEHICLE', 1, null, 4800);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (53, 'Колесо на V3S', 'Truck_01_WheelDouble', '', -2, 'VEHICLE', 1, null, 4900);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (54, 'Приоритет на 30 дней', '', 'https://cdn.discordapp.com/attachments/934733103589654558/1037151804904980500/unknown.png', -2, 'VIP', 1, '30', 5000);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (55, 'Приоритет на 60 дней', '', 'https://cdn.discordapp.com/attachments/934733103589654558/1037151804904980500/unknown.png', -2, 'VIP', 1, '60', 5100);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (56, 'Set 101', '101', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30', 5200);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (57, 'Set 102', '102', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30', 5300);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (58, 'Set 103', '103', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30', 5400);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (59, 'Set 104', '104', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30', 5500);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (60, 'Set 105', '105', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30', 5600);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (61, 'Set 106', '106', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30', 5700);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (62, 'Set 107', '107', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30', 5800);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (63, 'Set 108', '108', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30', 5900);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (64, 'Set 109', '109', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30', 6000);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (65, 'Set 110', '110', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30', 6100);
+INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE) VALUES (66, 'Set 111', '111', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30', 6200);
 
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (8, 1);
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (8, 2);
@@ -92,15 +138,6 @@ INSERT INTO shop.list_price (LISTPRICE_ID, PRICE, CURRENCY, ITEM_ID, STORE_ID) V
 
 
 
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (19, 'Красный Golf', 'Hatchback_02', 'https://cdn.discordapp.com/attachments/952625703558475846/1037154422641397770/5555555555555555555.png', -2, 'VEHICLE', 1, 'red');
-
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (20, 'Дверь на Golf', 'Hatchback_02_Door_2_1', '', -2, 'VEHICLE', 1, 'red');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (21, 'Дверь на Golf', 'Hatchback_02_Door_2_2', '', -2, 'VEHICLE', 1, 'red');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (22, 'Дверь на Golf', 'Hatchback_02_Door_1_1', '', -2, 'VEHICLE', 1, 'red');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (23, 'Дверь на Golf', 'Hatchback_02_Door_1_2', '', -2, 'VEHICLE', 1, 'red');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (24, 'Ляда на Golf', 'Hatchback_02_Trunk', '', -2, 'VEHICLE', 1);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (25, 'Капот на Golf', 'Hatchback_02_Hood', '', -2, 'VEHICLE', 1, 'red');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT) VALUES (26, 'Колесо на Golf', 'Hatchback_02_Wheel', 'https://cdn.discordapp.com/attachments/952625703558475846/1037182573127938128/unknown.png', -2, 'VEHICLE', 1);
 
 INSERT INTO shop.list_price (LISTPRICE_ID, PRICE, CURRENCY, ITEM_ID, STORE_ID) VALUES (19, 150.00, 'RUB', 19, -2);
 INSERT INTO shop.list_price (LISTPRICE_ID, PRICE, CURRENCY, ITEM_ID, STORE_ID) VALUES (21, 10.00, 'RUB', 21, -2);
@@ -222,12 +259,6 @@ VALUES
        (19, -2, 'buyable', 'true'),
        (26, -2, 'buyable', 'true');
 
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (27, 'Белая нива', 'OffroadHatchback_White', 'https://cdn.discordapp.com/attachments/952625703558475846/1037170785187528724/unknown.png', -2, 'VEHICLE', 1, 'white');
-
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (28, 'Дверь на Ниву', 'HatchbackDoors_CoDriver_White', '', -2, 'VEHICLE', 1, 'white');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (29, 'Дверь на Ниву', 'HatchbackDoors_Driver_White', '', -2, 'VEHICLE', 1, 'white');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (30, 'Капот на Ниву', 'HatchbackHood_White', '', -2, 'VEHICLE', 1, 'white');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (31, 'Ляда на Ниву', 'HatchbackTrunk_White', '', -2, 'VEHICLE', 1, 'white');
 
 
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (27, 1);
@@ -261,15 +292,6 @@ VALUES
 
 
 
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (32, 'Жёлтая Skoda', 'Sedan_02_Yellow', 'https://cdn.discordapp.com/attachments/952625703558475846/1038085410338902068/unknown.png', -2, 'VEHICLE', 1, 'white');
-
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (33, 'Дверь на Skoda', 'Sedan_02_Door_2_1', '', -2, 'VEHICLE', 1, 'yellow');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (34, 'Дверь на Skoda', 'Sedan_02_Door_2_2', '', -2, 'VEHICLE', 1, 'yellow');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (35, 'Дверь на Skoda', 'Sedan_02_Door_1_1', '', -2, 'VEHICLE', 1, 'yellow');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (36, 'Дверь на Skoda', 'Sedan_02_Door_1_2', '', -2, 'VEHICLE', 1, 'yellow');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (37, 'Капот на Skoda', 'Sedan_02_Hood', '', -2, 'VEHICLE', 1, 'yellow');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (38, 'Ляда на Skoda', 'Sedan_02_Trunk', '', -2, 'VEHICLE', 1, 'yellow');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (39, 'Колесо на Skoda', 'Sedan_02_Wheel', 'https://cdn.discordapp.com/attachments/952625703558475846/1037181923518328922/unknown.png', -2, 'VEHICLE', 1, null);
 
 
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (32, 1);
@@ -308,15 +330,6 @@ VALUES
 	(39, -2, 'buyable', 'true');
 
 
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (40, 'Белая Волга', 'CivilianSedan', 'https://cdn.discordapp.com/attachments/952625703558475846/1038104667525218404/unknown.png', -2, 'VEHICLE', 1, 'white');
-
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (41, 'Дверь на Волгу', 'CivSedanDoors_Driver', '', -2, 'VEHICLE', 1, 'white');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (42, 'Дверь на Волгу', 'CivSedanDoors_CoDriver', '', -2, 'VEHICLE', 1, 'white');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (43, 'Дверь на Волгу', 'CivSedanDoors_BackRight', '', -2, 'VEHICLE', 1, 'white');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (44, 'Дверь на Волгу', 'CivSedanDoors_BackLeft', '', -2, 'VEHICLE', 1, 'white');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (45, 'Капот на Волгу', 'CivSedanHood', '', -2, 'VEHICLE', 1, 'white');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (46, 'Ляда на Волгу',  'CivSedanTrunk', '', -2, 'VEHICLE', 1, 'white');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (47, 'Колесо на Волгу', 'CivSedanWheel', 'https://cdn.discordapp.com/attachments/952625703558475846/1037181447364157550/unknown.png', -2, 'VEHICLE', 1, null);
 
 
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (40, 1);
@@ -357,13 +370,6 @@ VALUES
 
 
 
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (48, 'Хаки V3S', 'Truck_01_Covered', 'https://cdn.discordapp.com/attachments/952625703558475846/1037164091011244092/unknown.png', -2, 'VEHICLE', 1, 'khaki');
-
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (49, 'Дверь на V3S', 'Truck_01_Door_1_1', '', -2, 'VEHICLE', 1, 'khaki');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (50, 'Дверь на V3S', 'Truck_01_Door_2_1', '', -2, 'VEHICLE', 1, 'khaki');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (51, 'Капот на V3S', 'Truck_01_Hood', '', -2, 'VEHICLE', 1, 'khaki');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (52, 'Колесо на V3S', 'Truck_01_Wheel', '', -2, 'VEHICLE', 1, null);
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (53, 'Колесо на V3S', 'Truck_01_WheelDouble', '', -2, 'VEHICLE', 1, null);
 
 
 insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID) values (48, 7);
@@ -395,22 +401,6 @@ INSERT INTO shop.list_price (LISTPRICE_ID, PRICE, CURRENCY, ITEM_ID, STORE_ID) V
 INSERT INTO item_attributes (ITEM_ID, STORE_ID, ATTRIBUTE_NAME, ATTRIBUTE_VALUE)
 VALUES
 	(48, -2, 'buyable', 'true');
-
-
-
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (54, 'Приоритет на 30 дней', '', 'https://cdn.discordapp.com/attachments/934733103589654558/1037151804904980500/unknown.png', -2, 'VIP', 1, '30');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (55, 'Приоритет на 60 дней', '', 'https://cdn.discordapp.com/attachments/934733103589654558/1037151804904980500/unknown.png', -2, 'VIP', 1, '60');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (56, 'Set 101', '101', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (57, 'Set 102', '102', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (58, 'Set 103', '103', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (59, 'Set 104', '104', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (60, 'Set 105', '105', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (61, 'Set 106', '106', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (62, 'Set 107', '107', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (63, 'Set 108', '108', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (64, 'Set 109', '109', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (65, 'Set 110', '110', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30');
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR) VALUES (66, 'Set 111', '111', 'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30');
 
 
 
