@@ -15,9 +15,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -142,16 +144,16 @@ public class SendToServerService {
 
 	private InputStream getFileContent(String username, String password, String host, String path) throws
 			JSchException, SftpException, IOException {
-		PipedOutputStream outputStream = new PipedOutputStream();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		Session session = setupJsch(username, password, host);
 		ChannelSftp channelSftp = (ChannelSftp) session.openChannel(SFTP_TYPE);
 		channelSftp.connect();
 
-		PipedInputStream result = null;
+		InputStream result = null;
 
 		try {
-			channelSftp.get(path, outputStream);
-			result = new PipedInputStream(outputStream);
+			channelSftp.get(path, baos);
+			result = new ByteArrayInputStream(baos.toByteArray());
 		} catch (SftpException e) {
 			if ("No such file".equals(e.getMessage())) {
 				System.out.println("Creating new file: " + path);
