@@ -48,7 +48,7 @@ public class BalanceTransferService {
 
 	private boolean doesHaveRealCharges(User currentUser, Store store) {
 		boolean result = true;
-		if (Boolean.parseBoolean(storeConfigRepository.findByKeyAndStore("checkRealCharges", store).getValue())) {
+		if (Utils.isStoreAdmin(currentUser) || Boolean.parseBoolean(storeConfigRepository.findByKeyAndStore("checkRealCharges", store).getValue())) {
 			List<Payment> payments = paymentRepository.findAllByUserAndTypeNotIn(currentUser, Collections.singletonList(Type.TRANSFER));
 			int threshold = Integer.parseInt(storeConfigRepository.findByKeyAndStore("realChargesThreshold", store).getValue());
 			result = threshold <= payments.size();

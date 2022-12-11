@@ -71,7 +71,8 @@ public class BalanceController {
 		payment.setType(Type.TRANSFER);
 		payment.setStatus(OrderStatus.PENDING);
 		if (payment.getAmount().compareTo(BigDecimal.ZERO) > 0) {
-			User user = userRepository.getBySteamIdAndStore(steamId, store);
+			boolean isSelfCharge = Utils.isStoreAdmin() && Utils.getCurrentUser().getSteamId().equals(steamId);
+			User user = isSelfCharge ? Utils.getCurrentUser() : userRepository.getBySteamIdAndStore(steamId, store);
 			if (user != null) {
 				payment.setUser(user);
 				balanceTransferService.doTransfer(payment);
@@ -86,7 +87,7 @@ public class BalanceController {
 	@GetMapping("{paymentId}")
 	@SuppressWarnings("deprecation")
 	@PreAuthorize("hasAuthority('STORE_READ')")
-	public Payment getOrderById(@PathVariable("paymentId") Long paymentId, OpenIDAuthenticationToken principal) {
+	public Payment getPaymentById(@PathVariable("paymentId") Long paymentId, OpenIDAuthenticationToken principal) {
 		Payment result = null;
 		Optional<Payment> fromRepo = paymentRepository.findById(paymentId);
 		if (fromRepo.isPresent() && fromRepo.get().getUser().equals(principal.getPrincipal())) {

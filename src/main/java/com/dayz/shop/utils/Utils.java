@@ -45,6 +45,14 @@ public class Utils {
 		return user.getRoles().stream().flatMap((Function<Role, Stream<Privilege>>) input -> input.getPrivileges().stream()).collect(Collectors.toList()).contains(privilegeRepository.findByName("STORE_WRITE"));
 	}
 
+	public static boolean isAppAdmin() {
+		return isAppAdmin(getCurrentUser());
+	}
+
+	public static boolean isStoreAdmin() {
+		return isStoreAdmin(getCurrentUser());
+	}
+
 	public static boolean isRootStore(Store store) {
 		return rootStoreId.equals(store.getId());
 	}
