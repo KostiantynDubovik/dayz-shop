@@ -91,6 +91,8 @@ public class OrderService {
 			order.setStatus(OrderStatus.COMPLETE);
 			order.getOrderItems().forEach(orderItem -> orderItem.setStatus(OrderStatus.COMPLETE));
 		} catch (JSchException | InterruptedException | SftpException | IOException e) {
+			order.setStatus(OrderStatus.FAILED);
+			order.getOrderItems().forEach(orderItem -> orderItem.setStatus(OrderStatus.COMPLETE));
 			e.printStackTrace();
 		}
 		return orderRepository.save(order);

@@ -8,6 +8,7 @@ import com.dayz.shop.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -31,7 +32,8 @@ public class BalanceTransferService {
 		User currentUser = Utils.getCurrentUser();
 		if (Utils.isStoreAdmin(currentUser) || (currentUser.getBalance().compareTo(payment.getAmount()) > 0 && doesHaveRealCharges(currentUser, payment.getStore()))) {
 			User paymentUser = payment.getUser();
-			paymentUser.setBalance(paymentUser.getBalance().add(payment.getAmount()));
+			BigDecimal newBalance = paymentUser.getBalance().add(payment.getAmount());
+			paymentUser.setBalance(newBalance.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : newBalance);
 			if (!Utils.isStoreAdmin(currentUser)) {
 				currentUser.setBalance(currentUser.getBalance().subtract(payment.getAmount()));
 				userRepository.save(currentUser);
