@@ -143,7 +143,7 @@ public class SendToServerService {
 	}
 
 	private InputStream getFileContent(String username, String password, String host, String path) throws
-			JSchException, SftpException, IOException {
+			JSchException, SftpException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		Session session = setupJsch(username, password, host);
 		ChannelSftp channelSftp = (ChannelSftp) session.openChannel(SFTP_TYPE);
@@ -168,7 +168,7 @@ public class SendToServerService {
 	}
 
 	private void updateFile(String username, String password, String host, String path, InputStream contentStream)
-			throws JSchException, SftpException, IOException {
+			throws JSchException, SftpException {
 		Session session = null;
 		ChannelSftp channelSftp = null;
 		try {
