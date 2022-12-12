@@ -10,6 +10,7 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -17,37 +18,39 @@ import java.io.IOException;
 
 @Order(1)
 @Component
-public class StoreFilter implements Filter {
+public class StoreFilter extends HttpFilter {
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+	public void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 		Store requestedStore = Utils.extractStoreFromRequest(request);
+		if (requestedStore == null) {
+			response.sendError(404);
+		} else {
+			request.setAttribute("store", requestedStore);
 
-		HttpServletRequest httpRequest = (HttpServletRequest) request;
-		httpRequest.setAttribute("store", requestedStore);
+			HttpSession session = request.getSession(false);
 
-		HttpSession session = httpRequest.getSession(false);
-
-		if (session != null) {
-			SecurityContext securityContext = (SecurityContext) session.getAttribute("SPRING_SECURITY_CONTEXT");
-			if (securityContext != null) {
-				Authentication authentication = securityContext.getAuthentication();
-				User user = (User) authentication.getPrincipal();
-				if (!Utils.isAppAdmin(user)) {
-					Store userStore = user.getStore();
-					if (!userStore.getId().equals(requestedStore.getId()) && !Utils.isAppAdmin(user)) {
-						SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
-						logoutHandler.setClearAuthentication(true);
-						logoutHandler.setInvalidateHttpSession(true);
-						logoutHandler.logout(httpRequest, (HttpServletResponse) response, authentication);
-						((HttpServletResponse) response).sendRedirect("/");
-						return;
+			if (session != null) {
+				SecurityContext securityContext = (SecurityContext) session.getAttribute("SPRING_SECURITY_CONTEXT");
+				if (securityContext != null) {
+					Authentication authentication = securityContext.getAuthentication();
+					User user = (User) authentication.getPrincipal();
+					if (!Utils.isAppAdmin(user)) {
+						Store userStore = user.getStore();
+						if (!userStore.getId().equals(requestedStore.getId()) && !Utils.isAppAdmin(user)) {
+							SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
+							logoutHandler.setClearAuthentication(true);
+							logoutHandler.setInvalidateHttpSession(true);
+							logoutHandler.logout(request, response, authentication);
+							response.sendRedirect("/");
+							return;
+						}
 					}
 				}
 			}
-		}
 
-		chain.doFilter(request, response);
+			chain.doFilter(request, response);
+		}
 	}
 
 }

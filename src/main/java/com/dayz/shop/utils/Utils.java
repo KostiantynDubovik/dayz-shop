@@ -63,8 +63,7 @@ public class Utils {
 	}
 
 	public static Store extractStoreFromRequest(ServletRequest request) {
-//		return storeNameStoreMap.get(request.getServerName().split("\\.")[0].toLowerCase());
-		return storeNameStoreMap.get("alcatraz");
+		return storeNameStoreMap.get(request.getServerName().split("\\.")[0].toLowerCase());
 	}
 
 	public static User getCurrentUser() {
