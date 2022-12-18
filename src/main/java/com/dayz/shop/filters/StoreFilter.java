@@ -20,37 +20,44 @@ import java.io.IOException;
 @Component
 public class StoreFilter extends HttpFilter {
 
-	@Override
-	public void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-		Store requestedStore = Utils.extractStoreFromRequest(request);
-		if (requestedStore == null) {
-			response.sendError(404);
-		} else {
-			request.setAttribute("store", requestedStore);
+    @Override
+    public void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+        if (isNotFreeKassaIp(request)) {
+            Store requestedStore = Utils.extractStoreFromRequest(request);
+            if (requestedStore == null) {
+                response.sendError(404);
+            } else {
+                request.setAttribute("store", requestedStore);
 
-			HttpSession session = request.getSession(false);
+                HttpSession session = request.getSession(false);
 
-			if (session != null) {
-				SecurityContext securityContext = (SecurityContext) session.getAttribute("SPRING_SECURITY_CONTEXT");
-				if (securityContext != null) {
-					Authentication authentication = securityContext.getAuthentication();
-					User user = (User) authentication.getPrincipal();
-					if (!Utils.isAppAdmin(user)) {
-						Store userStore = user.getStore();
-						if (!userStore.getId().equals(requestedStore.getId()) && !Utils.isAppAdmin(user)) {
-							SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
-							logoutHandler.setClearAuthentication(true);
-							logoutHandler.setInvalidateHttpSession(true);
-							logoutHandler.logout(request, response, authentication);
-							response.sendRedirect("/");
-							return;
-						}
-					}
-				}
-			}
+                if (session != null) {
+                    SecurityContext securityContext = (SecurityContext) session.getAttribute("SPRING_SECURITY_CONTEXT");
+                    if (securityContext != null) {
+                        Authentication authentication = securityContext.getAuthentication();
+                        User user = (User) authentication.getPrincipal();
+                        if (!Utils.isAppAdmin(user)) {
+                            Store userStore = user.getStore();
+                            if (!userStore.getId().equals(requestedStore.getId()) && !Utils.isAppAdmin(user)) {
+                                SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
+                                logoutHandler.setClearAuthentication(true);
+                                logoutHandler.setInvalidateHttpSession(true);
+                                logoutHandler.logout(request, response, authentication);
+                                response.sendRedirect("/");
+                                return;
+                            }
+                        }
+                    }
+                }
 
-			chain.doFilter(request, response);
-		}
-	}
+                chain.doFilter(request, response);
+            }
+        }
+    }
 
+
+    private boolean isNotFreeKassaIp(HttpServletRequest request) {
+        String reqIp = Utils.getClientIpAddress(request);
+        return !Utils.getStoreConfig("freekassa.ips", -2L).contains(reqIp);
+    }
 }

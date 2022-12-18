@@ -3,8 +3,8 @@ package com.dayz.shop.service;
 import com.dayz.shop.jpa.entities.Store;
 import com.dayz.shop.jpa.entities.User;
 import com.dayz.shop.repository.RoleRepository;
-import com.dayz.shop.repository.StoreConfigRepository;
 import com.dayz.shop.repository.UserRepository;
+import com.dayz.shop.utils.Utils;
 import org.apache.wink.client.RestClient;
 import org.apache.wink.json4j.JSONException;
 import org.apache.wink.json4j.JSONObject;
@@ -21,17 +21,15 @@ public class UserService {
 	public static final String STEAM_API_KEY = "steam.api.key";
 	private final UserRepository userRepository;
 	private final RoleRepository roleRepository;
-	private final StoreConfigRepository storeConfigRepository;
 
 	@Value("${steam.api.url}")
 	private String apiUrl;
 
 
 	@Autowired
-	public UserService(UserRepository userRepository, RoleRepository roleRepository, StoreConfigRepository storeConfigRepository) {
+	public UserService(UserRepository userRepository, RoleRepository roleRepository) {
 		this.userRepository = userRepository;
 		this.roleRepository = roleRepository;
-		this.storeConfigRepository = storeConfigRepository;
 	}
 
 	public String getApiUrl() {
@@ -43,7 +41,7 @@ public class UserService {
 	}
 
 	public String getApiKey(Store store) {
-		return storeConfigRepository.findByKeyAndStore(STEAM_API_KEY, store).getValue();
+		return Utils.getStoreConfig(STEAM_API_KEY, store);
 	}
 
 	//parse json to get nickname and avatar url

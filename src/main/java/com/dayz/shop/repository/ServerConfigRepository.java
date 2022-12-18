@@ -10,6 +10,7 @@ import java.util.List;
 
 @Repository
 public interface ServerConfigRepository extends JpaRepository<ServerConfig, Long> {
-	ServerConfig findByKeyAndServer(String key, Server store);
-	List<ServerConfig> findAllByServer(Server store);
+	ServerConfig findByKeyAndServer(String key, Server server);
+	ServerConfig findByKeyAndServerId(String key, Long serverId);
+	List<ServerConfig> findAllByServer(Server server);
 }

@@ -2,7 +2,6 @@ package com.dayz.shop.service;
 
 import com.dayz.shop.jpa.entities.*;
 import com.dayz.shop.repository.PaymentRepository;
-import com.dayz.shop.repository.StoreConfigRepository;
 import com.dayz.shop.utils.Utils;
 import nonapi.io.github.classgraph.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +24,11 @@ public class FreeKassaService {
 	public static final String SIGNATURE_KEY = "s";
 	public static final String PAYMENT_ID_KEY = "o";
 	public static final String CURRENCY_KEY = "currency";
-	private final StoreConfigRepository storeConfigRepository;
 	private final PaymentRepository paymentRepository;
 	private final UserService userService;
 
 	@Autowired
-	public FreeKassaService(StoreConfigRepository storeConfigRepository, PaymentRepository paymentRepository, UserService userService) {
-		this.storeConfigRepository = storeConfigRepository;
+	public FreeKassaService(PaymentRepository paymentRepository, UserService userService) {
 		this.paymentRepository = paymentRepository;
 		this.userService = userService;
 	}
@@ -45,8 +42,8 @@ public class FreeKassaService {
 
 	private String buildRedirectUrl(Payment payment) {
 		Store store = payment.getStore();
-		String merchantId = getStoreConfigValue("freekassa.merchantId", store);
-		String secret = getStoreConfigValue("freekassa.secret", store);
+		String merchantId = Utils.getStoreConfig("freekassa.merchantId", store);
+		String secret = Utils.getStoreConfig("freekassa.secret", store);
 
 		String amount = payment.getAmount().setScale(2, RoundingMode.UNNECESSARY).toString();
 		Long paymentId = payment.getId();
@@ -55,17 +52,13 @@ public class FreeKassaService {
 
 		String signHashed = DigestUtils.md5DigestAsHex(sign.getBytes());
 		paymentRepository.save(payment);
-		return UriBuilder.fromUri(getStoreConfigValue("freekassa.baseUrl", store))
+		return UriBuilder.fromUri(Utils.getStoreConfig("freekassa.baseUrl", store))
 				.queryParam(MERCHAND_ID_KEY, merchantId)
 				.queryParam(AMOUNT_KEY, amount)
 				.queryParam(CURRENCY_KEY, currency)
 				.queryParam(PAYMENT_ID_KEY, paymentId)
 				.queryParam(SIGNATURE_KEY, signHashed)
 				.build().toString();
-	}
-
-	private String getStoreConfigValue(String key, Store store) {
-		return storeConfigRepository.findByKeyAndStore(key, store).getValue();
 	}
 
 	public String notify(HttpServletRequest request, HttpServletResponse response, Store store) {
@@ -95,6 +88,6 @@ public class FreeKassaService {
 
 	public boolean isFreeKassaIp(HttpServletRequest request, Store store) {
 		String reqIp = Utils.getClientIpAddress(request);
-		return storeConfigRepository.findByKeyAndStore("freekassa.ips", store).getValue().contains(reqIp);
+		return Utils.getStoreConfig("freekassa.ips", store).contains(reqIp);
 	}
 }

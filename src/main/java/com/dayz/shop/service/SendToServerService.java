@@ -4,9 +4,8 @@ import com.dayz.shop.jpa.entities.ItemType;
 import com.dayz.shop.jpa.entities.Order;
 import com.dayz.shop.json.MCodeArray;
 import com.dayz.shop.json.Root;
-import com.dayz.shop.repository.ServerConfigRepository;
-import com.dayz.shop.repository.StoreConfigRepository;
 import com.dayz.shop.utils.MCodeMapper;
+import com.dayz.shop.utils.Utils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jcraft.jsch.*;
@@ -30,14 +29,10 @@ public class SendToServerService {
 	public static final String PIPE = "|";
 	public static final String SEMICOLON = ";";
 	public static final String ZERO = "0";
-	final ServerConfigRepository serverConfigRepository;
 	final MCodeMapper mCodeMapper;
-	private StoreConfigRepository storeConfigRepository;
 
 	@Autowired
-	public SendToServerService(ServerConfigRepository serverConfigRepository, StoreConfigRepository storeConfigRepository, MCodeMapper mCodeMapper) {
-		this.serverConfigRepository = serverConfigRepository;
-		this.storeConfigRepository = storeConfigRepository;
+	public SendToServerService(MCodeMapper mCodeMapper) {
 		this.mCodeMapper = mCodeMapper;
 	}
 
@@ -119,27 +114,27 @@ public class SendToServerService {
 	}
 
 	private String getPathToSpawningItemsJson(Order order) {
-		return serverConfigRepository.findByKeyAndServer("PATH_TO_JSON", order.getServer()).getValue();
+		return Utils.getServerConfig("PATH_TO_JSON", order.getServer());
 	}
 
 	private String getPathToSet(Order order) {
-		return serverConfigRepository.findByKeyAndServer("PATH_TO_SET", order.getServer()).getValue();
+		return Utils.getServerConfig("PATH_TO_SET", order.getServer());
 	}
 
 	private String getPathToVip(Order order) {
-		return serverConfigRepository.findByKeyAndServer("PATH_TO_VIP", order.getServer()).getValue();
+		return Utils.getServerConfig("PATH_TO_VIP", order.getServer());
 	}
 
 	private String getUsr(Order order) {
-		return serverConfigRepository.findByKeyAndServer("SSH_USR", order.getServer()).getValue();
+		return Utils.getServerConfig("SSH_USR", order.getServer());
 	}
 
 	private String getPwd(Order order) {
-		return serverConfigRepository.findByKeyAndServer("SSH_PWD", order.getServer()).getValue();
+		return Utils.getServerConfig("SSH_PWD", order.getServer());
 	}
 
 	private String getIp(Order order) {
-		return serverConfigRepository.findByKeyAndServer("SSH_IP", order.getServer()).getValue();
+		return Utils.getServerConfig("SSH_IP", order.getServer());
 	}
 
 	private InputStream getFileContent(String username, String password, String host, String path) throws

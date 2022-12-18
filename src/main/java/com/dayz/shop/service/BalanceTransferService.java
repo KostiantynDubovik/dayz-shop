@@ -2,7 +2,6 @@ package com.dayz.shop.service;
 
 import com.dayz.shop.jpa.entities.*;
 import com.dayz.shop.repository.PaymentRepository;
-import com.dayz.shop.repository.StoreConfigRepository;
 import com.dayz.shop.repository.UserRepository;
 import com.dayz.shop.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +14,11 @@ import java.util.List;
 
 @Service
 public class BalanceTransferService {
-	private final StoreConfigRepository storeConfigRepository;
 	private final PaymentRepository paymentRepository;
 	private final UserRepository userRepository;
 
 	@Autowired
-	public BalanceTransferService(StoreConfigRepository storeConfigRepository,
-	                              PaymentRepository paymentRepository, UserRepository userRepository) {
-		this.storeConfigRepository = storeConfigRepository;
+	public BalanceTransferService(PaymentRepository paymentRepository, UserRepository userRepository) {
 		this.paymentRepository = paymentRepository;
 		this.userRepository = userRepository;
 	}
@@ -50,9 +46,9 @@ public class BalanceTransferService {
 
 	private boolean doesHaveRealCharges(User currentUser, Store store) {
 		boolean result = true;
-		if (Utils.isStoreAdmin(currentUser) || Boolean.parseBoolean(storeConfigRepository.findByKeyAndStore("checkRealCharges", store).getValue())) {
+		if (Utils.isStoreAdmin(currentUser) || Boolean.parseBoolean(Utils.getStoreConfig("checkRealCharges", store))) {
 			List<Payment> payments = paymentRepository.findAllByUserAndTypeNotIn(currentUser, Collections.singletonList(Type.TRANSFER));
-			int threshold = Integer.parseInt(storeConfigRepository.findByKeyAndStore("realChargesThreshold", store).getValue());
+			int threshold = Integer.parseInt(Utils.getStoreConfig("realChargesThreshold", store));
 			result = threshold <= payments.size();
 		}
 		return result;

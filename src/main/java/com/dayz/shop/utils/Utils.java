@@ -1,12 +1,7 @@
 package com.dayz.shop.utils;
 
-import com.dayz.shop.jpa.entities.Privilege;
-import com.dayz.shop.jpa.entities.Role;
-import com.dayz.shop.jpa.entities.Store;
-import com.dayz.shop.jpa.entities.User;
-import com.dayz.shop.repository.PrivilegeRepository;
-import com.dayz.shop.repository.RoleRepository;
-import com.dayz.shop.repository.StoreRepository;
+import com.dayz.shop.jpa.entities.*;
+import com.dayz.shop.repository.*;
 import com.google.common.base.Function;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,15 +20,15 @@ public class Utils {
 	public static final Long rootStoreId = -1L;
 	private static Map<String, Store> storeNameStoreMap;
 
-	private static RoleRepository roleRepository;
 	private static PrivilegeRepository privilegeRepository;
-	private static StoreRepository storeRepository;
+	private static StoreConfigRepository storeConfigRepository;
+	private static ServerConfigRepository serverConfigRepository;
 
 	@Autowired
-	public Utils(RoleRepository roleRepository, StoreRepository storeRepository, PrivilegeRepository privilegeRepository) {
-		Utils.roleRepository = roleRepository;
-		Utils.storeRepository = storeRepository;
+	public Utils(StoreRepository storeRepository, PrivilegeRepository privilegeRepository, StoreConfigRepository storeConfigRepository, ServerConfigRepository serverConfigRepository) {
 		Utils.privilegeRepository = privilegeRepository;
+		Utils.storeConfigRepository = storeConfigRepository;
+		Utils.serverConfigRepository = serverConfigRepository;
 		storeNameStoreMap = storeRepository.findAll().stream().collect(Collectors.toMap(Store::getStoreName, store -> store));
 	}
 
@@ -77,5 +72,42 @@ public class Utils {
 		} else {
 			return new StringTokenizer(xForwardedForHeader, ",").nextToken().trim();
 		}
+	}
+
+	public static String getStoreConfig(String key, Long storeId) {
+		String result = null;
+		StoreConfig storeConfig = storeConfigRepository.findByKeyAndStoreId(key, storeId);
+		if (storeConfig != null) {
+			result = storeConfig.getValue();
+		}
+		return result;
+	}
+
+	public static String getStoreConfig(String key, Store store) {
+		String result = null;
+		StoreConfig storeConfig = storeConfigRepository.findByKeyAndStore(key, store);
+		if (storeConfig != null) {
+			result = storeConfig.getValue();
+		}
+		return result;
+	}
+
+	public static String getServerConfig(String key, Long serverId) {
+
+		String result = null;
+		ServerConfig serverConfig = serverConfigRepository.findByKeyAndServerId(key, serverId);
+		if (serverConfig != null) {
+			result = serverConfig.getValue();
+		}
+		return result;
+	}
+
+	public static String getServerConfig(String key, Server server) {
+		String result = null;
+		ServerConfig serverConfig = serverConfigRepository.findByKeyAndServer(key, server);
+		if (serverConfig != null) {
+			result = serverConfig.getValue();
+		}
+		return result;
 	}
 }
