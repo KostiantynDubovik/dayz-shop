@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.UriBuilder;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -36,6 +37,7 @@ public class FreeKassaService {
 	public String initPayment(Payment payment) {
 		payment.setStatus(OrderStatus.PENDING);
 		payment.setType(Type.FREEKASSA);
+		payment.setChargeTime(LocalDateTime.now());
 		payment = paymentRepository.save(payment);
 		return buildRedirectUrl(payment);
 	}

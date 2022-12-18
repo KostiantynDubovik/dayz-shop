@@ -52,6 +52,8 @@ public class StoreFilter extends HttpFilter {
 
                 chain.doFilter(request, response);
             }
+        } else {
+            chain.doFilter(request, response);
         }
     }
 
