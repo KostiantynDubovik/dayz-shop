@@ -27,7 +27,9 @@ public class ListPrice {
 	@Column(name = "PRICE", nullable = false)
 	private BigDecimal price;
 
-	@OneToOne(mappedBy = "listPrice", cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL)
+	@JsonIgnore
+	@JoinColumn(name = "ITEM_ID", referencedColumnName = "ITEM_ID", nullable = false)
 	private Item item;
 
 	@Column(name = "CURRENCY", nullable = false)
