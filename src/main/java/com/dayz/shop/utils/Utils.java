@@ -25,6 +25,7 @@ public class Utils {
 
 	private static PrivilegeRepository privilegeRepository;
 	private static StoreConfigRepository storeConfigRepository;
+	private static StoreRepository storeRepository;
 	private static ServerConfigRepository serverConfigRepository;
 
 	@Autowired
@@ -32,6 +33,7 @@ public class Utils {
 		Utils.privilegeRepository = privilegeRepository;
 		Utils.storeConfigRepository = storeConfigRepository;
 		Utils.serverConfigRepository = serverConfigRepository;
+		Utils.storeRepository = storeRepository;
 		Utils.storeNameStoreMap = storeRepository.findAll().stream().collect(Collectors.toMap(Store::getStoreName, store -> store));
 	}
 
@@ -65,10 +67,7 @@ public class Utils {
 		if (store == null && isFreeKassaIp(request)) {
 			String orderId = request.getParameter(MERCHANT_ORDER_ID_KEY);
 			if (orderId != null) {
-				Order order = OrderUtils.getOrder(orderId);
-				if (order != null) {
-					store = order.getStore();
-				}
+				store = storeRepository.findByOrder(Long.valueOf(orderId));
 			}
 		}
 		return store;
