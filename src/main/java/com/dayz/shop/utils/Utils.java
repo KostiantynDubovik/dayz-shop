@@ -64,7 +64,7 @@ public class Utils {
 
 	public static Store extractStoreFromRequest(HttpServletRequest request) {
 		Store store = storeNameStoreMap.get(request.getServerName().split("\\.")[0].toLowerCase());
-		if (store == null && isFreeKassaIp(request)) {
+		if (store == null && request.getParameterMap().containsKey(MERCHANT_ORDER_ID_KEY)) {
 			String orderId = request.getParameter(MERCHANT_ORDER_ID_KEY);
 			if (orderId != null) {
 				store = storeRepository.findByOrder(Long.valueOf(orderId));
