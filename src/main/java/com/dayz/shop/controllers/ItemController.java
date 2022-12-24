@@ -58,14 +58,14 @@ public class ItemController {
 
 	@PostMapping()
 	@PreAuthorize("hasAuthority('STORE_WRITE')")
-	public Item createItem(@RequestBody Item item, @RequestParam BigDecimal listPriceValue, @RequestAttribute Store store) {
+	public Item createItem(@RequestBody Item item, @RequestParam BigDecimal listPrice, @RequestAttribute Store store) {
 		item.setStore(store);
-		ListPrice listPrice = new ListPrice();
-		listPrice.setPrice(listPriceValue);
-		listPrice.setStore(store);
-		listPrice.setItem(item);
-		listPrice.setCurrency("RUB");
-		item.setListPrice(listPrice);
+		ListPrice price = new ListPrice();
+		price.setPrice(listPrice);
+		price.setStore(store);
+		price.setItem(item);
+		price.setCurrency("RUB");
+		item.setListPrice(price);
 		return itemRepository.save(item);
 	}
 
