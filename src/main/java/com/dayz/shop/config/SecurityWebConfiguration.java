@@ -39,7 +39,7 @@ public class SecurityWebConfiguration extends WebSecurityConfigurerAdapter {
 				.authorizeRequests()
 				.expressionHandler(webSecurityExpressionHandler())
 				.antMatchers("/shutdown").hasIpAddress("127.0.0.1")
-				.antMatchers("/settings").hasAuthority("STORE_WRITE")
+				.antMatchers("/settings/*").hasAuthority("STORE_WRITE")
 				.antMatchers("/profile").hasAuthority("STORE_READ")
 				.antMatchers("/").permitAll()
 				.antMatchers("/fk-verify.html").permitAll()
