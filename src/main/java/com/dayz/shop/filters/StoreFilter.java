@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+import static com.dayz.shop.utils.Utils.US_STORE_KEY;
+
 @org.springframework.core.annotation.Order(1)
 @Component
 public class StoreFilter extends HttpFilter {
@@ -26,7 +28,7 @@ public class StoreFilter extends HttpFilter {
 		if (requestedStore == null) {
 			response.sendError(404);
 		} else {
-			if (!request.getServerName().startsWith(requestedStore.getStoreName())) {
+			if (!request.getParameterMap().containsKey(US_STORE_KEY) && !request.getServerName().startsWith(requestedStore.getStoreName())) {
 				response.sendRedirect(String.join("?", request.getRequestURI().replace("dayz-shop", String.join(".", requestedStore.getStoreName(), "dayz-shop")), request.getQueryString()));
 			} else {
 				request.setAttribute("store", requestedStore);
