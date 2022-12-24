@@ -6,6 +6,7 @@ import org.openid4java.consumer.ConsumerManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.expression.SecurityExpressionHandler;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
+@EnableScheduling
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityWebConfiguration extends WebSecurityConfigurerAdapter {

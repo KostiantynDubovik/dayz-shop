@@ -355,10 +355,14 @@ create table if not exists user_services
 	ITEM_TYPE varchar(25) not null,
 	END_DATE  timestamp   not null,
 	SERVER_ID bigint      not null,
+	ORDER_ID bigint not null,
 	primary key (USER_ID, ITEM_TYPE),
 	constraint user_services_users_USER_ID_fk
 		foreign key (USER_ID) references users (USER_ID)
 			on delete cascade on update cascade,
+	constraint user_services_orders_null_fk
+		foreign key (ORDER_ID) references orders (ORDER_ID)
+			on update cascade on delete cascade,
 	constraint user_services_servers_SERVER_ID_fk
 		foreign key (SERVER_ID) references servers (SERVER_ID)
 			on delete cascade on update cascade

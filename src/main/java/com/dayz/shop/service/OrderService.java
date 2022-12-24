@@ -16,8 +16,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -112,20 +114,39 @@ public class OrderService {
 					LocalDateTime endDate;
 					if (userService != null) {
 						endDate = userService.getEndDate();
+						if (itemTypeOrderEntry.getKey().equals(ItemType.SET)) {
+							chargebackSet(userService);
+						}
 					} else {
 						userService = new UserService();
+						userService.setOrder(orderItem.getOrder());
 						userService.setUser(itemTypeOrderEntry.getValue().getUser());
 						userService.setItemType(itemType);
 						userService.setItemTypeStr(itemType.toString());
 						userService.setServer(server);
 						userService.setUser(user);
 						userService.setUserId(user.getId());
-						endDate = LocalDateTime.now();
+						endDate = LocalDateTime.now().plusDays(30);
 					}
-					userService.setEndDate(endDate.plus(Period.ofDays(Integer.parseInt(item.getColor()))));
+					if (itemTypeOrderEntry.getKey().equals(ItemType.VIP)) {
+						endDate = endDate.plusDays(Integer.parseInt(item.getColor()));
+					} else if (itemTypeOrderEntry.getKey().equals(ItemType.SET)) {
+						chargebackSet(userService);
+						endDate = LocalDateTime.now().plusDays(30);
+					}
+					userService.setEndDate(endDate);
 					userServiceRepository.save(userService);
 			}
 		}
+	}
+
+	private void chargebackSet(UserService userService) {
+		LocalDateTime end = userService.getEndDate();
+		long days = ChronoUnit.DAYS.between(end, LocalDateTime.now());
+		BigDecimal chargebackAmount = userService.getOrder().getOrderTotal().divide(BigDecimal.valueOf(30), 0, RoundingMode.HALF_DOWN).multiply(BigDecimal.valueOf(days));
+		User user = userService.getUser();
+		user.setBalance(user.getBalance().add(chargebackAmount));
+		userRepository.save(user);
 	}
 
 	private Map<ItemType, Order> splitTypes(Order order) {

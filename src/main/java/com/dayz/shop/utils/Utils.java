@@ -29,7 +29,7 @@ public class Utils {
 		Utils.privilegeRepository = privilegeRepository;
 		Utils.storeConfigRepository = storeConfigRepository;
 		Utils.serverConfigRepository = serverConfigRepository;
-		storeNameStoreMap = storeRepository.findAll().stream().collect(Collectors.toMap(Store::getStoreName, store -> store));
+		Utils.storeNameStoreMap = storeRepository.findAll().stream().collect(Collectors.toMap(Store::getStoreName, store -> store));
 	}
 
 	public static boolean isAppAdmin(User user) {

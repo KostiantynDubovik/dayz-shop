@@ -44,6 +44,10 @@ public class UserService {
 	@ManyToOne
 	private Server server;
 
+	@JoinColumn(name = "ORDER_ID")
+	@OneToOne
+	private Order order;
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;

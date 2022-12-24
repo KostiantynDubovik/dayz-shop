@@ -4,7 +4,6 @@ import com.dayz.shop.jpa.entities.*;
 import com.dayz.shop.repository.OrderRepository;
 import org.apache.commons.collections4.CollectionUtils;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,7 +50,7 @@ public class OrderUtils {
 			orders.add(order);
 			orderRepository.save(order);
 		}
-		return orders.stream().findFirst().get();
+		return orders.stream().findFirst().orElse(new Order());
 	}
 
 	public Order createOrder(User user, Store store) {
