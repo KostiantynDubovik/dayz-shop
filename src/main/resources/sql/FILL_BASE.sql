@@ -179,6 +179,7 @@ INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'steam.api.ke
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'yoomoney.client_id', '283B42B550A5600978948FF5B6F48F1980E8C374C8B1F9F42FD867F80D0BE356');
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'yoomoney.client_secret', '5CD09F538D6F2D0C43A0B389A252B835C67109174C778C709ED7AC306C3B824B2F5945880B3B6381C4D51B0A3967D49639D45C4A0D0D42CD7ED54145EA8245D9');
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'yoomoney.app_name', 'Alcatraz Donation');
+INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE) VALUES (-2, 'default.image', 'https://media.discordapp.net/attachments/925072921125351454/1056336180188299274/missing.png?width=676&height=676');
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE)
 VALUES (-2, 'freekassa.api_key', 'c7d8f2117410ec8d40a00b077d3b9bd9'),
        (-2, 'freekassa.secret', 'TC*bn0XfesGM8cC'),

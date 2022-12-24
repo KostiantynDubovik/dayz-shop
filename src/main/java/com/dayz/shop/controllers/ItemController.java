@@ -6,6 +6,7 @@ import com.dayz.shop.jpa.entities.Store;
 import com.dayz.shop.repository.CategoryRepository;
 import com.dayz.shop.repository.ItemRepository;
 import com.dayz.shop.repository.ListPriceRepository;
+import com.dayz.shop.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -56,7 +57,9 @@ public class ItemController {
 		price.setItem(item);
 		price.setCurrency("RUB");
 		item.setListPrice(price);
-//		item.setListPrice(listPriceRepository.save(price));
+		if (item.getImageUrl() == null) {
+			item.setImageUrl(Utils.getStoreConfig("'default.image", store));
+		}
 		return itemRepository.save(item);
 	}
 
