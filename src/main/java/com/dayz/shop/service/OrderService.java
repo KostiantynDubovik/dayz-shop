@@ -120,7 +120,7 @@ public class OrderService {
 					} else {
 						userService = new UserService();
 						userService.setOrder(orderItem.getOrder());
-						userService.setUser(itemTypeOrderEntry.getValue().getUser());
+						userService.setUser(orderItem.getUser());
 						userService.setItemType(itemType);
 						userService.setItemTypeStr(itemType.toString());
 						userService.setServer(server);
