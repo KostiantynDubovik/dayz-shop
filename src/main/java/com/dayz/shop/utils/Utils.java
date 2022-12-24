@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 public class Utils {
 	public static final Long rootStoreId = -1L;
 	public static final String MERCHANT_ORDER_ID_KEY = "MERCHANT_ORDER_ID";
+	public static final String US_STORE_KEY = "us_store";
 	private static Map<String, Store> storeNameStoreMap;
 
 	private static PrivilegeRepository privilegeRepository;
@@ -64,11 +65,8 @@ public class Utils {
 
 	public static Store extractStoreFromRequest(HttpServletRequest request) {
 		Store store = storeNameStoreMap.get(request.getServerName().split("\\.")[0].toLowerCase());
-		if (store == null && request.getParameterMap().containsKey(MERCHANT_ORDER_ID_KEY)) {
-			String orderId = request.getParameter(MERCHANT_ORDER_ID_KEY);
-			if (orderId != null) {
-				store = storeRepository.findByOrder(Long.valueOf(orderId));
-			}
+		if (store == null && request.getParameterMap().containsKey(US_STORE_KEY)) {
+			store = storeNameStoreMap.get(request.getParameter(US_STORE_KEY));
 		}
 		return store;
 	}

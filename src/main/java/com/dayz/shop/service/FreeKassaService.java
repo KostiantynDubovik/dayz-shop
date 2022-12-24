@@ -18,6 +18,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.dayz.shop.utils.Utils.US_STORE_KEY;
+
 @Service
 public class FreeKassaService {
 	public static final String MERCHAND_ID_KEY = "m";
@@ -60,6 +62,7 @@ public class FreeKassaService {
 				.queryParam(CURRENCY_KEY, currency)
 				.queryParam(PAYMENT_ID_KEY, paymentId)
 				.queryParam(SIGNATURE_KEY, signHashed)
+				.queryParam(US_STORE_KEY, payment.getStore().getStoreName())
 				.build().toString();
 	}
 
