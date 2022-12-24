@@ -45,8 +45,8 @@ public class Item {
 	@ToString.Exclude
 	private List<Category> categories;
 
-	@Formula("(select lp.PRICE from list_price lp where lp.ITEM_ID = ITEM_ID AND lp.STORE_ID = STORE_ID)")
-	private BigDecimal listPrice;
+	@OneToOne(cascade = CascadeType.MERGE)
+	private ListPrice listPrice;
 
 	@OneToMany(cascade = CascadeType.MERGE)
 	@JoinTable(name = "offer_price",

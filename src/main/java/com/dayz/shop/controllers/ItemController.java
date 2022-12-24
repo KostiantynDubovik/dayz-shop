@@ -1,6 +1,7 @@
 package com.dayz.shop.controllers;
 
 import com.dayz.shop.jpa.entities.Item;
+import com.dayz.shop.jpa.entities.ListPrice;
 import com.dayz.shop.jpa.entities.Store;
 import com.dayz.shop.repository.CategoryRepository;
 import com.dayz.shop.repository.ItemRepository;
@@ -12,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/api/item")
@@ -55,8 +58,14 @@ public class ItemController {
 
 	@PostMapping()
 	@PreAuthorize("hasAuthority('STORE_WRITE')")
-	public Item createItem(@RequestBody Item item, @RequestAttribute Store store) {
+	public Item createItem(@RequestBody Item item, @RequestParam BigDecimal listPriceValue, @RequestAttribute Store store) {
 		item.setStore(store);
+		ListPrice listPrice = new ListPrice();
+		listPrice.setPrice(listPriceValue);
+		listPrice.setStore(store);
+		listPrice.setItem(item);
+		listPrice.setCurrency("RUB");
+		item.setListPrice(listPrice);
 		return itemRepository.save(item);
 	}
 
