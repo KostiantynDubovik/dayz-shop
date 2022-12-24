@@ -26,29 +26,33 @@ public class StoreFilter extends HttpFilter {
 		if (requestedStore == null) {
 			response.sendError(404);
 		} else {
-			request.setAttribute("store", requestedStore);
+			if (!request.getServerName().startsWith(requestedStore.getStoreName())) {
+				response.sendRedirect(String.join("?", request.getRequestURI().replace("dayz-shop", String.join(".", requestedStore.getStoreName(), "dayz-shop")), request.getQueryString()));
+			} else {
+				request.setAttribute("store", requestedStore);
 
-			HttpSession session = request.getSession(false);
+				HttpSession session = request.getSession(false);
 
-			if (session != null) {
-				SecurityContext securityContext = (SecurityContext) session.getAttribute("SPRING_SECURITY_CONTEXT");
-				if (securityContext != null) {
-					Authentication authentication = securityContext.getAuthentication();
-					User user = (User) authentication.getPrincipal();
-					if (!Utils.isAppAdmin(user)) {
-						Store userStore = user.getStore();
-						if (!userStore.getId().equals(requestedStore.getId()) && !Utils.isAppAdmin(user)) {
-							SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
-							logoutHandler.setClearAuthentication(true);
-							logoutHandler.setInvalidateHttpSession(true);
-							logoutHandler.logout(request, response, authentication);
-							response.sendRedirect("/");
-							return;
+				if (session != null) {
+					SecurityContext securityContext = (SecurityContext) session.getAttribute("SPRING_SECURITY_CONTEXT");
+					if (securityContext != null) {
+						Authentication authentication = securityContext.getAuthentication();
+						User user = (User) authentication.getPrincipal();
+						if (!Utils.isAppAdmin(user)) {
+							Store userStore = user.getStore();
+							if (!userStore.getId().equals(requestedStore.getId()) && !Utils.isAppAdmin(user)) {
+								SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
+								logoutHandler.setClearAuthentication(true);
+								logoutHandler.setInvalidateHttpSession(true);
+								logoutHandler.logout(request, response, authentication);
+								response.sendRedirect("/");
+								return;
+							}
 						}
 					}
 				}
+				chain.doFilter(request, response);
 			}
-			chain.doFilter(request, response);
 		}
 	}
 }
