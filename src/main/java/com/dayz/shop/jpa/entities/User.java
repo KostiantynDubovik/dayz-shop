@@ -1,7 +1,10 @@
 package com.dayz.shop.jpa.entities;
 
+import com.dayz.shop.utils.Utils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -15,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -61,19 +65,18 @@ public class User implements UserDetails {
 					name = "USER_ID", referencedColumnName = "USER_ID"),
 			inverseJoinColumns = @JoinColumn(
 					name = "ROLE_ID", referencedColumnName = "ROLE_ID"))
-	private List<Role> roles;
+	@JsonIgnore
+	private List<Role> roles = new ArrayList<>();
 
 	@JsonIgnore
 	@ToString.Exclude
 	@OneToMany(mappedBy = "user")
 	private List<Order> orders;
 
-	public Boolean isActive() {
-		return active;
-	}
-
-	public void setActive(Boolean active) {
-		this.active = active;
+	@JsonProperty(value = "isAdmin", defaultValue = "false")
+	@JsonInclude(JsonInclude.Include.NON_DEFAULT)
+	public boolean isAdmin() {
+		return Utils.isStoreAdmin(this);
 	}
 
 	@Override
@@ -125,7 +128,7 @@ public class User implements UserDetails {
 	@Transient
 	@Override
 	public boolean isEnabled() {
-		return isActive();
+		return active;
 	}
 
 	@Override
