@@ -6,7 +6,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -76,7 +75,7 @@ public class OrderUtils {
 		orderItem.setBoughtTime(LocalDateTime.now());
 		orderItem.setItem(item);
 		List<OfferPrice> offerPrices = item.getOfferPrices();
-		orderItem.setPrice(CollectionUtils.isEmpty(offerPrices) ? item.getListPrice() : getCurrentOfferPrice(offerPrices).getPrice());
+		orderItem.setPrice(CollectionUtils.isEmpty(offerPrices) ? item.getListPrice().getPrice() : getCurrentOfferPrice(offerPrices).getPrice());
 		return orderItem;
 	}
 
