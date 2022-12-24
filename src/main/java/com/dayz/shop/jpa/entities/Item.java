@@ -45,7 +45,9 @@ public class Item {
 	@ToString.Exclude
 	private List<Category> categories;
 
-	@OneToOne(mappedBy = "item")
+	@OneToOne(cascade = CascadeType.ALL)
+	@JsonIgnore
+	@JoinColumn(name = "ITEM_ID", referencedColumnName = "ITEM_ID", nullable = false)
 	private ListPrice listPrice;
 
 	@OneToMany(cascade = CascadeType.MERGE)
