@@ -99,8 +99,6 @@ public class OrderService {
 	}
 
 	private void saveServices(Map<ItemType, Order> separatedTypes) {
-
-		repeatSet:
 		for (Map.Entry<ItemType, Order> itemTypeOrderEntry : separatedTypes.entrySet()) {
 			switch (itemTypeOrderEntry.getKey()) {
 				case SET:
@@ -147,8 +145,8 @@ public class OrderService {
 
 	private void chargebackSet(UserService userService) {
 		LocalDateTime end = userService.getEndDate();
-		long days = ChronoUnit.DAYS.between(end, LocalDateTime.now());
-		BigDecimal chargebackAmount = userService.getOrder().getOrderTotal().divide(BigDecimal.valueOf(30), 0, RoundingMode.HALF_DOWN).multiply(BigDecimal.valueOf(days));
+		long days = ChronoUnit.DAYS.between(LocalDateTime.now(), end);
+		BigDecimal chargebackAmount = userService.getOrder().getOrderTotal().divide(BigDecimal.valueOf(30), 0, RoundingMode.HALF_DOWN).multiply(BigDecimal.valueOf(days).abs());
 		User user = userService.getUser();
 		user.setBalance(user.getBalance().add(chargebackAmount));
 		userRepository.save(user);
