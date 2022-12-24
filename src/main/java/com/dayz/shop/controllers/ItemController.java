@@ -55,7 +55,8 @@ public class ItemController {
 		price.setStore(store);
 		price.setItem(item);
 		price.setCurrency("RUB");
-		item.setListPrice(listPriceRepository.save(price));
+		item.setListPrice(price);
+//		item.setListPrice(listPriceRepository.save(price));
 		return itemRepository.save(item);
 	}
 
