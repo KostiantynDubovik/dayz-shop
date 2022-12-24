@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
+import java.util.Optional;
 import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -24,18 +25,18 @@ public class Utils {
 	private static PrivilegeRepository privilegeRepository;
 	private static StoreConfigRepository storeConfigRepository;
 	private static StoreRepository storeRepository;
-	private static OrderRepository orderRepository;
+	private static PaymentRepository paymentRepository;
 	private static ServerConfigRepository serverConfigRepository;
 
 	@Autowired
 	public Utils(StoreRepository storeRepository, PrivilegeRepository privilegeRepository,
 	             StoreConfigRepository storeConfigRepository, ServerConfigRepository serverConfigRepository,
-	             OrderRepository orderRepository) {
+	             PaymentRepository paymentRepository) {
 		Utils.privilegeRepository = privilegeRepository;
 		Utils.storeConfigRepository = storeConfigRepository;
 		Utils.serverConfigRepository = serverConfigRepository;
 		Utils.storeRepository = storeRepository;
-		Utils.orderRepository = orderRepository;
+		Utils.paymentRepository = paymentRepository;
 		Utils.storeNameStoreMap = storeRepository.findAll().stream().collect(Collectors.toMap(Store::getStoreName, store -> store));
 	}
 
@@ -68,10 +69,10 @@ public class Utils {
 		Store store = storeNameStoreMap.get(request.getServerName().split("\\.")[0].toLowerCase());
 		if (store == null && request.getParameterMap().containsKey(US_STORE_KEY)) {
 			store = storeNameStoreMap.get(request.getParameter(US_STORE_KEY));
-		} else if (store == null && request.getParameterMap().containsKey("MERCHANT_ORDER_ID")) {
-			Order order = orderRepository.getById(Long.valueOf(request.getParameter("MERCHANT_ORDER_ID")));
-			if (order != null) {
-				store = order.getStore();
+		} else if (store == null && request.getParameterMap().containsKey(MERCHANT_ORDER_ID_KEY)) {
+			Optional<Payment> paymentOptional = paymentRepository.findById(Long.valueOf(request.getParameter(MERCHANT_ORDER_ID_KEY)));
+			if (paymentOptional.isPresent()) {
+				store = paymentOptional.get().getStore();
 			}
 		}
 		return store;
