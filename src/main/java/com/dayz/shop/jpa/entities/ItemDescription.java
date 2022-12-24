@@ -27,8 +27,8 @@ public class ItemDescription {
 	@JoinColumn(name = "STORE_ID")
 	private Store store;
 
-	@ManyToOne(cascade = CascadeType.MERGE)
-	@JoinColumn(name = "ITEM_ID")
+	@OneToOne(cascade = CascadeType.MERGE)
+	@JoinColumn(name = "ITEM_ID", referencedColumnName = "ITEM_ID", nullable = false)
 	private Item item;
 
 	@Column(name = "DESCRIPTION")

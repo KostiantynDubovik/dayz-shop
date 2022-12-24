@@ -84,6 +84,8 @@ public class Item {
 	@Column(name = "SEQUENCE")
 	private Long sequence;
 
+	@OneToOne
+	private ItemDescription itemDescription;
 
 	@ManyToMany()
 	@JoinTable(name = "item_server_buyable",

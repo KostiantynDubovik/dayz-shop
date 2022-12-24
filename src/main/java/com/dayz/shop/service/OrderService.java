@@ -131,6 +131,7 @@ public class OrderService {
 							userService.setUser(user);
 							userService.setUserId(user.getId());
 							endDate = LocalDateTime.now().plusDays(30);
+							repeat = false;
 						}
 					} while (repeat);
 					if (itemTypeOrderEntry.getKey().equals(ItemType.VIP)) {
