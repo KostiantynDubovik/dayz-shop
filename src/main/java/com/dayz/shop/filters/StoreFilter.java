@@ -29,7 +29,9 @@ public class StoreFilter extends HttpFilter {
 			response.sendError(404);
 		} else {
 			if (!request.getParameterMap().containsKey(US_STORE_KEY) && !request.getServerName().startsWith(requestedStore.getStoreName())) {
-				response.sendRedirect(String.join("?", request.getRequestURI().replace("dayz-shop", String.join(".", requestedStore.getStoreName(), "dayz-shop")), request.getQueryString()));
+				String serverName = "https://".concat(request.getServerName().replace("dayz-shop", String.join(".", requestedStore.getStoreName(), "dayz-shop")));
+				String query = String.join("?", request.getRequestURI(), request.getQueryString());
+				response.sendRedirect(serverName.concat(query));
 			} else {
 				request.setAttribute("store", requestedStore);
 
