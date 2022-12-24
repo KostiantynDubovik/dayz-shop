@@ -46,6 +46,7 @@ public class Item {
 	private List<Category> categories;
 
 	@OneToOne(cascade = CascadeType.MERGE)
+	@JoinColumn(name = "ITEM_ID", referencedColumnName = "ITEM_ID", nullable = false)
 	private ListPrice listPrice;
 
 	@OneToMany(cascade = CascadeType.MERGE)

@@ -21,6 +21,7 @@ public class ListPrice {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	@Column(name = "LISTPRICE_ID", nullable = false)
+	@JsonIgnore
 	private Long id;
 
 	@Column(name = "PRICE", nullable = false)
@@ -37,6 +38,7 @@ public class ListPrice {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "STORE_ID")
 	@ToString.Exclude
+	@JsonIgnore
 	private Store store;
 
 	@Override
