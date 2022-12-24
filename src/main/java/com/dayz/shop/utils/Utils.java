@@ -1,10 +1,7 @@
 package com.dayz.shop.utils;
 
 import com.dayz.shop.jpa.entities.*;
-import com.dayz.shop.repository.PrivilegeRepository;
-import com.dayz.shop.repository.ServerConfigRepository;
-import com.dayz.shop.repository.StoreConfigRepository;
-import com.dayz.shop.repository.StoreRepository;
+import com.dayz.shop.repository.*;
 import com.google.common.base.Function;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,14 +24,18 @@ public class Utils {
 	private static PrivilegeRepository privilegeRepository;
 	private static StoreConfigRepository storeConfigRepository;
 	private static StoreRepository storeRepository;
+	private static OrderRepository orderRepository;
 	private static ServerConfigRepository serverConfigRepository;
 
 	@Autowired
-	public Utils(StoreRepository storeRepository, PrivilegeRepository privilegeRepository, StoreConfigRepository storeConfigRepository, ServerConfigRepository serverConfigRepository) {
+	public Utils(StoreRepository storeRepository, PrivilegeRepository privilegeRepository,
+	             StoreConfigRepository storeConfigRepository, ServerConfigRepository serverConfigRepository,
+	             OrderRepository orderRepository) {
 		Utils.privilegeRepository = privilegeRepository;
 		Utils.storeConfigRepository = storeConfigRepository;
 		Utils.serverConfigRepository = serverConfigRepository;
 		Utils.storeRepository = storeRepository;
+		Utils.orderRepository = orderRepository;
 		Utils.storeNameStoreMap = storeRepository.findAll().stream().collect(Collectors.toMap(Store::getStoreName, store -> store));
 	}
 
@@ -67,6 +68,11 @@ public class Utils {
 		Store store = storeNameStoreMap.get(request.getServerName().split("\\.")[0].toLowerCase());
 		if (store == null && request.getParameterMap().containsKey(US_STORE_KEY)) {
 			store = storeNameStoreMap.get(request.getParameter(US_STORE_KEY));
+		} else if (store == null && request.getParameterMap().containsKey("MERCHANT_ORDER_ID")) {
+			Order order = orderRepository.getById(Long.valueOf(request.getParameter("MERCHANT_ORDER_ID")));
+			if (order != null) {
+				store = order.getStore();
+			}
 		}
 		return store;
 	}
