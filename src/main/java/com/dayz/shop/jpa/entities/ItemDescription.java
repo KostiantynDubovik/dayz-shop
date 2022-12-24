@@ -1,5 +1,6 @@
 package com.dayz.shop.jpa.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.hibernate.Hibernate;
@@ -19,10 +20,12 @@ public class ItemDescription {
 	@Column(name = "DESCRIPTION_ID", nullable = false)
 	private Long id;
 
+	@JsonIgnore
 	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "LANGUAGE_ID")
 	private Language language;
 
+	@JsonIgnore
 	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "STORE_ID")
 	private Store store;
