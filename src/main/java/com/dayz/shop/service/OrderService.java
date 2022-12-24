@@ -30,46 +30,44 @@ public class OrderService {
 	private final OrderRepository orderRepository;
 	private final OrderItemRepository orderItemRepository;
 	private final SendToServerService sendToServerService;
-	private final OrderUtils orderUtils;
 	private final UserServiceRepository userServiceRepository;
 	private final UserRepository userRepository;
 
 	@Autowired
 	public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository,
-						SendToServerService sendToServerService, OrderUtils orderUtils,
-						UserServiceRepository userServiceRepository, UserRepository userRepository) {
+	                    SendToServerService sendToServerService, UserServiceRepository userServiceRepository,
+	                    UserRepository userRepository) {
 		this.orderRepository = orderRepository;
 		this.orderItemRepository = orderItemRepository;
 		this.sendToServerService = sendToServerService;
-		this.orderUtils = orderUtils;
 		this.userServiceRepository = userServiceRepository;
 		this.userRepository = userRepository;
 	}
 
 	public Order addOrderItem(Item item, Store store) {
 		User user = Utils.getCurrentUser();
-		Order order = orderUtils.getCurrentOrder(user, store);
-		OrderItem orderItem = orderUtils.createOrderItem(item, user, order);
+		Order order = OrderUtils.getCurrentOrder(user, store);
+		OrderItem orderItem = OrderUtils.createOrderItem(item, user, order);
 		orderItemRepository.save(orderItem);
-		orderUtils.recalculateOrder(order);
+		OrderUtils.recalculateOrder(order);
 		return orderRepository.save(order);
 	}
 
 	public Order deleteOrderItem(Item item, Store store) {
-		Order order = orderUtils.getCurrentOrder(store);
+		Order order = OrderUtils.getCurrentOrder(store);
 		OrderItem orderItem = orderItemRepository.findFirstByItemAndOrder(item, order);
 		order.getOrderItems().remove(orderItem);
-		orderUtils.recalculateOrder(order);
+		OrderUtils.recalculateOrder(order);
 		orderItemRepository.delete(orderItem);
 		return orderRepository.save(order);
 	}
 
 	public Order buyItemNow(Item item, Store store, Server server) throws BalanceTooLowException {
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		Order order = orderUtils.createOrder(user, store);
+		Order order = OrderUtils.createOrder(user, store);
 		order.setServer(server);
 		orderRepository.save(order);
-		OrderItem orderItem = orderUtils.createOrderItem(item, user, order);
+		OrderItem orderItem = OrderUtils.createOrderItem(item, user, order);
 		List<OrderItem> orderItems = new ArrayList<>(order.getOrderItems());
 		orderItems.add(orderItemRepository.save(orderItem));
 		order.setOrderItems(orderItems);
@@ -77,7 +75,7 @@ public class OrderService {
 	}
 
 	public Order placeOrder(Store store) throws BalanceTooLowException {
-		return placeOrder(orderUtils.getCurrentOrder(Utils.getCurrentUser(), store));
+		return placeOrder(OrderUtils.getCurrentOrder(Utils.getCurrentUser(), store));
 	}
 
 	public Order placeOrder(Order order) throws BalanceTooLowException {
@@ -101,6 +99,8 @@ public class OrderService {
 	}
 
 	private void saveServices(Map<ItemType, Order> separatedTypes) {
+
+		repeatSet:
 		for (Map.Entry<ItemType, Order> itemTypeOrderEntry : separatedTypes.entrySet()) {
 			switch (itemTypeOrderEntry.getKey()) {
 				case SET:
@@ -110,28 +110,32 @@ public class OrderService {
 					Item item = orderItem.getItem();
 					ItemType itemType = item.getItemType();
 					Server server = orderItem.getServer();
-					UserService userService = userServiceRepository.findByUserAndItemTypeAndServer(user, itemType, server);
 					LocalDateTime endDate;
-					if (userService != null) {
-						endDate = userService.getEndDate();
-						if (itemTypeOrderEntry.getKey().equals(ItemType.SET)) {
-							chargebackSet(userService);
+					boolean repeat = false;
+					UserService userService;
+					do {
+						userService = userServiceRepository.findByUserAndItemTypeAndServer(user, itemType, server);
+						if (userService != null) {
+							endDate = userService.getEndDate();
+							if (itemTypeOrderEntry.getKey().equals(ItemType.SET)) {
+								chargebackSet(userService);
+								repeat = true;
+							}
+						} else {
+							userService = new UserService();
+							userService.setOrder(orderItem.getOrder());
+							userService.setUser(orderItem.getUser());
+							userService.setItemType(itemType);
+							userService.setItemTypeStr(itemType.toString());
+							userService.setServer(server);
+							userService.setUser(user);
+							userService.setUserId(user.getId());
+							endDate = LocalDateTime.now().plusDays(30);
 						}
-					} else {
-						userService = new UserService();
-						userService.setOrder(orderItem.getOrder());
-						userService.setUser(orderItem.getUser());
-						userService.setItemType(itemType);
-						userService.setItemTypeStr(itemType.toString());
-						userService.setServer(server);
-						userService.setUser(user);
-						userService.setUserId(user.getId());
-						endDate = LocalDateTime.now().plusDays(30);
-					}
+					} while (repeat);
 					if (itemTypeOrderEntry.getKey().equals(ItemType.VIP)) {
 						endDate = endDate.plusDays(Integer.parseInt(item.getColor()));
 					} else if (itemTypeOrderEntry.getKey().equals(ItemType.SET)) {
-						chargebackSet(userService);
 						endDate = LocalDateTime.now().plusDays(30);
 					}
 					userService.setEndDate(endDate);
@@ -147,6 +151,7 @@ public class OrderService {
 		User user = userService.getUser();
 		user.setBalance(user.getBalance().add(chargebackAmount));
 		userRepository.save(user);
+		userServiceRepository.delete(userService);
 	}
 
 	private Map<ItemType, Order> splitTypes(Order order) {

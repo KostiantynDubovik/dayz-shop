@@ -63,10 +63,10 @@ public class FreeKassaService {
 				.build().toString();
 	}
 
-	public String notify(HttpServletRequest request, HttpServletResponse response, Store store) {
+	public String notify(HttpServletRequest request) {
 		String result = "NO";
 		try {
-			if (isFreeKassaIp(request, store)) {
+			if (Utils.isFreeKassaIp(request)) {
 				Map<String, String> parameterMap = request.getParameterMap().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, (e)-> e.getValue()[0]));
 				Optional<Payment> paymentOptional = paymentRepository.findById(Long.valueOf(parameterMap.get("MERCHANT_ORDER_ID")));
 				if (paymentOptional.isPresent()) {
@@ -86,10 +86,5 @@ public class FreeKassaService {
 			return "NO";
 		}
 		return result;
-	}
-
-	public boolean isFreeKassaIp(HttpServletRequest request, Store store) {
-		String reqIp = Utils.getClientIpAddress(request);
-		return Utils.getStoreConfig("freekassa.ips", store).contains(reqIp);
 	}
 }

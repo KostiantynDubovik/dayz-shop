@@ -41,7 +41,7 @@ public class BalanceController {
 	@PostMapping("notify")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String notify(HttpServletRequest request, HttpServletResponse response, @RequestAttribute("store") Store store) {
-		return freeKassaService.notify(request, response, store);
+		return freeKassaService.notify(request);
 	}
 
 	@PostMapping("init")

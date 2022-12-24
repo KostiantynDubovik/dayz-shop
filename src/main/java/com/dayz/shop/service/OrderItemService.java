@@ -12,18 +12,16 @@ public class OrderItemService {
 
 	private final OrderItemRepository orderItemRepository;
 	private final OrderRepository orderRepository;
-	private final OrderUtils orderUtils;
 
 	@Autowired
-	public OrderItemService(OrderItemRepository orderItemRepository, OrderRepository orderRepository, OrderUtils orderUtils) {
+	public OrderItemService(OrderItemRepository orderItemRepository, OrderRepository orderRepository) {
 		this.orderItemRepository = orderItemRepository;
 		this.orderRepository = orderRepository;
-		this.orderUtils = orderUtils;
 	}
 
 	public OrderItem updateOrderItemCount(OrderItem orderItem, Integer count) {
 		orderItem.setCount(count);
-		orderUtils.recalculateOrder(orderItem.getOrder());
+		OrderUtils.recalculateOrder(orderItem.getOrder());
 		orderRepository.save(orderItem.getOrder());
 		return orderItemRepository.save(orderItem);
 	}

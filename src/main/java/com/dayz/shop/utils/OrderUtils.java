@@ -5,6 +5,7 @@ import com.dayz.shop.repository.OrderRepository;
 import org.apache.commons.collections4.CollectionUtils;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -14,17 +15,18 @@ import java.util.Comparator;
 import java.util.List;
 
 @Aspect
-@Service
+@Component
 public class OrderUtils {
 
-	final private OrderRepository orderRepository;
+	private static OrderRepository orderRepository;
 
 	@Autowired
 	public OrderUtils(OrderRepository orderRepository) {
-		this.orderRepository = orderRepository;
+		OrderUtils.orderRepository = orderRepository;
+
 	}
 
-	public OfferPrice getCurrentOfferPrice(List<OfferPrice> offerPrices) {
+	public static OfferPrice getCurrentOfferPrice(List<OfferPrice> offerPrices) {
 		OfferPrice result = new OfferPrice();
 		offerPrices.sort(Comparator.comparingInt(OfferPrice::getPriority));
 		for (OfferPrice offerPrice : offerPrices) {
@@ -37,11 +39,11 @@ public class OrderUtils {
 		return result;
 	}
 
-	public Order getCurrentOrder(Store store) {
+	public static Order getCurrentOrder(Store store) {
 		return getCurrentOrder(Utils.getCurrentUser(), store);
 	}
 
-	public Order getCurrentOrder(User user, Store store) {
+	public static Order getCurrentOrder(User user, Store store) {
 		List<Order> orders = orderRepository.findAllByUserAndStoreAndStatus(user, store, OrderStatus.PENDING);
 		if (CollectionUtils.isEmpty(orders)) {
 			orders = new ArrayList<>();
@@ -53,7 +55,7 @@ public class OrderUtils {
 		return orders.stream().findFirst().orElse(new Order());
 	}
 
-	public Order createOrder(User user, Store store) {
+	public static Order createOrder(User user, Store store) {
 		Order order = new Order();
 		order.setOrderItems(new ArrayList<>());
 		order.setStore(store);
@@ -63,7 +65,7 @@ public class OrderUtils {
 		return order;
 	}
 
-	public OrderItem createOrderItem(Item item, User user, Order order) {
+	public static OrderItem createOrderItem(Item item, User user, Order order) {
 		OrderItem orderItem = new OrderItem();
 		orderItem.setUser(user);
 		orderItem.setOrder(order);
@@ -78,7 +80,7 @@ public class OrderUtils {
 		return orderItem;
 	}
 
-	public void recalculateOrder(Order order) {
+	public static void recalculateOrder(Order order) {
 		List<OrderItem> orderItems = order.getOrderItems();
 		BigDecimal total = BigDecimal.ZERO;
 		for (OrderItem orderItem : orderItems) {
@@ -88,7 +90,15 @@ public class OrderUtils {
 		order.setOrderTotal(total);
 	}
 
-	public void recalculateOrderItem(OrderItem orderItem) {
+	public static void recalculateOrderItem(OrderItem orderItem) {
 		orderItem.setTotalPrice(orderItem.getPrice().multiply(BigDecimal.valueOf(orderItem.getCount())));
+	}
+
+	public static Order getOrder(String orderId) {
+		return getOrder(Long.valueOf(orderId));
+	}
+
+	public static Order getOrder(Long orderId) {
+		return orderRepository.getById(orderId);
 	}
 }

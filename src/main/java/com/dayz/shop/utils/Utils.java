@@ -1,14 +1,16 @@
 package com.dayz.shop.utils;
 
 import com.dayz.shop.jpa.entities.*;
-import com.dayz.shop.repository.*;
+import com.dayz.shop.repository.PrivilegeRepository;
+import com.dayz.shop.repository.ServerConfigRepository;
+import com.dayz.shop.repository.StoreConfigRepository;
+import com.dayz.shop.repository.StoreRepository;
 import com.google.common.base.Function;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.openid.OpenIDAuthenticationToken;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -18,6 +20,7 @@ import java.util.stream.Stream;
 @Component
 public class Utils {
 	public static final Long rootStoreId = -1L;
+	public static final String MERCHANT_ORDER_ID_KEY = "MERCHANT_ORDER_ID";
 	private static Map<String, Store> storeNameStoreMap;
 
 	private static PrivilegeRepository privilegeRepository;
@@ -57,8 +60,23 @@ public class Utils {
 		return user.getStore().getId().equals(((User) principal.getPrincipal()).getStore().getId());
 	}
 
-	public static Store extractStoreFromRequest(ServletRequest request) {
-		return storeNameStoreMap.get(request.getServerName().split("\\.")[0].toLowerCase());
+	public static Store extractStoreFromRequest(HttpServletRequest request) {
+		Store store = storeNameStoreMap.get(request.getServerName().split("\\.")[0].toLowerCase());
+		if (store == null && isFreeKassaIp(request)) {
+			String orderId = request.getParameter(MERCHANT_ORDER_ID_KEY);
+			if (orderId != null) {
+				Order order = OrderUtils.getOrder(orderId);
+				if (order != null) {
+					store = order.getStore();
+				}
+			}
+		}
+		return store;
+	}
+
+	public static boolean isFreeKassaIp(HttpServletRequest request) {
+		String reqIp = Utils.getClientIpAddress(request);
+		return Utils.getStoreConfig("freekassa.ips", -2L).contains(reqIp);
 	}
 
 	public static User getCurrentUser() {
@@ -93,7 +111,6 @@ public class Utils {
 	}
 
 	public static String getServerConfig(String key, Long serverId) {
-
 		String result = null;
 		ServerConfig serverConfig = serverConfigRepository.findByKeyAndServerId(key, serverId);
 		if (serverConfig != null) {

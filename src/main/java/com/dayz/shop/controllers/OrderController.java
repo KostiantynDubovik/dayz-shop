@@ -4,7 +4,6 @@ import com.dayz.shop.jpa.entities.Item;
 import com.dayz.shop.jpa.entities.Order;
 import com.dayz.shop.jpa.entities.Server;
 import com.dayz.shop.jpa.entities.Store;
-import com.dayz.shop.repository.OrderRepository;
 import com.dayz.shop.service.OrderService;
 import com.dayz.shop.utils.OrderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,20 +16,16 @@ import org.springframework.web.server.ServerErrorException;
 public class OrderController {
 
 	private final OrderService orderService;
-	private final OrderUtils orderUtils;
-	private final OrderRepository orderRepository;
 
 	@Autowired
-	public OrderController(OrderService orderService, OrderUtils orderUtils, OrderRepository orderRepository) {
+	public OrderController(OrderService orderService) {
 		this.orderService = orderService;
-		this.orderUtils = orderUtils;
-		this.orderRepository = orderRepository;
 	}
 
 	@GetMapping
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public Order getOrder(@RequestAttribute Store store) {
-		return orderUtils.getCurrentOrder(store);
+		return OrderUtils.getCurrentOrder(store);
 	}
 
 	@PostMapping("add/{item}")
@@ -41,7 +36,7 @@ public class OrderController {
 
 	@DeleteMapping("delete/{item}")
 	@PreAuthorize("hasAuthority('STORE_READ')")
-	public Order deleteOrderItem(@PathVariable Item item,@RequestAttribute Store store) {
+	public Order deleteOrderItem(@PathVariable Item item, @RequestAttribute Store store) {
 		return orderService.deleteOrderItem(item, store);
 	}
 
@@ -55,7 +50,7 @@ public class OrderController {
 		}
 	}
 
-	@PostMapping("")
+	@PostMapping()
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public Order placeOrder(@RequestAttribute Store store) {
 		try {
