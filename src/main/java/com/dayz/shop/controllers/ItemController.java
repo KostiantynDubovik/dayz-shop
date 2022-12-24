@@ -5,7 +5,7 @@ import com.dayz.shop.jpa.entities.ListPrice;
 import com.dayz.shop.jpa.entities.Store;
 import com.dayz.shop.repository.CategoryRepository;
 import com.dayz.shop.repository.ItemRepository;
-import com.dayz.shop.service.ItemService;
+import com.dayz.shop.repository.ListPriceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,13 +22,13 @@ public class ItemController {
 
 	private final ItemRepository itemRepository;
 	private final CategoryRepository categoryRepository;
-	private final ItemService itemService;
+	private final ListPriceRepository listPriceRepository;
 
 	@Autowired
-	public ItemController(ItemRepository itemRepository, ItemService itemService, CategoryRepository categoryRepository) {
+	public ItemController(ItemRepository itemRepository, CategoryRepository categoryRepository, ListPriceRepository listPriceRepository) {
 		this.itemRepository = itemRepository;
-		this.itemService = itemService;
 		this.categoryRepository = categoryRepository;
+		this.listPriceRepository = listPriceRepository;
 	}
 
 	@GetMapping("{itemId}")
@@ -45,16 +45,6 @@ public class ItemController {
 		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 3 ? 3 : pageSize, Sort.by(sortBy));
 		return itemRepository.findAllByStoreAndBuyableAndCategory(store, categoryRepository.findByCategoryName(categoryName), pageable);
 	}
-//
-//	@GetMapping("app/{categoryName}/{page}")
-//	public Page<Item> getAllItemsByCategoryAcrossStores(
-//			@PathVariable int page,
-//			@PathVariable String categoryName,
-//			@RequestParam(defaultValue = "name") String sortBy,
-//			@RequestParam(defaultValue = "9") int pageSize) {
-//		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(sortBy));
-//		return itemService.findAllByCategory(categoryName, pageable);
-//	}
 
 	@PostMapping()
 	@PreAuthorize("hasAuthority('STORE_WRITE')")
@@ -65,7 +55,7 @@ public class ItemController {
 		price.setStore(store);
 		price.setItem(item);
 		price.setCurrency("RUB");
-		item.setListPrice(price);
+		item.setListPrice(listPriceRepository.save(price));
 		return itemRepository.save(item);
 	}
 
