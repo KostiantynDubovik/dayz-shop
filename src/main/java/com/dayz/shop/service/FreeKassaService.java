@@ -68,24 +68,30 @@ public class FreeKassaService {
 
 	public String notify(HttpServletRequest request) {
 		String result = "NO";
+		Map<String, String> parameterMap = request.getParameterMap().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, (e)-> e.getValue()[0]));
+		Optional<Payment> paymentOptional = paymentRepository.findById(Long.valueOf(parameterMap.get("MERCHANT_ORDER_ID")));
 		try {
 			if (Utils.isFreeKassaIp(request)) {
-				Map<String, String> parameterMap = request.getParameterMap().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, (e)-> e.getValue()[0]));
-				Optional<Payment> paymentOptional = paymentRepository.findById(Long.valueOf(parameterMap.get("MERCHANT_ORDER_ID")));
 				if (paymentOptional.isPresent()) {
 					Payment payment = paymentOptional.get();
 					payment.getProperties().putAll(parameterMap);
 					payment.setStatus(OrderStatus.COMPLETE);
 					BigDecimal amount = payment.getAmount();
-					if (amount.compareTo(BigDecimal.valueOf(3000)) > 0) {
+					if (amount.compareTo(BigDecimal.valueOf(3000)) > -1) {
 						payment.setAmount(amount.multiply(BigDecimal.valueOf(1.33)));
 					}
+					payment.getProperties().put("message", Utils.getMessage("payment.success", payment.getStore(), payment.getAmount(), payment.getCurrency()));
 					paymentRepository.save(payment);
 					userService.updateUserBalance(payment.getUser(), new BigDecimal(parameterMap.get("AMOUNT")));
 				}
 				result = "YES";
 			}
 		} catch (Exception e) {
+			if(paymentOptional.isPresent()) {
+				Payment payment = paymentOptional.get();
+				payment.getProperties().put("message", Utils.getMessage("payment.failed", payment.getStore()));
+				paymentRepository.save(payment);
+			}
 			return "NO";
 		}
 		return result;
