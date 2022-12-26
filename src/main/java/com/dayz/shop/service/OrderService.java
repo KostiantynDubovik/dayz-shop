@@ -1,6 +1,5 @@
 package com.dayz.shop.service;
 
-import com.dayz.shop.exception.BalanceTooLowException;
 import com.dayz.shop.jpa.entities.UserService;
 import com.dayz.shop.jpa.entities.*;
 import com.dayz.shop.repository.OrderItemRepository;
@@ -24,9 +23,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Service
 public class OrderService {
+	public static final String CLASSNAME = OrderService.class.getName();
+	private static final Logger LOGGER = Logger.getLogger(CLASSNAME);
+
 	private final OrderRepository orderRepository;
 	private final OrderItemRepository orderItemRepository;
 	private final SendToServerService sendToServerService;
@@ -62,7 +66,7 @@ public class OrderService {
 		return orderRepository.save(order);
 	}
 
-	public Order buyItemNow(Item item, Store store, Server server) throws BalanceTooLowException {
+	public Order buyItemNow(Item item, Store store, Server server) {
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Order order = OrderUtils.createOrder(user, store);
 		order.setServer(server);
@@ -74,28 +78,41 @@ public class OrderService {
 		return placeOrder(orderRepository.save(order));
 	}
 
-	public Order placeOrder(Store store) throws BalanceTooLowException {
+	public Order placeOrder(Store store) {
 		return placeOrder(OrderUtils.getCurrentOrder(Utils.getCurrentUser(), store));
 	}
 
-	public Order placeOrder(Order order) throws BalanceTooLowException {
+	public Order placeOrder(Order order) {
 		User user = userRepository.getById(order.getUser().getId());
 		if (user.getBalance().compareTo(order.getOrderTotal()) < 0) {
-			throw new BalanceTooLowException(user.getBalance(), order.getOrderTotal());
-		}
-		try {
-			Map<ItemType, Order> separatedTypes = splitTypes(order);
-			saveServices(separatedTypes);
-			sendToServerService.sendOrder(order, separatedTypes);
-			user.setBalance(user.getBalance().subtract(order.getOrderTotal()));
-			order.setStatus(OrderStatus.COMPLETE);
-			order.getOrderItems().forEach(orderItem -> orderItem.setStatus(OrderStatus.COMPLETE));
-		} catch (JSchException | InterruptedException | SftpException | IOException e) {
+			LOGGER.log(Level.WARNING, "Insufficient funds to place order");
 			order.setStatus(OrderStatus.FAILED);
-			order.getOrderItems().forEach(orderItem -> orderItem.setStatus(OrderStatus.COMPLETE));
-			e.printStackTrace();
+			order.getOrderItems().forEach(orderItem -> orderItem.setStatus(OrderStatus.FAILED));
+			order.getProperties().put("message", Utils.getMessage("order.failed.insufficient", order.getStore(), order.getOrderTotal(), user.getBalance()));
+		} else {
+			try {
+				Map<ItemType, Order> separatedTypes = splitTypes(order);
+				saveServices(separatedTypes);
+				sendToServerService.sendOrder(order, separatedTypes);
+				user.setBalance(user.getBalance().subtract(order.getOrderTotal()));
+				order.setStatus(OrderStatus.COMPLETE);
+				order.getOrderItems().forEach(orderItem -> orderItem.setStatus(OrderStatus.COMPLETE));
+
+				order.getProperties().put("message", Utils.getMessage(getKey(order), order.getStore()));
+			} catch (JSchException | InterruptedException | SftpException | IOException e) {
+				LOGGER.log(Level.SEVERE, "Error during order placing", e);
+				order.getProperties().put("message", Utils.getMessage("order.failed", order.getStore()));
+				order.setStatus(OrderStatus.FAILED);
+				order.getOrderItems().forEach(orderItem -> orderItem.setStatus(OrderStatus.FAILED));
+			}
 		}
 		return orderRepository.save(order);
+	}
+
+	private static String getKey(Order order) {
+		return order.getOrderItems().get(0).getItem().getItemType() == ItemType.ITEM
+				|| order.getOrderItems().get(0).getItem().getItemType() == ItemType.VEHICLE
+				? "order.success" : "service.success";
 	}
 
 	private void saveServices(Map<ItemType, Order> separatedTypes) {

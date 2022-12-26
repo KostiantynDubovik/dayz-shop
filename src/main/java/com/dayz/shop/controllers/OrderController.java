@@ -1,16 +1,19 @@
 package com.dayz.shop.controllers;
 
+import com.dayz.shop.ProcessMessage;
 import com.dayz.shop.jpa.entities.Item;
 import com.dayz.shop.jpa.entities.Order;
 import com.dayz.shop.jpa.entities.Server;
 import com.dayz.shop.jpa.entities.Store;
 import com.dayz.shop.service.OrderService;
 import com.dayz.shop.utils.OrderUtils;
+import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ServerErrorException;
 
+@Aspect
 @RestController
 @RequestMapping("/api/order")
 public class OrderController {
@@ -40,6 +43,7 @@ public class OrderController {
 		return orderService.deleteOrderItem(item, store);
 	}
 
+	@ProcessMessage
 	@PostMapping("{item}/{server}")
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public Order buyItemNow(@PathVariable Item item, @PathVariable Server server, @RequestAttribute Store store) {
@@ -50,6 +54,7 @@ public class OrderController {
 		}
 	}
 
+	@ProcessMessage
 	@PostMapping()
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public Order placeOrder(@RequestAttribute Store store) {

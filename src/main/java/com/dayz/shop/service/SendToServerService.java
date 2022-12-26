@@ -3,9 +3,7 @@ package com.dayz.shop.service;
 import com.dayz.shop.jpa.entities.ItemType;
 import com.dayz.shop.jpa.entities.Order;
 import com.dayz.shop.json.Root;
-import com.dayz.shop.repository.ServerConfigRepository;
 import com.dayz.shop.utils.MCodeMapper;
-import com.dayz.shop.utils.Utils;
 import com.dayz.shop.utils.SFTPUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,12 +28,10 @@ public class SendToServerService {
 	public static final String ZERO = "0";
 	public static final String SETS_FILE = "CustomSpawnPlayerConfig.txt";
 	public static final String VIP_FILE = "priority.txt";
-	final ServerConfigRepository serverConfigRepository;
 	final MCodeMapper mCodeMapper;
 
 	@Autowired
-	public SendToServerService(ServerConfigRepository serverConfigRepository, MCodeMapper mCodeMapper) {
-		this.serverConfigRepository = serverConfigRepository;
+	public SendToServerService(MCodeMapper mCodeMapper) {
 		this.mCodeMapper = mCodeMapper;
 	}
 
@@ -110,7 +106,6 @@ public class SendToServerService {
 		}
 		if (add) {
 			root.getM_CodeArray().addAll(mCodeMapper.mapOrderToRoot(order).getM_CodeArray());
-			//TODO dir *.json /b
 		} else {
 			root.getM_CodeArray().removeAll(mCodeMapper.mapOrderToRoot(order).getM_CodeArray());
 		}

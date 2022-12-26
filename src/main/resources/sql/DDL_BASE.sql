@@ -381,3 +381,12 @@ create table item_server_buyable
 			on update cascade on delete cascade
 );
 
+create table order_properties
+(
+	ORDER_ID bigint       not null,
+	NAME     VARCHAR(30)  not null,
+	VALUE    varchar(255) null,
+	constraint order_properties_orders_null_fk
+		foreign key (ORDER_ID) references orders (ORDER_ID)
+			on update cascade on delete cascade
+);

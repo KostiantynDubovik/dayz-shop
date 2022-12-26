@@ -22,7 +22,6 @@ public class OrderUtils {
 	@Autowired
 	public OrderUtils(OrderRepository orderRepository) {
 		OrderUtils.orderRepository = orderRepository;
-
 	}
 
 	public static OfferPrice getCurrentOfferPrice(List<OfferPrice> offerPrices) {

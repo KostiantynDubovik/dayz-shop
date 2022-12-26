@@ -78,10 +78,10 @@ public class BalanceController {
 				balanceTransferService.doTransfer(payment);
 			} else {
 				payment.setStatus(OrderStatus.FAILED);
-				payment.getProperties().put("reason", "Пользователь не существует в системе");
+				payment.getProperties().put("message", "transfer.failed.no_user");
 			}
 		}
-		return payment;
+		return paymentRepository.save(payment);
 	}
 
 	@GetMapping("{paymentId}")

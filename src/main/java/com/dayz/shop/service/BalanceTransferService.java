@@ -37,11 +37,17 @@ public class BalanceTransferService {
 			userRepository.save(paymentUser);
 			payment.setStatus(OrderStatus.COMPLETE);
 			payment.setChargeTime(LocalDateTime.now());
+			payment.getProperties().put("message", Utils.getMessage("transfer.success", payment.getStore()));
 			paymentRepository.save(payment);
 		} else {
-			payment.setStatus(OrderStatus.FAILED);
-			payment.getProperties().put("reason", "Не хватает средств на счету для совершения операции");
+			saveFail(payment, currentUser);
 		}
+	}
+
+	private void saveFail(Payment payment, User currentUser) {
+		payment.setStatus(OrderStatus.FAILED);
+		payment.getProperties().put("message", Utils.getMessage("transfer.failed.insufficient", payment.getStore(), currentUser.getBalance(), payment.getAmount()));
+		paymentRepository.save(payment);
 	}
 
 	private boolean doesHaveRealCharges(User currentUser, Store store) {

@@ -2,9 +2,7 @@ package com.dayz.shop.utils;
 
 import com.dayz.shop.jpa.entities.Order;
 import com.dayz.shop.jpa.entities.Server;
-import com.dayz.shop.repository.ServerConfigRepository;
 import com.jcraft.jsch.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -14,35 +12,28 @@ public class SFTPUtils {
 	public static final String SFTP_TYPE = "sftp";
 	public static final String SSH_KNOWN_HOSTS = "~/.ssh/known_hosts";
 
-	private static ServerConfigRepository serverConfigRepository;
-
-	@Autowired
-	public SFTPUtils(ServerConfigRepository serverConfigRepository) {
-		SFTPUtils.serverConfigRepository = serverConfigRepository;
-	}
-
 	public static String getUsr(Server server) {
-		return serverConfigRepository.findByKeyAndServer("SSH_USR", server).getValue();
+		return Utils.getServerConfig("SSH_USR", server);
 	}
 
 	public static String getPwd(Server server) {
-		return serverConfigRepository.findByKeyAndServer("SSH_PWD", server).getValue();
+		return Utils.getServerConfig("SSH_PWD", server);
 	}
 
 	public static String getIp(Server server) {
-		return serverConfigRepository.findByKeyAndServer("SSH_IP", server).getValue();
+		return Utils.getServerConfig("SSH_IP", server);
 	}
 
 	public static String getPathToSpawningItemsJson(Order order) {
-		return serverConfigRepository.findByKeyAndServer("PATH_TO_JSON", order.getServer()).getValue();
+		return Utils.getServerConfig("PATH_TO_JSON", order.getServer());
 	}
 
 	public static String getPathToSet(Order order) {
-		return serverConfigRepository.findByKeyAndServer("PATH_TO_SET", order.getServer()).getValue();
+		return Utils.getServerConfig("PATH_TO_SET", order.getServer());
 	}
 
 	public static String getPathToVip(Order order) {
-		return serverConfigRepository.findByKeyAndServer("PATH_TO_VIP", order.getServer()).getValue();
+		return Utils.getServerConfig("PATH_TO_VIP", order.getServer());
 	}
 
 	public static ByteArrayInputStream getFileContent(Order order, String path) throws JSchException, SftpException {

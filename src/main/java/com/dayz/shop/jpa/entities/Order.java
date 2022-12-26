@@ -3,15 +3,15 @@ package com.dayz.shop.jpa.entities;
 import com.dayz.shop.listeners.OrderListener;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.aspectj.lang.annotation.Aspect;
-import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Aspect
 @Getter
@@ -57,16 +57,23 @@ public class Order {
 	@Transient
 	private Type type = Type.ORDER;
 
+	@ElementCollection
+	@CollectionTable(name = "order_properties",
+			joinColumns = {@JoinColumn(name = "ORDER_ID", referencedColumnName = "ORDER_ID")})
+	@MapKeyColumn(name = "NAME")
+	@Column(name = "VALUE")
+	private Map<String, String> properties = new HashMap<>();
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+		if (o == null || getClass() != o.getClass()) return false;
 		Order order = (Order) o;
-		return id != null && Objects.equals(id, order.id);
+		return Objects.equals(id, order.id) && Objects.equals(orderItems, order.orderItems) && Objects.equals(orderTotal, order.orderTotal) && Objects.equals(user, order.user) && Objects.equals(store, order.store) && Objects.equals(server, order.server) && status == order.status && type == order.type && Objects.equals(properties, order.properties);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, orderItems, orderTotal, user, store, server, status);
+		return Objects.hash(id, orderItems, orderTotal, user, store, server, status, type, properties);
 	}
 }

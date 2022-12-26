@@ -1,14 +1,21 @@
 package com.dayz.shop.utils;
 
+import com.dayz.shop.config.LocalizationConfiguration;
 import com.dayz.shop.jpa.entities.*;
 import com.dayz.shop.repository.*;
 import com.google.common.base.Function;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.support.ResourceBundleMessageSourceExt;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.openid.OpenIDAuthenticationToken;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.StringTokenizer;
@@ -27,17 +34,22 @@ public class Utils {
 	private static StoreRepository storeRepository;
 	private static PaymentRepository paymentRepository;
 	private static ServerConfigRepository serverConfigRepository;
+	private static ResourceBundleMessageSourceExt messageSource;
+	private static AcceptHeaderLocaleResolver localeResolver;
 
 	@Autowired
 	public Utils(StoreRepository storeRepository, PrivilegeRepository privilegeRepository,
 	             StoreConfigRepository storeConfigRepository, ServerConfigRepository serverConfigRepository,
-	             PaymentRepository paymentRepository) {
+	             PaymentRepository paymentRepository, ResourceBundleMessageSource messageSource,
+	             AcceptHeaderLocaleResolver localeResolver) {
 		Utils.privilegeRepository = privilegeRepository;
 		Utils.storeConfigRepository = storeConfigRepository;
 		Utils.serverConfigRepository = serverConfigRepository;
 		Utils.storeRepository = storeRepository;
 		Utils.paymentRepository = paymentRepository;
 		Utils.storeNameStoreMap = storeRepository.findAll().stream().collect(Collectors.toMap(Store::getStoreName, store -> store));
+		Utils.messageSource = new ResourceBundleMessageSourceExt(messageSource);
+		Utils.localeResolver = localeResolver;
 	}
 
 	public static boolean isAppAdmin(User user) {
@@ -130,5 +142,15 @@ public class Utils {
 			result = serverConfig.getValue();
 		}
 		return result;
+	}
+
+	public static String getMessage(String key, Store store, Object... args) {
+		ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+		Locale locale = LocalizationConfiguration.DEFAULT_LOCALE;
+		if (requestAttributes != null) {
+			HttpServletRequest request = requestAttributes.getRequest();
+			locale = localeResolver.resolveLocale(request);
+		}
+		return messageSource.getMessage(key, args, locale);
 	}
 }

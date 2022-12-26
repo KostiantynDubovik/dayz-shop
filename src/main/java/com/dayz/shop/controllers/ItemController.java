@@ -5,7 +5,6 @@ import com.dayz.shop.jpa.entities.ListPrice;
 import com.dayz.shop.jpa.entities.Store;
 import com.dayz.shop.repository.CategoryRepository;
 import com.dayz.shop.repository.ItemRepository;
-import com.dayz.shop.repository.ListPriceRepository;
 import com.dayz.shop.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,13 +22,11 @@ public class ItemController {
 
 	private final ItemRepository itemRepository;
 	private final CategoryRepository categoryRepository;
-	private final ListPriceRepository listPriceRepository;
 
 	@Autowired
-	public ItemController(ItemRepository itemRepository, CategoryRepository categoryRepository, ListPriceRepository listPriceRepository) {
+	public ItemController(ItemRepository itemRepository, CategoryRepository categoryRepository) {
 		this.itemRepository = itemRepository;
 		this.categoryRepository = categoryRepository;
-		this.listPriceRepository = listPriceRepository;
 	}
 
 	@GetMapping("{itemId}")
