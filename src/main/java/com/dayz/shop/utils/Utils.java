@@ -149,10 +149,10 @@ public class Utils {
 	public static String getMessage(String key, Store store, Object... args) {
 		ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 		Locale locale = LocalizationConfiguration.DEFAULT_LOCALE;
-		if (requestAttributes != null) {
-			HttpServletRequest request = requestAttributes.getRequest();
-			locale = localeResolver.resolveLocale(request);
-		}
+//		if (requestAttributes != null) {
+//			HttpServletRequest request = requestAttributes.getRequest();
+//			locale = localeResolver.resolveLocale(request);
+//		}
 		return messageSource.getMessage(key, args, locale);
 	}
 

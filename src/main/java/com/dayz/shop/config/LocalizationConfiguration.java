@@ -23,9 +23,9 @@ public class LocalizationConfiguration {
 		Locale.setDefault(DEFAULT_LOCALE);
 
 		List<Locale> localeList = new ArrayList<>();
-		localeList.add(Locale.ENGLISH);
+//		localeList.add(Locale.ENGLISH);
 		localeList.add(DEFAULT_LOCALE);
-		localeList.add(new Locale("uk"));
+//		localeList.add(new Locale("uk"));
 		localeResolver.setSupportedLocales(localeList);
 		return localeResolver;
 	}
