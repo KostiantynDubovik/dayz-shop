@@ -1,6 +1,7 @@
 package com.dayz.shop.jpa.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
@@ -18,6 +19,7 @@ import java.io.Serializable;
 public class SubItem {
 
 	@EmbeddedId
+	@JsonIgnore
 	private SubItemKey primaryKey;
 
 	@Id
@@ -28,7 +30,7 @@ public class SubItem {
 
 	@Id
 	@OneToOne
-	@JsonBackReference
+	@JsonBackReference("subItem")
 	@ToString.Exclude
 	private Item subItem;
 
@@ -45,12 +47,10 @@ class SubItemKey implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "ITEM_ID", nullable = false, insertable = false, updatable = false)
 	@ToString.Exclude
-	@JsonBackReference
 	private Item item;
 
 	@OneToOne
 	@JoinColumn(name = "SUB_ITEM_ID", nullable = false, insertable = false, updatable = false)
 	@ToString.Exclude
-	@JsonBackReference
 	private Item subItem;
 }

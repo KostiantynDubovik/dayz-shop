@@ -1,5 +1,6 @@
 package com.dayz.shop.jpa.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class OfferPrice {
 
 	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "ITEM_ID")
+	@JsonBackReference
 	private Item item;
 
 	@Column(name = "PRICE")
