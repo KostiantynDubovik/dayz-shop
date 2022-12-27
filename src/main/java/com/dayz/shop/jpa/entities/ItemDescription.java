@@ -1,5 +1,6 @@
 package com.dayz.shop.jpa.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
@@ -33,6 +34,7 @@ public class ItemDescription {
 
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "ITEM_ID", referencedColumnName = "ITEM_ID", nullable = false)
+	@JsonBackReference
 	private Item item;
 
 	@Column(name = "DESCRIPTION")
