@@ -182,21 +182,7 @@ VALUES (1, 'Радиатор', 'CarRadiator',
         'https://cdn.discordapp.com/attachments/952625703558475846/1037475695334523050/unknown.png', -2, 'SET', 1, '30',
         6200);
 
-insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID)
-values (8, 1),
-       (8, 2),
-       (8, 3),
-       (8, 7),
-       (8, 7),
-       (8, 11),
-       (8, 12),
-       (8, 13),
-       (8, 14),
-       (8, 15),
-       (8, 15),
-       (8, 15),
-       (8, 15),
-       (8, 15);
+
 
 INSERT INTO shop.list_price (LISTPRICE_ID, PRICE, CURRENCY, ITEM_ID, STORE_ID)
 VALUES (1, 50.00, 'RUB', 1, -2),
@@ -222,28 +208,6 @@ VALUES (19, 150.00, 'RUB', 19, -2),
        (24, 10.00, 'RUB', 24, -2),
        (25, 10.00, 'RUB', 25, -2),
        (26, 25.00, 'RUB', 26, -2);
-
-
-insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID)
-values (19, 1),
-       (19, 2),
-       (19, 3),
-       (19, 7),
-       (19, 7);
-
-
-insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID)
-values (19, 20),
-       (19, 21),
-       (19, 22),
-       (19, 23),
-       (19, 24),
-       (19, 25),
-       (19, 26),
-       (19, 26),
-       (19, 26),
-       (19, 26),
-       (19, 26);
 
 INSERT INTO shop.servers (SERVER_ID, STORE_ID, SERVER_NAME, INSTANCE_NAME)
 VALUES (1, -2, '1PP', '1PP'),
@@ -343,24 +307,6 @@ VALUES (1, -2, 'buyable', 'true'),
 
 
 
-insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID)
-values (27, 1),
-       (27, 2),
-       (27, 3),
-       (27, 7),
-       (27, 7),
-       (27, 15),
-       (27, 15),
-       (27, 15),
-       (27, 15),
-       (27, 15),
-       (27, 28),
-       (27, 29),
-       (27, 30),
-       (27, 31);
-
-
-
 INSERT INTO shop.list_price (LISTPRICE_ID, PRICE, CURRENCY, ITEM_ID, STORE_ID)
 VALUES (27, 150.00, 'RUB', 27, -2),
        (28, 10.00, 'RUB', 28, -2),
@@ -372,26 +318,6 @@ VALUES (27, 150.00, 'RUB', 27, -2),
 
 INSERT INTO item_attributes (ITEM_ID, STORE_ID, ATTRIBUTE_NAME, ATTRIBUTE_VALUE)
 VALUES (27, -2, 'buyable', 'true');
-
-
-
-insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID)
-values (32, 1),
-       (32, 2),
-       (32, 3),
-       (32, 7),
-       (32, 7),
-       (32, 33),
-       (32, 34),
-       (32, 35),
-       (32, 36),
-       (32, 37),
-       (32, 38),
-       (32, 39),
-       (32, 39),
-       (32, 39),
-       (32, 39),
-       (32, 39);
 
 
 
@@ -413,26 +339,6 @@ VALUES (32, -2, 'buyable', 'true'),
 
 
 
-insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID)
-values (40, 1),
-       (40, 2),
-       (40, 3),
-       (40, 7),
-       (40, 7),
-       (40, 41),
-       (40, 42),
-       (40, 43),
-       (40, 44),
-       (40, 45),
-       (40, 46),
-       (40, 47),
-       (40, 47),
-       (40, 47),
-       (40, 47),
-       (40, 47);
-
-
-
 INSERT INTO shop.list_price (LISTPRICE_ID, PRICE, CURRENCY, ITEM_ID, STORE_ID)
 VALUES (40, 120.00, 'RUB', 40, -2),
        (41, 10.00, 'RUB', 41, -2),
@@ -448,24 +354,6 @@ VALUES (40, 120.00, 'RUB', 40, -2),
 INSERT INTO item_attributes (ITEM_ID, STORE_ID, ATTRIBUTE_NAME, ATTRIBUTE_VALUE)
 VALUES (40, -2, 'buyable', 'true'),
        (47, -2, 'buyable', 'true');
-
-
-
-insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID)
-values (48, 7),
-       (48, 7),
-       (48, 9),
-       (48, 49),
-       (48, 50),
-       (48, 51),
-       (48, 52),
-       (48, 52),
-       (48, 52),
-       (48, 52),
-       (48, 53),
-       (48, 53),
-       (48, 53),
-       (48, 53);
 
 
 
@@ -660,9 +548,66 @@ VALUES (67, 110),
 INSERT INTO shop.list_price (LISTPRICE_ID, PRICE, CURRENCY, ITEM_ID, STORE_ID)
 VALUES (67, 200.00, 'RUB', 67, -2);
 
-insert into shop.sub_items (MAIN_ITEM_ID, SUB_ITEM_ID)
-values (67, 5),
-       (67, 4);
+insert into shop.sub_items (ITEM_ID, SUB_ITEM_ID, QUANTITY)
+values (8, 1, 1),
+       (8, 2, 1),
+       (8, 3, 1),
+       (8, 7, 2),
+       (8, 11, 1),
+       (8, 12, 1),
+       (8, 13, 1),
+       (8, 14, 1),
+       (8, 15, 5),
+       (19, 1, 1),
+       (19, 2, 1),
+       (19, 3, 1),
+       (19, 7, 2),
+       (19, 20, 1),
+       (19, 21, 1),
+       (19, 22, 1),
+       (19, 23, 1),
+       (19, 24, 1),
+       (19, 25, 1),
+       (19, 26, 5),
+       (27, 1, 1),
+       (27, 2, 1),
+       (27, 3, 1),
+       (27, 7, 2),
+       (27, 15, 5),
+       (27, 29, 1),
+       (27, 30, 1),
+       (27, 31, 1),
+       (32, 1, 1),
+       (32, 2, 1),
+       (32, 3, 1),
+       (32, 7, 2),
+       (32, 33, 1),
+       (32, 34, 1),
+       (32, 35, 1),
+       (32, 36, 1),
+       (32, 37, 1),
+       (32, 38, 1),
+       (32, 39, 5),
+       (40, 1, 1),
+       (40, 2, 1),
+       (40, 3, 1),
+       (40, 7, 2),
+       (40, 41, 1),
+       (40, 42, 1),
+       (40, 43, 1),
+       (40, 44, 1),
+       (40, 45, 1),
+       (40, 46, 1),
+       (40, 47, 5),
+       (48, 7, 2),
+       (48, 9, 1),
+       (48, 49, 1),
+       (48, 50, 1),
+       (48, 51, 1),
+       (48, 52, 4),
+       (48, 53, 4),
+       (67, 5, 1),
+       (67, 4, 1);
 
 insert into item_server_buyable(item_id, server_id)
 select item_id, server_id

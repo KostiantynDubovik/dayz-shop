@@ -1,16 +1,13 @@
 package com.dayz.shop.jpa.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
@@ -58,13 +55,9 @@ public class Item {
 	@Column(name = "IMAGE_URL")
 	private String imageUrl;
 
-	@OneToMany(cascade = CascadeType.MERGE)
-	@JoinTable(name = "sub_items",
-			joinColumns = @JoinColumn(name = "MAIN_ITEM_ID", referencedColumnName = "ITEM_ID"),
-			inverseJoinColumns = @JoinColumn(name = "SUB_ITEM_ID", referencedColumnName = "ITEM_ID"))
+	@OneToMany(mappedBy = "item")
 	@ToString.Exclude
-	@JsonBackReference
-	private List<Item> subItems;
+	private List<SubItem> subItems;
 
 	@Column(name = "COUNT")
 	private Integer count = 1;
@@ -91,6 +84,7 @@ public class Item {
 	@JoinTable(name = "item_server_buyable",
 			joinColumns = {@JoinColumn(name = "item_id")},
 			inverseJoinColumns = {@JoinColumn(name = "server_id")})
+	@ToString.Exclude
 	private List<Server> servers;
 
 	@Override

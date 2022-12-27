@@ -64,17 +64,17 @@ public class MCodeMapper {
 		MVehicles m_vehicles = getEmptyMVehicles();
 		mCodeArray.setM_vehicles(m_vehicles);
 		List<MItemsArray> mItemsArrays = new ArrayList<>();
-		List<Item> subItems = orderItem.getItem().getSubItems();
+		List<SubItem> subItems = orderItem.getItem().getSubItems();
 		if (CollectionUtils.isEmpty(subItems)) {
 			MItemsArray mItemsArray = new MItemsArray();
 			mItemsArray.setM_item(orderItem.getItem().getInGameId());
 			mItemsArray.setM_count(orderItem.getItem().getCount());
 			mItemsArrays.add(mItemsArray);
 		} else {
-			for (Item subItem : subItems) {
+			for (SubItem subItem : subItems) {
 				MItemsArray mItemsArray = new MItemsArray();
-				mItemsArray.setM_item(subItem.getInGameId());
-				mItemsArray.setM_count(subItem.getCount());
+				mItemsArray.setM_item(subItem.getSubItem().getInGameId());
+				mItemsArray.setM_count(subItem.getQuantity());
 				mItemsArrays.add(mItemsArray);
 			}
 		}
@@ -93,8 +93,10 @@ public class MCodeMapper {
 		MVehicles m_vehicles = new MVehicles();
 		m_vehicles.setM_item(orderItem.getItem().getInGameId());
 		List<String> attachments = new ArrayList<>();
-		for (Item subItem : orderItem.getItem().getSubItems()) {
-			attachments.add(subItem.getInGameId());
+		for (SubItem subItem : orderItem.getItem().getSubItems()) {
+			for (int i = 0; i < subItem.getQuantity(); i++) {
+				attachments.add(subItem.getSubItem().getInGameId());
+			}
 		}
 		m_vehicles.setM_attachments(attachments);
 		mCodeArray.setM_vehicles(m_vehicles);

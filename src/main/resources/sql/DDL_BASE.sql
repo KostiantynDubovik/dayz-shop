@@ -194,10 +194,13 @@ create table store_languages
 
 create table sub_items
 (
-	MAIN_ITEM_ID bigint not null,
-	SUB_ITEM_ID  bigint not null,
+	ITEM_ID        bigint           not null,
+	SUB_ITEM_ID         bigint           not null,
+	QUANTITY            bigint default 1 not null,
+	constraint sub_items_pk
+		primary key (ITEM_ID, SUB_ITEM_ID),
 	constraint main_item_FK
-		foreign key (MAIN_ITEM_ID) references items (ITEM_ID)
+		foreign key (ITEM_ID) references items (ITEM_ID)
 			ON DELETE CASCADE ON UPDATE CASCADE,
 	constraint sub_item_FK
 		foreign key (SUB_ITEM_ID) references items (ITEM_ID)
@@ -259,7 +262,7 @@ create table order_items
 	USER_ID       bigint                      null,
 	ORDER_ID      bigint                      null,
 	SERVER_ID     bigint                      null,
-	M_CODE        varchar(20)                 not null,
+	M_CODE        varchar(255)                 not null,
 	STATUS        varchar(20)                 not null,
 	COUNT         int            default 1    not null,
 	constraint order_items_M_CODE_uindex
