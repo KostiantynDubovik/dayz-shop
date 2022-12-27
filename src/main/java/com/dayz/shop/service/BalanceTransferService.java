@@ -26,11 +26,12 @@ public class BalanceTransferService {
 	public void doTransfer(Payment payment) {
 		payment.setStatus(OrderStatus.PENDING);
 		User currentUser = Utils.getCurrentUser();
-		if (Utils.isStoreAdmin(currentUser) || (currentUser.getBalance().compareTo(payment.getAmount()) > 0 && doesHaveRealCharges(currentUser, payment.getStore()))) {
+		boolean storeAdmin = Utils.isStoreAdmin(currentUser);
+		if (storeAdmin || (currentUser.getBalance().compareTo(payment.getAmount()) > 0 && doesHaveRealCharges(currentUser, payment.getStore()))) {
 			User paymentUser = payment.getUser();
 			BigDecimal newBalance = paymentUser.getBalance().add(payment.getAmount());
 			paymentUser.setBalance(newBalance.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : newBalance);
-			if (!Utils.isStoreAdmin(currentUser)) {
+			if (!storeAdmin) {
 				currentUser.setBalance(currentUser.getBalance().subtract(payment.getAmount()));
 				userRepository.save(currentUser);
 			}

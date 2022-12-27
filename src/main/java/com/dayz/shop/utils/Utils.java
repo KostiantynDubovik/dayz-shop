@@ -15,10 +15,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.StringTokenizer;
+import java.math.BigDecimal;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -36,12 +34,14 @@ public class Utils {
 	private static ServerConfigRepository serverConfigRepository;
 	private static ResourceBundleMessageSourceExt messageSource;
 	private static AcceptHeaderLocaleResolver localeResolver;
+	private static RoleRepository roleRepository;
+	private static UserRepository userRepository;
 
 	@Autowired
 	public Utils(StoreRepository storeRepository, PrivilegeRepository privilegeRepository,
 	             StoreConfigRepository storeConfigRepository, ServerConfigRepository serverConfigRepository,
 	             PaymentRepository paymentRepository, ResourceBundleMessageSource messageSource,
-	             AcceptHeaderLocaleResolver localeResolver) {
+	             AcceptHeaderLocaleResolver localeResolver, RoleRepository roleRepository, UserRepository userRepository) {
 		Utils.privilegeRepository = privilegeRepository;
 		Utils.storeConfigRepository = storeConfigRepository;
 		Utils.serverConfigRepository = serverConfigRepository;
@@ -50,6 +50,8 @@ public class Utils {
 		Utils.storeNameStoreMap = storeRepository.findAll().stream().collect(Collectors.toMap(Store::getStoreName, store -> store));
 		Utils.messageSource = new ResourceBundleMessageSourceExt(messageSource);
 		Utils.localeResolver = localeResolver;
+		Utils.roleRepository = roleRepository;
+		Utils.userRepository = userRepository;
 	}
 
 	public static boolean isAppAdmin(User user) {
@@ -152,5 +154,15 @@ public class Utils {
 			locale = localeResolver.resolveLocale(request);
 		}
 		return messageSource.getMessage(key, args, locale);
+	}
+
+	public static User createUser(Store store, String steamId) {
+		User paymentUser = new User();
+		paymentUser.setSteamId(steamId);
+		paymentUser.setStore(store);
+		paymentUser.setBalance(BigDecimal.ZERO);
+		paymentUser.setActive(true);
+		paymentUser.setRoles(Collections.singletonList(roleRepository.getById(-6L)));
+		return userRepository.save(paymentUser);
 	}
 }
