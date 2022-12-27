@@ -245,14 +245,14 @@ values (19, 20),
        (19, 26),
        (19, 26);
 
-INSERT INTO shop.servers (SERVER_ID, STORE_ID, SERVER_NAME)
-VALUES (1, -2, '1PP'),
-       (2, -2, 'LITE'),
-       (3, -2, '3PP'),
-       (4, -2, 'CASUAL'),
-       (5, -2, 'CASUAL2'),
-       (6, -2, 'WINTER'),
-       (7, -2, 'LIVONIA');
+INSERT INTO shop.servers (SERVER_ID, STORE_ID, SERVER_NAME, INSTANCE_NAME)
+VALUES (1, -2, '1PP', '1PP'),
+       (2, -2, 'LITE', 'LITE'),
+       (3, -2, '3PP', 'CHERNO_3PP'),
+       (4, -2, 'CASUAL', 'CASUAL'),
+       (5, -2, 'CASUAL 24/7', 'CASUAL2'),
+       (6, -2, 'WINTER', 'WINTER'),
+       (7, -2, 'LIVONIA', 'LIVONIA');
 
 INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE)
 values (-2, 'checkRealCharges', true),

@@ -1,5 +1,6 @@
 package com.dayz.shop.jpa.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
@@ -27,6 +28,10 @@ public class Server {
 	@JsonProperty("name")
 	@Column(name = "SERVER_NAME")
 	private String serverName;
+
+	@JsonIgnore
+	@Column(name = "INSTANCE_NAME")
+	private String instanceName;
 
 	@Override
 	public boolean equals(Object o) {

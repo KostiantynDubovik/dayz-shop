@@ -54,7 +54,7 @@ public class SendToServerService {
 
 	public void vip(Order order, String steamId, boolean add) throws JSchException, SftpException {
 		String pathToVip = SFTPUtils.getPathToVip(order);
-		String completePath = String.format(pathToVip, order.getServer().getServerName(), VIP_FILE);
+		String completePath = String.format(pathToVip, order.getServer().getInstanceName(), VIP_FILE);
 		ByteArrayInputStream fileContent = SFTPUtils.getFileContent(order, completePath);
 		if (fileContent != null) {
 			Scanner scanner = new Scanner(fileContent);
@@ -80,7 +80,7 @@ public class SendToServerService {
 
 	public void set(Order order, String steamId, boolean add) throws IOException, JSchException, SftpException {
 		String pathToSet = SFTPUtils.getPathToSet(order);
-		String completePath = String.format(pathToSet, order.getServer().getServerName(), SETS_FILE);
+		String completePath = String.format(pathToSet, order.getServer().getInstanceName(), SETS_FILE);
 		InputStream existingSets = SFTPUtils.getFileContent(order, completePath);
 		if (existingSets != null) {
 			Map<String, String> setMap = IOUtils.readLines(existingSets, StandardCharsets.UTF_8).stream().collect(Collectors.toMap(input -> StringUtils.split(input, PIPE)[0], input -> input));
@@ -96,7 +96,7 @@ public class SendToServerService {
 
 	public void spawningItems(Order order, String steamId, boolean add) throws IOException, JSchException, SftpException {
 		String pathToJson = SFTPUtils.getPathToSpawningItemsJson(order);
-		String completePath = String.format(pathToJson, order.getServer().getServerName(), steamId);
+		String completePath = String.format(pathToJson, order.getServer().getInstanceName(), steamId);
 		InputStream existingItems = SFTPUtils.getFileContent(order, completePath);
 		Root root = new Root();
 		ObjectMapper om = new ObjectMapper();

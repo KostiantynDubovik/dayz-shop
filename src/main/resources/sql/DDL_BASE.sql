@@ -158,9 +158,10 @@ create table offer_price
 
 create table servers
 (
-	SERVER_ID   bigint       null,
-	STORE_ID    bigint       null,
-	SERVER_NAME varchar(255) null,
+	SERVER_ID     bigint       null,
+	STORE_ID      bigint       null,
+	SERVER_NAME   varchar(255) null,
+	INSTANCE_NAME varchar(100) not null,
 	constraint servers_pk
 		unique (SERVER_ID, STORE_ID, SERVER_NAME),
 	constraint servers_stores_STORE_ID_fk
