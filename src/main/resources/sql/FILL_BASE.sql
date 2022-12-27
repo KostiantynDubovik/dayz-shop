@@ -605,9 +605,7 @@ values (8, 1, 1),
        (48, 50, 1),
        (48, 51, 1),
        (48, 52, 4),
-       (48, 53, 4),
-       (67, 5, 1),
-       (67, 4, 1);
+       (48, 53, 4);
 
 insert into item_server_buyable(item_id, server_id)
 select item_id, server_id

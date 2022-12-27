@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.ws.rs.Consumes;
 import java.math.BigDecimal;
 
 @RestController
@@ -45,6 +46,7 @@ public class ItemController {
 	}
 
 	@PostMapping()
+	@Consumes("application/json;charset=UTF-8")
 	@PreAuthorize("hasAuthority('STORE_WRITE')")
 	public Item createItem(@RequestBody Item item, @RequestParam BigDecimal listPrice, @RequestAttribute Store store) {
 		item.setStore(store);
