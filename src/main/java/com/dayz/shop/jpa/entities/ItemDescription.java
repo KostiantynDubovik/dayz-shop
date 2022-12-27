@@ -17,6 +17,7 @@ import java.util.Objects;
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
 public class ItemDescription {
 	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	@Column(name = "DESCRIPTION_ID", nullable = false)
 	private Long id;
 
@@ -30,7 +31,7 @@ public class ItemDescription {
 	@JoinColumn(name = "STORE_ID")
 	private Store store;
 
-	@OneToOne(cascade = CascadeType.MERGE)
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "ITEM_ID", referencedColumnName = "ITEM_ID", nullable = false)
 	private Item item;
 

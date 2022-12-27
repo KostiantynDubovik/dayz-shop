@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -40,7 +41,7 @@ public class Item {
 			joinColumns = @JoinColumn(name = "ITEM_ID", referencedColumnName = "ITEM_ID"),
 			inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
 	@ToString.Exclude
-	private List<Category> categories;
+	private List<Category> categories = new ArrayList<>();
 
 	@OneToOne(mappedBy = "item", cascade = CascadeType.ALL)
 	private ListPrice listPrice;
@@ -50,14 +51,14 @@ public class Item {
 			joinColumns = @JoinColumn(name = "ITEM_ID", referencedColumnName = "ITEM_ID"),
 			inverseJoinColumns = @JoinColumn(name = "OFFER_ID", referencedColumnName = "ITEM_ID"))
 	@ToString.Exclude
-	private List<OfferPrice> offerPrices;
+	private List<OfferPrice> offerPrices = new ArrayList<>();
 
 	@Column(name = "IMAGE_URL")
 	private String imageUrl;
 
 //	@OneToMany(mappedBy = "item")
 //	@ToString.Exclude
-//	private List<SubItem> subItems;
+//	private List<SubItem> subItems = new ArrayList<>();
 
 	@Column(name = "COUNT")
 	private Integer count = 1;
@@ -69,7 +70,7 @@ public class Item {
 	@OneToMany(mappedBy = "item")
 	@ToString.Exclude
 	@JsonIgnore
-	private List<ItemAttribute> attributes;
+	private List<ItemAttribute> attributes = new ArrayList<>();
 
 	@Column(name = "COLOR")
 	private String color;
@@ -77,7 +78,7 @@ public class Item {
 	@Column(name = "SEQUENCE")
 	private Long sequence;
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	private ItemDescription itemDescription;
 
 	@ManyToMany()
