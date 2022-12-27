@@ -23,11 +23,13 @@ public class SubItem {
 	@Id
 	@ManyToOne
 	@JsonBackReference
+	@ToString.Exclude
 	private Item item;
 
 	@Id
 	@OneToOne
 	@JsonBackReference
+	@ToString.Exclude
 	private Item subItem;
 
 	@Column(name = "QUANTITY")
@@ -42,11 +44,13 @@ class SubItemKey implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "ITEM_ID", nullable = false, insertable = false, updatable = false)
+	@ToString.Exclude
 	@JsonBackReference
 	private Item item;
 
 	@OneToOne
 	@JoinColumn(name = "SUB_ITEM_ID", nullable = false, insertable = false, updatable = false)
+	@ToString.Exclude
 	@JsonBackReference
 	private Item subItem;
 }
