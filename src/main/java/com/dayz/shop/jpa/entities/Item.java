@@ -56,7 +56,7 @@ public class Item {
 	@Column(name = "IMAGE_URL")
 	private String imageUrl;
 
-//	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+//	@OneToMany(mappedBy = "item")
 //	@ToString.Exclude
 //	private List<SubItem> subItems = new ArrayList<>();
 
