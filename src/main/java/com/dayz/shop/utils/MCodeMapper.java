@@ -51,56 +51,56 @@ public class MCodeMapper {
 		ItemType itemType = orderItem.getItem().getItemType();
 		mCodeArray.setM_type(itemType.toString().toLowerCase());
 		switch (itemType) {
-			case ITEM:
-				fillItems(orderItem, mCodeArray);
-				break;
-			case VEHICLE:
-				fillVehicle(orderItem, mCodeArray);
-				break;
+//			case ITEM:
+//				fillItems(orderItem, mCodeArray);
+//				break;
+//			case VEHICLE:
+//				fillVehicle(orderItem, mCodeArray);
+//				break;
 		}
 	}
 
-	private void fillItems(OrderItem orderItem, MCodeArray mCodeArray) {
-		MVehicles m_vehicles = getEmptyMVehicles();
-		mCodeArray.setM_vehicles(m_vehicles);
-		List<MItemsArray> mItemsArrays = new ArrayList<>();
-		List<SubItem> subItems = orderItem.getItem().getSubItems();
-		if (CollectionUtils.isEmpty(subItems)) {
-			MItemsArray mItemsArray = new MItemsArray();
-			mItemsArray.setM_item(orderItem.getItem().getInGameId());
-			mItemsArray.setM_count(orderItem.getItem().getCount());
-			mItemsArrays.add(mItemsArray);
-		} else {
-			for (SubItem subItem : subItems) {
-				MItemsArray mItemsArray = new MItemsArray();
-				mItemsArray.setM_item(subItem.getSubItem().getInGameId());
-				mItemsArray.setM_count(subItem.getQuantity());
-				mItemsArrays.add(mItemsArray);
-			}
-		}
-		mCodeArray.setM_itemsArray(mItemsArrays);
-	}
-
-	private MVehicles getEmptyMVehicles() {
-		MVehicles m_vehicles = new MVehicles();
-		m_vehicles.setM_item(StringUtils.EMPTY);
-		m_vehicles.setM_attachments(new ArrayList<>());
-		return m_vehicles;
-	}
-
-	private void fillVehicle(OrderItem orderItem, MCodeArray mCodeArray) {
-		mCodeArray.setM_itemsArray(new ArrayList<>());
-		MVehicles m_vehicles = new MVehicles();
-		m_vehicles.setM_item(orderItem.getItem().getInGameId());
-		List<String> attachments = new ArrayList<>();
-		for (SubItem subItem : orderItem.getItem().getSubItems()) {
-			for (int i = 0; i < subItem.getQuantity(); i++) {
-				attachments.add(subItem.getSubItem().getInGameId());
-			}
-		}
-		m_vehicles.setM_attachments(attachments);
-		mCodeArray.setM_vehicles(m_vehicles);
-	}
+//	private void fillItems(OrderItem orderItem, MCodeArray mCodeArray) {
+//		MVehicles m_vehicles = getEmptyMVehicles();
+//		mCodeArray.setM_vehicles(m_vehicles);
+//		List<MItemsArray> mItemsArrays = new ArrayList<>();
+//		List<SubItem> subItems = orderItem.getItem().getSubItems();
+//		if (CollectionUtils.isEmpty(subItems)) {
+//			MItemsArray mItemsArray = new MItemsArray();
+//			mItemsArray.setM_item(orderItem.getItem().getInGameId());
+//			mItemsArray.setM_count(orderItem.getItem().getCount());
+//			mItemsArrays.add(mItemsArray);
+//		} else {
+//			for (SubItem subItem : subItems) {
+//				MItemsArray mItemsArray = new MItemsArray();
+//				mItemsArray.setM_item(subItem.getSubItem().getInGameId());
+//				mItemsArray.setM_count(subItem.getQuantity());
+//				mItemsArrays.add(mItemsArray);
+//			}
+//		}
+//		mCodeArray.setM_itemsArray(mItemsArrays);
+//	}
+//
+//	private MVehicles getEmptyMVehicles() {
+//		MVehicles m_vehicles = new MVehicles();
+//		m_vehicles.setM_item(StringUtils.EMPTY);
+//		m_vehicles.setM_attachments(new ArrayList<>());
+//		return m_vehicles;
+//	}
+//
+//	private void fillVehicle(OrderItem orderItem, MCodeArray mCodeArray) {
+//		mCodeArray.setM_itemsArray(new ArrayList<>());
+//		MVehicles m_vehicles = new MVehicles();
+//		m_vehicles.setM_item(orderItem.getItem().getInGameId());
+//		List<String> attachments = new ArrayList<>();
+//		for (SubItem subItem : orderItem.getItem().getSubItems()) {
+//			for (int i = 0; i < subItem.getQuantity(); i++) {
+//				attachments.add(subItem.getSubItem().getInGameId());
+//			}
+//		}
+//		m_vehicles.setM_attachments(attachments);
+//		mCodeArray.setM_vehicles(m_vehicles);
+//	}
 
 	public List<OrderItem> mapRootToOrderItems(Root root) {
 		List<String> mCodes =  root.getM_CodeArray().stream().map(MCodeArray::getM_code).collect(Collectors.toList());

@@ -55,9 +55,9 @@ public class Item {
 	@Column(name = "IMAGE_URL")
 	private String imageUrl;
 
-	@OneToMany(mappedBy = "item")
-	@ToString.Exclude
-	private List<SubItem> subItems;
+//	@OneToMany(mappedBy = "item")
+//	@ToString.Exclude
+//	private List<SubItem> subItems;
 
 	@Column(name = "COUNT")
 	private Integer count = 1;
@@ -92,11 +92,11 @@ public class Item {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Item item = (Item) o;
-		return Objects.equals(id, item.id) && Objects.equals(name, item.name) && Objects.equals(inGameId, item.inGameId) && Objects.equals(store, item.store) && Objects.equals(categories, item.categories) && Objects.equals(listPrice, item.listPrice) && Objects.equals(offerPrices, item.offerPrices) && Objects.equals(imageUrl, item.imageUrl) && Objects.equals(subItems, item.subItems) && Objects.equals(count, item.count) && itemType == item.itemType && Objects.equals(attributes, item.attributes) && Objects.equals(color, item.color) && Objects.equals(servers, item.servers);
+		return Objects.equals(id, item.id) && Objects.equals(name, item.name) && Objects.equals(inGameId, item.inGameId) && Objects.equals(store, item.store) && Objects.equals(categories, item.categories) && Objects.equals(listPrice, item.listPrice) && Objects.equals(offerPrices, item.offerPrices) && Objects.equals(imageUrl, item.imageUrl) /*&& Objects.equals(subItems, item.subItems)*/ && Objects.equals(count, item.count) && itemType == item.itemType && Objects.equals(attributes, item.attributes) && Objects.equals(color, item.color) && Objects.equals(servers, item.servers);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, name, inGameId, store, categories, listPrice, offerPrices, imageUrl, subItems, count, itemType, attributes, color, servers);
+		return Objects.hash(id, name, inGameId, store, categories, listPrice, offerPrices, imageUrl, /*subItems,*/ count, itemType, attributes, color, servers);
 	}
 }
