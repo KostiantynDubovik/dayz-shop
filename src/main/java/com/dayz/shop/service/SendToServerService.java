@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -56,7 +57,7 @@ public class SendToServerService {
 				}
 			}
 		} catch (JSchException | SftpException e) {
-			System.out.println(e);
+			LOGGER.log(Level.SEVERE, "Cant send order", e);
 		}
 	}
 
@@ -109,7 +110,7 @@ public class SendToServerService {
 		try {
 			existingItems = SFTPUtils.getFileContent(order, completePath);
 		} catch (JSchException | SftpException e) {
-			LOGGER.info("There is no such file, will create for user: " + steamId);
+			LOGGER.info("There is no such file on server: " + order.getServer().getInstanceName() + ", will create for user: " + steamId);
 		}
 		Root root = new Root();
 		ObjectMapper om = new ObjectMapper();
