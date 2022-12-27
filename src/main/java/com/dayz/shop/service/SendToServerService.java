@@ -19,10 +19,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
 public class SendToServerService {
+	private static final String CLASSNAME = SendToServerService.class.getName();
+	private static final Logger LOGGER = Logger.getLogger(CLASSNAME);
+
 	public static final String PIPE = "|";
 	public static final String SEMICOLON = ";";
 	public static final String ZERO = "0";
@@ -101,7 +105,12 @@ public class SendToServerService {
 	public void spawningItems(Order order, String steamId, boolean add) throws IOException, JSchException, SftpException {
 		String pathToJson = SFTPUtils.getPathToSpawningItemsJson(order);
 		String completePath = String.format(pathToJson, order.getServer().getInstanceName(), steamId);
-		InputStream existingItems = SFTPUtils.getFileContent(order, completePath);
+		InputStream existingItems = null;
+		try {
+			existingItems = SFTPUtils.getFileContent(order, completePath);
+		} catch (JSchException | SftpException e) {
+			LOGGER.info("There is no such file, will create for user: " + steamId);
+		}
 		Root root = new Root();
 		ObjectMapper om = new ObjectMapper();
 		om.setSerializationInclusion(JsonInclude.Include.NON_NULL);
