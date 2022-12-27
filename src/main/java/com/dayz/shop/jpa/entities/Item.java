@@ -78,7 +78,7 @@ public class Item {
 	@Column(name = "SEQUENCE")
 	private Long sequence;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(mappedBy = "item", cascade = CascadeType.ALL)
 	private ItemDescription itemDescription;
 
 	@ManyToMany()
