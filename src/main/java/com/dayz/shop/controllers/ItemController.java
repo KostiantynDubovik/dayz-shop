@@ -67,7 +67,7 @@ public class ItemController {
 		price.setCurrency("RUB");
 		item.setListPrice(price);
 		if (item.getImageUrl() == null) {
-			item.setImageUrl(Utils.getStoreConfig("'default.image", store));
+			item.setImageUrl(Utils.getStoreConfig("default.image", store));
 		}
 		return itemRepository.save(item);
 	}
