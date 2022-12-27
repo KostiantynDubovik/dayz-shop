@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
 @Aspect
 @Component
@@ -67,7 +68,7 @@ public class OrderUtils {
 		OrderItem orderItem = new OrderItem();
 		orderItem.setUser(user);
 		orderItem.setOrder(order);
-		orderItem.setCode(MCodeGenerator.generateMCode());
+		orderItem.setCode(UUID.randomUUID().toString());
 		orderItem.setServer(order.getServer());
 		orderItem.setStatus(OrderStatus.PENDING);
 		orderItem.setReceived(false);
