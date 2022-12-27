@@ -1,8 +1,6 @@
 package com.dayz.shop.controllers;
 
-import com.dayz.shop.jpa.entities.Item;
-import com.dayz.shop.jpa.entities.ListPrice;
-import com.dayz.shop.jpa.entities.Store;
+import com.dayz.shop.jpa.entities.*;
 import com.dayz.shop.repository.CategoryRepository;
 import com.dayz.shop.repository.ItemRepository;
 import com.dayz.shop.utils.Utils;
@@ -23,11 +21,16 @@ public class ItemController {
 
 	private final ItemRepository itemRepository;
 	private final CategoryRepository categoryRepository;
+	private final LanguageRepository languageRepository;
+	private final ItemDescriptionRepository itemDescriptionRepository;
 
 	@Autowired
-	public ItemController(ItemRepository itemRepository, CategoryRepository categoryRepository) {
+	public ItemController(ItemRepository itemRepository, CategoryRepository categoryRepository,
+	                      LanguageRepository languageRepository, ItemDescriptionRepository itemDescriptionRepository) {
 		this.itemRepository = itemRepository;
 		this.categoryRepository = categoryRepository;
+		this.languageRepository = languageRepository;
+		this.itemDescriptionRepository = itemDescriptionRepository;
 	}
 
 	@GetMapping("{itemId}")
@@ -50,6 +53,13 @@ public class ItemController {
 	@PreAuthorize("hasAuthority('STORE_WRITE')")
 	public Item createItem(@RequestBody Item item, @RequestParam BigDecimal listPrice, @RequestAttribute Store store) {
 		item.setStore(store);
+		ItemDescription itemDescription = item.getItemDescription();
+		if (itemDescription != null) {
+			itemDescription.setStore(store);
+			itemDescription.setItem(item);
+			itemDescription.setLanguage(languageRepository.getById(-3L));
+			itemDescriptionRepository.save(itemDescription);
+		}
 		ListPrice price = new ListPrice();
 		price.setPrice(listPrice);
 		price.setStore(store);
