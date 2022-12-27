@@ -37,18 +37,22 @@ public class SendToServerService {
 
 	public void sendOrder(Order order, Map<ItemType, Order> separatedTypes) throws JSchException, InterruptedException, IOException, SftpException {
 		String steamId = order.getUser().getSteamId();
-		for (ItemType itemType : separatedTypes.keySet()) {
-			switch (itemType) {
-				case ITEM:
-				case VEHICLE:
-					spawningItems(order, steamId, true);
-					break;
-				case VIP:
-					vip(order, steamId, true);
-					break;
-				case SET:
-					set(order, steamId, true);
+		try {
+			for (ItemType itemType : separatedTypes.keySet()) {
+				switch (itemType) {
+					case ITEM:
+					case VEHICLE:
+						spawningItems(order, steamId, true);
+						break;
+					case VIP:
+						vip(order, steamId, true);
+						break;
+					case SET:
+						set(order, steamId, true);
+				}
 			}
+		} catch (JSchException | SftpException e) {
+			System.out.println(e);
 		}
 	}
 
