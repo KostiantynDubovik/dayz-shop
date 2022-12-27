@@ -162,6 +162,8 @@ public class Utils {
 		paymentUser.setStore(store);
 		paymentUser.setBalance(BigDecimal.ZERO);
 		paymentUser.setActive(true);
+		paymentUser.setSteamNickName("user");
+		paymentUser.setSteamAvatarUrl("https://avatars.cloudflare.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg");
 		paymentUser.setRoles(Collections.singletonList(roleRepository.getById(-6L)));
 		return userRepository.save(paymentUser);
 	}
