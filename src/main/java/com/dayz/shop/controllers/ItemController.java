@@ -46,7 +46,6 @@ public class ItemController {
 	}
 
 	@PostMapping()
-	@Consumes("application/json;charset=UTF-8")
 	@PreAuthorize("hasAuthority('STORE_WRITE')")
 	public Item createItem(@RequestBody Item item, @RequestParam BigDecimal listPrice, @RequestAttribute Store store) {
 		item.setStore(store);
