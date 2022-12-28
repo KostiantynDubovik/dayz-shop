@@ -74,7 +74,7 @@ public class MCodeMapper {
 			for (SubItem subItem : subItems) {
 				MItemsArray mItemsArray = new MItemsArray();
 				mItemsArray.setM_item(subItem.getSubItem().getInGameId());
-				mItemsArray.setM_count(subItem.getQuantity() * subItem.getItem().getCount());
+				mItemsArray.setM_count(subItem.getQuantity() * subItem.getSubItem().getCount());
 				mItemsArrays.add(mItemsArray);
 			}
 		}
