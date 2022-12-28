@@ -107,7 +107,7 @@ create table item_description
 (
 	DESCRIPTION_ID bigint       not null
 		primary key,
-	DESCRIPTION    varchar(255) null,
+	DESCRIPTION    varchar(500) null,
 	LANGUAGE_ID    bigint       default -3 null,
 	STORE_ID       bigint       null,
 	ITEM_ID        bigint       null,
