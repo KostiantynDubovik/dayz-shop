@@ -11,6 +11,7 @@ import com.dayz.shop.utils.Utils;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -182,7 +183,7 @@ public class OrderService {
 		return separatedItems;
 	}
 
-	public List<Order> getAllUserOrders(User user, Store store) {
-		return orderRepository.findAllByUserAndStoreAndStatus(user, store, OrderStatus.COMPLETE);
+	public List<Order> getAllUserOrders(User user, Store store, Pageable pageable) {
+		return orderRepository.findAllByUserAndStoreAndStatus(user, store, OrderStatus.COMPLETE, pageable);
 	}
 }

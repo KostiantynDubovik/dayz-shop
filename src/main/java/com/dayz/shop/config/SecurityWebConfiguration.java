@@ -70,6 +70,7 @@ public class SecurityWebConfiguration extends WebSecurityConfigurerAdapter {
 	}
 
 	@Bean
+	@SuppressWarnings("deprecation")
 	public AuthenticationUserDetailsService<OpenIDAuthenticationToken> authenticationUserDetailsService() {
 		return new CustomUserDetailsService();
 	}

@@ -25,6 +25,7 @@ public class UserController {
 
 	@Transactional
 	@GetMapping("/self")
+	@SuppressWarnings("deprecation")
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public User getSelf(OpenIDAuthenticationToken principal) {
 		return userRepository.getBySteamId(((User) principal.getPrincipal()).getSteamId());
@@ -51,6 +52,7 @@ public class UserController {
 		return userRepository.getAllByStore(store);
 	}
 
+	@SuppressWarnings("deprecation")
 	@DeleteMapping("store/{userId}")
 	@PreAuthorize("hasAuthority('STORE_WRITE')")
 	public void deactivateUser(@PathVariable("userId") User user, OpenIDAuthenticationToken principal) {

@@ -6,6 +6,9 @@ import com.dayz.shop.service.OrderService;
 import com.dayz.shop.utils.OrderUtils;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.openid.OpenIDAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
@@ -31,10 +34,12 @@ public class OrderController {
 		return OrderUtils.getCurrentOrder(store);
 	}
 
-	@GetMapping("all")
+	@GetMapping("all/{page}")
+	@SuppressWarnings("deprecation")
 	@PreAuthorize("hasAuthority('STORE_READ')")
-	public List<Order> getOrders(@RequestAttribute Store store, OpenIDAuthenticationToken principal) {
-		return orderService.getAllUserOrders((User) principal.getPrincipal(), store);
+	public List<Order> getAllUserOrders(@RequestAttribute Store store, OpenIDAuthenticationToken principal, @PathVariable int page, @RequestParam(defaultValue = "20") int pageSize) {
+		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 20 ? 20 : pageSize, Sort.by("timePlaced"));
+		return orderService.getAllUserOrders((User) principal.getPrincipal(), store, pageable);
 	}
 
 	@PostMapping("add/{item}")

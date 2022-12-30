@@ -31,6 +31,7 @@ import java.util.List;
 @Getter
 @Setter
 @Service
+@SuppressWarnings("deprecation")
 public class CustomUserDetailsService implements AuthenticationUserDetailsService<OpenIDAuthenticationToken>, UserDetailsService {
 
 	private static final Logger log = LoggerFactory.getLogger(CustomUserDetailsService.class);
@@ -66,6 +67,7 @@ public class CustomUserDetailsService implements AuthenticationUserDetailsServic
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public UserDetails loadUserDetails(OpenIDAuthenticationToken token) throws UsernameNotFoundException {
 		String steamId = token.getName().substring(token.getName().lastIndexOf('/') + 1);
 		Store store = Utils.extractStoreFromRequest(request);
