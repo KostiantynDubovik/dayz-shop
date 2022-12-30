@@ -85,7 +85,6 @@ public class BalanceController {
 			if (user != null) {
 				payment.setUser(user);
 				balanceTransferService.doTransfer(payment);
-				payment.getProperties().put("message", Utils.getMessage("transfer.success", store));
 			} else {
 				payment.setStatus(OrderStatus.FAILED);
 				payment.getProperties().put("message", Utils.getMessage("transfer.failed.no_user", store));
