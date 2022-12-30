@@ -1,17 +1,17 @@
 package com.dayz.shop.controllers;
 
 import com.dayz.shop.ProcessMessage;
-import com.dayz.shop.jpa.entities.Item;
-import com.dayz.shop.jpa.entities.Order;
-import com.dayz.shop.jpa.entities.Server;
-import com.dayz.shop.jpa.entities.Store;
+import com.dayz.shop.jpa.entities.*;
 import com.dayz.shop.service.OrderService;
 import com.dayz.shop.utils.OrderUtils;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.openid.OpenIDAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ServerErrorException;
+
+import java.util.List;
 
 @Aspect
 @RestController
@@ -29,6 +29,12 @@ public class OrderController {
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public Order getOrder(@RequestAttribute Store store) {
 		return OrderUtils.getCurrentOrder(store);
+	}
+
+	@GetMapping("all")
+	@PreAuthorize("hasAuthority('STORE_READ')")
+	public List<Order> getOrders(@RequestAttribute Store store, OpenIDAuthenticationToken principal) {
+		return orderService.getAllUserOrders((User) principal.getPrincipal(), store);
 	}
 
 	@PostMapping("add/{item}")

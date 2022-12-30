@@ -181,4 +181,8 @@ public class OrderService {
 		}
 		return separatedItems;
 	}
+
+	public List<Order> getAllUserOrders(User user, Store store) {
+		return orderRepository.findAllByUserAndStoreAndStatus(user, store, OrderStatus.COMPLETE);
+	}
 }
