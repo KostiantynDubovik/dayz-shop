@@ -16,5 +16,6 @@ import java.util.List;
 public interface PaymentRepository extends PagingAndSortingRepository<Payment, Long> {
 
 	List<Payment> findAllByUser(User user);
+	List<Payment> findAllByUserAndStoreAndTypeNotIn(User user, Store store, Collection<Type> paymentTypes);
 	List<Payment> findAllByUserAndStoreAndTypeNotIn(User user, Store store, Collection<Type> paymentTypes, Pageable pageable);
 }
