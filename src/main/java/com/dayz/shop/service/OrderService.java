@@ -106,6 +106,7 @@ public class OrderService {
 				order.getOrderItems().forEach(orderItem -> orderItem.setStatus(OrderStatus.FAILED));
 			}
 		}
+		order.setTimePlaced(LocalDateTime.now());
 		return orderRepository.save(order);
 	}
 

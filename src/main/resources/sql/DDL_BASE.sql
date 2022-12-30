@@ -238,6 +238,7 @@ create table orders
 	USER_ID     bigint         null,
 	STORE_ID    bigint         null,
 	SERVER_ID   bigint         null,
+	TIME_PLACED TIMESTAMP      null,
 	constraint FKenwru67yr8f0ei6m1bc2xlj4w
 		foreign key (USER_ID) references users (USER_ID)
 			ON DELETE CASCADE ON UPDATE CASCADE,

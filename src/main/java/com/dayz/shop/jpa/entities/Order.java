@@ -11,6 +11,7 @@ import org.aspectj.lang.annotation.Aspect;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Aspect
@@ -63,6 +64,9 @@ public class Order {
 	@MapKeyColumn(name = "NAME")
 	@Column(name = "VALUE")
 	private Map<String, String> properties = new HashMap<>();
+
+	@Column(name = "TIME_PLACED")
+	private LocalDateTime timePlaced;
 
 	@Override
 	public boolean equals(Object o) {
