@@ -17,6 +17,8 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -99,5 +101,12 @@ public class BalanceController {
 			result = fromRepo.get();
 		}
 		return result;
+	}
+
+	@GetMapping("all")
+	@SuppressWarnings("deprecation")
+	@PreAuthorize("hasAuthority('STORE_READ')")
+	public List<Payment> getPaymentById(@RequestAttribute Store store, OpenIDAuthenticationToken principal) {
+		return paymentRepository.findAllByUserAndStoreAndTypeNotIn((User) principal.getPrincipal(), store, Arrays.asList(Type.TRANSFER, Type.ORDER));
 	}
 }
