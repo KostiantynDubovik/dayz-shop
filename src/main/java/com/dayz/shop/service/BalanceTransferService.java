@@ -27,7 +27,7 @@ public class BalanceTransferService {
 		payment.setStatus(OrderStatus.PENDING);
 		User currentUser = Utils.getCurrentUser();
 		boolean storeAdmin = Utils.isStoreAdmin(currentUser);
-		if (storeAdmin || (currentUser.getBalance().compareTo(payment.getAmount()) > 0 && doesHaveRealCharges(currentUser, payment.getStore()))) {
+		if (storeAdmin || (currentUser.getBalance().compareTo(payment.getAmount()) >= 0 && doesHaveRealCharges(currentUser, payment.getStore()))) {
 			User paymentUser = payment.getUser();
 			BigDecimal newBalance = paymentUser.getBalance().add(payment.getAmount());
 			paymentUser.setBalance(newBalance.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : newBalance);
