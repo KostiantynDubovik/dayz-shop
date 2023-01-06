@@ -53,7 +53,9 @@ public class BalanceController {
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public void initPayment(HttpServletResponse response, @ModelAttribute Payment payment, @RequestAttribute("store") Store store, String steamId) throws IOException {
 		if (payment.getUser() == null) {
-			payment.setUser(Utils.getCurrentUser());
+			User currentUser = Utils.getCurrentUser();
+			payment.setUser(currentUser);
+			payment.setUserFrom(currentUser);
 		}
 		payment.setStore(store);
 		payment.setCurrency(Currency.RUB);
@@ -77,6 +79,7 @@ public class BalanceController {
 		payment.setStatus(OrderStatus.PENDING);
 		if (payment.getAmount().compareTo(BigDecimal.ZERO) > 0) {
 			User currentUser = Utils.getCurrentUser();
+			payment.setUserFrom(currentUser);
 			boolean isSelfCharge = Utils.isStoreAdmin() && currentUser.getSteamId().equals(steamId);
 			User user = isSelfCharge ? currentUser : userRepository.getBySteamIdAndStore(steamId, store);
 			if (user == null && Utils.isStoreAdmin(currentUser)) {
@@ -88,9 +91,10 @@ public class BalanceController {
 			} else {
 				payment.setStatus(OrderStatus.FAILED);
 				payment.getProperties().put("message", Utils.getMessage("transfer.failed.no_user", store));
+				paymentRepository.save(payment);
 			}
 		}
-		return paymentRepository.save(payment);
+		return payment;
 	}
 
 	@GetMapping("{paymentId}")
@@ -98,9 +102,16 @@ public class BalanceController {
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public Payment getPaymentById(@PathVariable("paymentId") Long paymentId, OpenIDAuthenticationToken principal) {
 		Payment result = null;
-		Optional<Payment> fromRepo = paymentRepository.findById(paymentId);
-		if (fromRepo.isPresent() && fromRepo.get().getUser().equals(principal.getPrincipal())) {
-			result = fromRepo.get();
+		User user = (User) principal.getPrincipal();
+		if (Utils.isAppAdmin(user)) {
+			result = paymentRepository.findById(paymentId).orElse(null);
+		} else if (Utils.isStoreAdmin(user)) {
+			Optional<Payment> paymentOptional = paymentRepository.findById(paymentId);
+			if (paymentOptional.isPresent() && user.getStore().equals(paymentOptional.get().getStore())) {
+				result = paymentOptional.get();
+			}
+		} else {
+			result = paymentRepository.findByIdAndUser(paymentId, user);
 		}
 		return result;
 	}

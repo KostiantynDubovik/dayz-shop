@@ -317,6 +317,7 @@ create table payments
 	AMOUNT         decimal      not null,
 	CHARGE_TIME    timestamp    null,
 	USER_ID        bigint       null,
+	USER_FROM      bigint       null,
 	STORE_ID       bigint       not null,
 	PAYMENT_TYPE   varchar(255) not null,
 	PAYMENT_STATUS varchar(20)  not null,
@@ -324,6 +325,9 @@ create table payments
 	constraint PAYMENTS_users_null_fk
 		foreign key (USER_ID) references users (USER_ID)
 			ON DELETE CASCADE ON UPDATE CASCADE,
+	constraint PAYMENTS_users_from_fk
+		foreign key (USER_FROM) references users (USER_ID)
+			on update cascade on delete cascade,
 	constraint payments_stores_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID)
 			ON DELETE CASCADE ON UPDATE CASCADE

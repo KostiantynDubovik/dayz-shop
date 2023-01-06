@@ -38,6 +38,10 @@ public class Payment {
 	@ManyToOne
 	private User user;
 
+	@JoinColumn(name = "USER_FROM")
+	@ManyToOne
+	private User userFrom;
+
 	@JoinColumn(name = "STORE_ID")
 	@ManyToOne
 	private Store store;
