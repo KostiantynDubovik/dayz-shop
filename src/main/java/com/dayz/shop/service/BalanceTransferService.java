@@ -25,15 +25,15 @@ public class BalanceTransferService {
 
 	public void doTransfer(Payment payment) {
 		payment.setStatus(OrderStatus.PENDING);
-		User currentUser = Utils.getCurrentUser();
-		boolean storeAdmin = Utils.isStoreAdmin(currentUser);
-		if (storeAdmin || (currentUser.getBalance().compareTo(payment.getAmount()) >= 0 && doesHaveRealCharges(currentUser, payment.getStore()))) {
+		User userFrom = payment.getUserFrom();
+		boolean storeAdmin = Utils.isStoreAdmin(userFrom);
+		if (storeAdmin || (userFrom.getBalance().compareTo(payment.getAmount()) >= 0 && doesHaveRealCharges(userFrom, payment.getStore()))) {
 			User paymentUser = payment.getUser();
 			BigDecimal newBalance = paymentUser.getBalance().add(payment.getAmount());
 			paymentUser.setBalance(newBalance.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : newBalance);
 			if (!storeAdmin) {
-				currentUser.setBalance(currentUser.getBalance().subtract(payment.getAmount()));
-				userRepository.save(currentUser);
+				userFrom.setBalance(userFrom.getBalance().subtract(payment.getAmount()));
+				userRepository.save(userFrom);
 			}
 			userRepository.save(paymentUser);
 			payment.setStatus(OrderStatus.COMPLETE);
@@ -41,7 +41,7 @@ public class BalanceTransferService {
 			payment.getProperties().put("message", Utils.getMessage("transfer.success", payment.getStore()));
 			paymentRepository.save(payment);
 		} else {
-			saveFail(payment, currentUser);
+			saveFail(payment, userFrom);
 		}
 	}
 
