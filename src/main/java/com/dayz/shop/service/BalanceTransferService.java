@@ -27,27 +27,32 @@ public class BalanceTransferService {
 		payment.setStatus(OrderStatus.PENDING);
 		User userFrom = payment.getUserFrom();
 		boolean storeAdmin = Utils.isStoreAdmin(userFrom);
-		if (storeAdmin || (userFrom.getBalance().compareTo(payment.getAmount()) >= 0 && doesHaveRealCharges(userFrom, payment.getStore()))) {
-			User paymentUser = payment.getUser();
-			BigDecimal newBalance = paymentUser.getBalance().add(payment.getAmount());
-			paymentUser.setBalance(newBalance.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : newBalance);
-			if (!storeAdmin) {
-				userFrom.setBalance(userFrom.getBalance().subtract(payment.getAmount()));
+		if (storeAdmin || (userFrom.getBalance().compareTo(payment.getAmount()) >= 0)) {
+			if (doesHaveRealCharges(userFrom, payment.getStore())) {
+				User paymentUser = payment.getUser();
+				BigDecimal newBalance = paymentUser.getBalance().add(payment.getAmount());
+				paymentUser.setBalance(newBalance.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : newBalance);
+				if (!storeAdmin) {
+					userFrom.setBalance(userFrom.getBalance().subtract(payment.getAmount()));
+				}
+				payment.setStatus(OrderStatus.COMPLETE);
+				payment.setChargeTime(LocalDateTime.now());
+				payment.getProperties().put("message", Utils.getMessage("transfer.success", payment.getStore()));
 				userRepository.save(userFrom);
+				userRepository.save(paymentUser);
+				paymentRepository.save(payment);
+			} else {
+				saveFail(payment, userFrom, "transfer.failed.noRealCharges");
 			}
-			userRepository.save(paymentUser);
-			payment.setStatus(OrderStatus.COMPLETE);
-			payment.setChargeTime(LocalDateTime.now());
-			payment.getProperties().put("message", Utils.getMessage("transfer.success", payment.getStore()));
-			paymentRepository.save(payment);
 		} else {
-			saveFail(payment, userFrom);
+			saveFail(payment, userFrom, "transfer.failed.insufficient");
 		}
 	}
 
-	private void saveFail(Payment payment, User currentUser) {
+	private void saveFail(Payment payment, User currentUser, String messageKey) {
 		payment.setStatus(OrderStatus.FAILED);
-		payment.getProperties().put("message", Utils.getMessage("transfer.failed.insufficient", payment.getStore(), currentUser.getBalance(), payment.getAmount()));
+		payment.getProperties().put("message", Utils.getMessage(messageKey, payment.getStore(), currentUser.getBalance(), payment.getAmount()));
+		payment.setChargeTime(LocalDateTime.now());
 		paymentRepository.save(payment);
 	}
 

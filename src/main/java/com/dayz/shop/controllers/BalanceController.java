@@ -20,6 +20,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -81,15 +82,16 @@ public class BalanceController {
 			User currentUser = Utils.getCurrentUser();
 			payment.setUserFrom(currentUser);
 			boolean isSelfCharge = Utils.isStoreAdmin() && currentUser.getSteamId().equals(steamId);
-			User user = isSelfCharge ? currentUser : userRepository.getBySteamIdAndStore(steamId, store);
-			if (user == null && Utils.isStoreAdmin(currentUser)) {
-				user = Utils.createUser(store, steamId);
+			User userTo = isSelfCharge ? currentUser : userRepository.getBySteamIdAndStore(steamId, store);
+			if (userTo == null && Utils.isStoreAdmin(currentUser)) {
+				userTo = Utils.createUser(store, steamId);
 			}
-			if (user != null) {
-				payment.setUser(user);
+			if (userTo != null) {
+				payment.setUser(userTo);
 				balanceTransferService.doTransfer(payment);
 			} else {
 				payment.setStatus(OrderStatus.FAILED);
+				payment.setChargeTime(LocalDateTime.now());
 				payment.getProperties().put("message", Utils.getMessage("transfer.failed.no_user", store));
 				paymentRepository.save(payment);
 			}
