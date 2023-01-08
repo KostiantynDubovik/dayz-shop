@@ -79,7 +79,7 @@ public class BalanceController {
 		payment.setType(Type.TRANSFER);
 		payment.setStatus(OrderStatus.PENDING);
 		if (payment.getAmount().compareTo(BigDecimal.ZERO) > 0) {
-			User currentUser = Utils.getCurrentUser();
+			User currentUser = userRepository.getBySteamIdAndStore(Utils.getCurrentUser().getSteamId(), store);
 			payment.setUserFrom(currentUser);
 			boolean isSelfCharge = Utils.isStoreAdmin() && currentUser.getSteamId().equals(steamId);
 			User userTo = isSelfCharge ? currentUser : userRepository.getBySteamIdAndStore(steamId, store);
