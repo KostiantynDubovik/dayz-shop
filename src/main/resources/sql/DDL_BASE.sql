@@ -263,11 +263,8 @@ create table order_items
 	USER_ID       bigint                      null,
 	ORDER_ID      bigint                      null,
 	SERVER_ID     bigint                      null,
-	M_CODE        varchar(255)                 not null,
 	STATUS        varchar(20)                 not null,
 	COUNT         int            default 1    not null,
-	constraint order_items_M_CODE_uindex
-		unique (M_CODE),
 	constraint order_items_servers_SERVER_ID_fk
 		foreign key (SERVER_ID) references servers (SERVER_ID)
 			ON DELETE CASCADE ON UPDATE CASCADE,
