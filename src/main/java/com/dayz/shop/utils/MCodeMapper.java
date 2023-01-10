@@ -39,7 +39,7 @@ public class MCodeMapper {
 		List<MCodeArray> mCodeArrays = new ArrayList<>();
 		for (OrderItem orderItem : orderItems) {
 			MCodeArray mCodeArray = new MCodeArray();
-			mCodeArray.setM_code(orderItem.getCode());
+			mCodeArray.setM_code(orderItem.getId().toString());
 			mCodeArray.setM_name(orderItem.getItem().getName());
 			fillSubItems(orderItem, mCodeArray);
 			mCodeArrays.add(mCodeArray);
