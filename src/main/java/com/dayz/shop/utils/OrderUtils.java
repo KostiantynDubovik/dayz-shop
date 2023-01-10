@@ -68,7 +68,7 @@ public class OrderUtils {
 		OrderItem orderItem = new OrderItem();
 		orderItem.setUser(user);
 		orderItem.setOrder(order);
-		orderItem.setCode(String.valueOf(orderItem.getId()));
+		orderItem.setCode(UUID.randomUUID().toString());
 		orderItem.setServer(order.getServer());
 		orderItem.setStatus(OrderStatus.PENDING);
 		orderItem.setReceived(false);
