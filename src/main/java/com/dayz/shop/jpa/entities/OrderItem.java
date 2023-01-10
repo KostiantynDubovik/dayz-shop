@@ -60,10 +60,6 @@ public class OrderItem {
 	@Column(name = "TOTAL_PRICE")
 	private BigDecimal totalPrice;
 
-	@Column(name = "M_CODE")
-	@JsonIgnore
-	private String code;
-
 	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "SERVER_ID")
 	@JsonIgnore

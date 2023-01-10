@@ -14,5 +14,5 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 
 	List<OrderItem> findAllByUserAndReceivedAndStatus(User user, boolean received, OrderStatus status);
 
-	List<OrderItem> findAllByCodeIn(Iterable<String> codes);
+	List<OrderItem> findAllByIdIn(Iterable<Long> codes);
 }
