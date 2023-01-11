@@ -98,7 +98,7 @@ public class Utils {
 	}
 
 	public static User getCurrentUser() {
-		return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return userRepository.getBySteamId(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getSteamId());
 	}
 
 	public static String getClientIpAddress(HttpServletRequest request) {

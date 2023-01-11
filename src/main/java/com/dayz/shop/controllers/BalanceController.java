@@ -78,8 +78,9 @@ public class BalanceController {
 		payment.setCurrency(Currency.RUB);
 		payment.setType(Type.TRANSFER);
 		payment.setStatus(OrderStatus.PENDING);
-		if (payment.getAmount().compareTo(BigDecimal.ZERO) > 0) {
-			User currentUser = userRepository.getBySteamId(Utils.getCurrentUser().getSteamId());
+		payment.setChargeTime(LocalDateTime.now());
+		User currentUser = Utils.getCurrentUser();
+		if (payment.getAmount().compareTo(BigDecimal.ZERO) > 0 || Utils.isStoreAdmin(currentUser)) {
 			payment.setUserFrom(currentUser);
 			boolean isSelfCharge = Utils.isStoreAdmin() && currentUser.getSteamId().equals(steamId);
 			User userTo = isSelfCharge ? currentUser : userRepository.getBySteamIdAndStore(steamId, store);
@@ -91,10 +92,13 @@ public class BalanceController {
 				balanceTransferService.doTransfer(payment);
 			} else {
 				payment.setStatus(OrderStatus.FAILED);
-				payment.setChargeTime(LocalDateTime.now());
 				payment.getProperties().put("message", Utils.getMessage("transfer.failed.no_user", store));
 				paymentRepository.save(payment);
 			}
+		} else {
+			payment.setStatus(OrderStatus.FAILED);
+			payment.getProperties().put("message",  Utils.getMessage("transfer.failed.negative_amount", store));
+			paymentRepository.save(payment);
 		}
 		return payment;
 	}
