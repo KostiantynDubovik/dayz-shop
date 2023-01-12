@@ -89,7 +89,7 @@ public class OrderService {
 			LOGGER.log(Level.WARNING, "Insufficient funds to place order");
 			order.setStatus(OrderStatus.FAILED);
 			order.getOrderItems().forEach(orderItem -> orderItem.setStatus(OrderStatus.FAILED));
-			order.getProperties().put("message", Utils.getMessage("order.failed.insufficient", order.getStore(), order.getOrderTotal(), user.getBalance()));
+			order.getProperties().put("message", Utils.getMessage("order.failed.insufficient", order.getStore(), user.getBalance(), order.getOrderTotal()));
 		} else {
 			try {
 				Map<ItemType, Order> separatedTypes = splitTypes(order);
