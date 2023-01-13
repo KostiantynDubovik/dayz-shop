@@ -2,6 +2,7 @@ package com.dayz.shop.controllers;
 
 import com.dayz.shop.ProcessMessage;
 import com.dayz.shop.jpa.entities.*;
+import com.dayz.shop.repository.UserRepository;
 import com.dayz.shop.service.OrderService;
 import com.dayz.shop.utils.OrderUtils;
 import org.aspectj.lang.annotation.Aspect;
@@ -22,10 +23,13 @@ import java.util.List;
 public class OrderController {
 
 	private final OrderService orderService;
+	private final UserRepository userRepository;
 
 	@Autowired
-	public OrderController(OrderService orderService) {
+	public OrderController(OrderService orderService,
+	                       UserRepository userRepository) {
 		this.orderService = orderService;
+		this.userRepository = userRepository;
 	}
 
 	@GetMapping
@@ -40,6 +44,13 @@ public class OrderController {
 	public List<Order> getAllUserOrders(@RequestAttribute Store store, OpenIDAuthenticationToken principal, @PathVariable int page, @RequestParam(defaultValue = "20") int pageSize) {
 		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 20 ? 20 : pageSize, Sort.by("timePlaced"));
 		return orderService.getAllUserOrders((User) principal.getPrincipal(), store, pageable);
+	}
+
+	@GetMapping("all/{steamId}/{page}")
+	@PreAuthorize("hasAuthority('STORE_WRITE')")
+	public List<Order> getAllUserOrdersBySteamId(@RequestAttribute Store store, @PathVariable String steamId, @PathVariable int page, @RequestParam(defaultValue = "20") int pageSize) {
+		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 20 ? 20 : pageSize, Sort.by("timePlaced"));
+		return orderService.getAllUserOrders(userRepository.getBySteamIdAndStore(steamId, store), store, pageable);
 	}
 
 	@PostMapping("add/{item}")
