@@ -68,10 +68,14 @@ public class User implements UserDetails {
 	@JsonIgnore
 	private List<Role> roles = new ArrayList<>();
 
-	@JsonIgnore
 	@ToString.Exclude
 	@OneToMany(mappedBy = "user")
 	private List<Order> orders;
+
+
+	@ToString.Exclude
+	@OneToMany(mappedBy = "user")
+	private List<Payment> payments;
 
 	@JsonProperty(value = "isAdmin", defaultValue = "false")
 	@JsonInclude(JsonInclude.Include.NON_DEFAULT)
