@@ -127,6 +127,6 @@ public class BalanceController {
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public List<Payment> getPaymentById(@RequestAttribute Store store, OpenIDAuthenticationToken principal, @PathVariable int page, @RequestParam(defaultValue = "20") int pageSize) {
 		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 20 ? 20 : pageSize, Sort.by("chargeTime"));
-		return paymentRepository.findAllByUserAndStoreAndTypeNotIn((User) principal.getPrincipal(), store, Arrays.asList(Type.TRANSFER, Type.ORDER), pageable);
+		return paymentRepository.findAllByUserAndStoreAndStatusAndTypeIn((User) principal.getPrincipal(), store, OrderStatus.COMPLETE, Arrays.asList(Type.TRANSFER, Type.FREEKASSA), pageable);
 	}
 }

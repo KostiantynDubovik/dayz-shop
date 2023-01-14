@@ -30,7 +30,6 @@ public class SubItem {
 
 	@Id
 	@OneToOne
-	@JsonBackReference("subItem")
 	@ToString.Exclude
 	private Item subItem;
 

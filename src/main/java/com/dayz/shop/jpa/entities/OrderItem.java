@@ -62,7 +62,6 @@ public class OrderItem {
 
 	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "SERVER_ID")
-	@JsonIgnore
 	private Server server;
 
 	@Enumerated(EnumType.STRING)
