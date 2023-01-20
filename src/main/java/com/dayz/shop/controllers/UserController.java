@@ -1,6 +1,5 @@
 package com.dayz.shop.controllers;
 
-import com.dayz.shop.jpa.entities.OrderStatus;
 import com.dayz.shop.jpa.entities.Store;
 import com.dayz.shop.jpa.entities.User;
 import com.dayz.shop.repository.UserRepository;
@@ -12,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/user")
@@ -30,10 +28,7 @@ public class UserController {
 	@SuppressWarnings("deprecation")
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public User getSelf(OpenIDAuthenticationToken principal) {
-		User user = userRepository.getBySteamId(((User) principal.getPrincipal()).getSteamId());
-		user.setPayments(user.getPayments().stream().filter(payment -> payment.getStatus() == OrderStatus.COMPLETE).collect(Collectors.toList()));
-		user.setOrders(user.getOrders().stream().filter(order -> order.getStatus() == OrderStatus.COMPLETE).collect(Collectors.toList()));
-		return user;
+		return userRepository.getBySteamId(((User) principal.getPrincipal()).getSteamId());
 	}
 
 	@Transactional

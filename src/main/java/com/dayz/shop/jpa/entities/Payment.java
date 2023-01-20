@@ -1,6 +1,5 @@
 package com.dayz.shop.jpa.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -37,12 +36,10 @@ public class Payment {
 
 	@JoinColumn(name = "USER_ID")
 	@ManyToOne
-	@JsonBackReference
 	private User user;
 
 	@JoinColumn(name = "USER_FROM")
 	@ManyToOne
-	@JsonBackReference("userFrom")
 	private User userFrom;
 
 	@JoinColumn(name = "STORE_ID")
