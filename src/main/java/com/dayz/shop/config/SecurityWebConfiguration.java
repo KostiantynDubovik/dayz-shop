@@ -44,6 +44,7 @@ public class SecurityWebConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers("/profile").hasAuthority("STORE_READ")
 				.antMatchers("/").permitAll()
 				.antMatchers("/fk-verify.html").permitAll()
+				.antMatchers("/*.ogg").permitAll()
 				.antMatchers("/js/**", "/img/**", "/fonts/**","/css/**", "/bower_components/**").permitAll()
 				.antMatchers("/api/**").permitAll()
 				.antMatchers(HttpMethod.POST, "/api/**").permitAll()
