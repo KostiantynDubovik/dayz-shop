@@ -72,7 +72,6 @@ public class User implements UserDetails {
 	@OneToMany(mappedBy = "user")
 	private List<Order> orders;
 
-
 	@ToString.Exclude
 	@OneToMany(mappedBy = "user")
 	private List<Payment> payments;
