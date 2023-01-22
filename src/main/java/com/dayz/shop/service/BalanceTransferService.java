@@ -23,35 +23,62 @@ public class BalanceTransferService {
 		this.userRepository = userRepository;
 	}
 
-	public void doTransfer(Payment payment) {
-		payment.setStatus(OrderStatus.PENDING);
-		User userFrom = payment.getUserFrom();
+	public void doTransfer(Payment incomingTransfer) {
+		incomingTransfer.setStatus(OrderStatus.PENDING);
+		incomingTransfer.setDirection(PaymentDirection.INCOMING);
+		User userFrom = incomingTransfer.getUserFrom();
+		Payment outgoingTransfer = buildOutgoingTransfer(incomingTransfer, userFrom);
 		boolean storeAdmin = Utils.isStoreAdmin(userFrom);
-		if (storeAdmin || (userFrom.getBalance().compareTo(payment.getAmount()) >= 0)) {
-			if (doesHaveRealCharges(userFrom, payment.getStore())) {
-				User paymentUser = payment.getUser();
-				BigDecimal newBalance = paymentUser.getBalance().add(payment.getAmount());
-				paymentUser.setBalance(newBalance.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : newBalance);
+		if (storeAdmin || (userFrom.getBalance().compareTo(incomingTransfer.getAmount()) >= 0)) {
+			if (doesHaveRealCharges(userFrom, incomingTransfer.getStore())) {
+				User userTo = incomingTransfer.getUser();
+				BigDecimal balanceBefore = userTo.getBalance();
+				incomingTransfer.setBalanceBefore(balanceBefore);
+				BigDecimal balanceAfter = balanceBefore.add(incomingTransfer.getAmount());
+				userTo.setBalance(balanceAfter);
 				if (!storeAdmin) {
-					userFrom.setBalance(userFrom.getBalance().subtract(payment.getAmount()));
+					userFrom.setBalance(userFrom.getBalance().subtract(incomingTransfer.getAmount()));
 				}
-				payment.setStatus(OrderStatus.COMPLETE);
-				payment.getProperties().put("message", Utils.getMessage("transfer.success", payment.getStore()));
+				outgoingTransfer.setBalanceAfter(userFrom.getBalance());
+				incomingTransfer.setStatus(OrderStatus.COMPLETE);
+				outgoingTransfer.setStatus(OrderStatus.COMPLETE);
+				incomingTransfer.getProperties().put("message", Utils.getMessage("transfer.success", incomingTransfer.getStore()));
+				outgoingTransfer.getProperties().put("message", Utils.getMessage("transfer.success", incomingTransfer.getStore()));
 				userRepository.save(userFrom);
-				userRepository.save(paymentUser);
-				paymentRepository.save(payment);
+				userRepository.save(userTo);
+				incomingTransfer.setBalanceAfter(userTo.getBalance());
+				paymentRepository.save(incomingTransfer);
+				paymentRepository.save(outgoingTransfer);
 			} else {
-				saveFail(payment, userFrom, "transfer.failed.noRealCharges");
+				saveFail(incomingTransfer, userFrom, "transfer.failed.noRealCharges");
+				saveFail(outgoingTransfer, userFrom, "transfer.failed.noRealCharges");
 			}
 		} else {
-			saveFail(payment, userFrom, "transfer.failed.insufficient");
+			saveFail(incomingTransfer, userFrom, "transfer.failed.insufficient");
+			saveFail(outgoingTransfer, userFrom, "transfer.failed.insufficient");
 		}
+	}
+
+	private static Payment buildOutgoingTransfer(Payment incomingTransfer, User userFrom) {
+		Payment outgoingTransfer = new Payment();
+		outgoingTransfer.setCurrency(incomingTransfer.getCurrency());
+		outgoingTransfer.setUserFrom(incomingTransfer.getUserFrom());
+		outgoingTransfer.setUser(incomingTransfer.getUser());
+		outgoingTransfer.setStatus(incomingTransfer.getStatus());
+		outgoingTransfer.setChargeTime(incomingTransfer.getChargeTime());
+		outgoingTransfer.setProperties(incomingTransfer.getProperties());
+		outgoingTransfer.setAmount(outgoingTransfer.getAmount().negate());
+		outgoingTransfer.setDirection(PaymentDirection.OUTGOING);
+		outgoingTransfer.setBalanceBefore(userFrom.getBalance());
+		return outgoingTransfer;
 	}
 
 	private void saveFail(Payment payment, User currentUser, String messageKey) {
 		payment.setStatus(OrderStatus.FAILED);
 		payment.getProperties().put("message", Utils.getMessage(messageKey, payment.getStore(), currentUser.getBalance(), payment.getAmount()));
 		payment.setChargeTime(LocalDateTime.now());
+		payment.setBalanceBefore(currentUser.getBalance());
+		payment.setBalanceAfter(currentUser.getBalance());
 		paymentRepository.save(payment);
 	}
 

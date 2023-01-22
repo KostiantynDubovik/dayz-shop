@@ -1,10 +1,14 @@
 package com.dayz.shop.controllers;
 
+import com.dayz.shop.jpa.entities.OrderItem;
 import com.dayz.shop.jpa.entities.OrderStatus;
 import com.dayz.shop.jpa.entities.Store;
 import com.dayz.shop.jpa.entities.User;
 import com.dayz.shop.repository.UserRepository;
 import com.dayz.shop.utils.Utils;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.openid.OpenIDAuthenticationToken;
@@ -12,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -27,13 +32,18 @@ public class UserController {
 
 	@Transactional
 	@GetMapping("/self")
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({"deprecation", "unchecked"})
 	@PreAuthorize("hasAuthority('STORE_READ')")
-	public User getSelf(OpenIDAuthenticationToken principal) {
+	public Map<String, Object> getSelf(OpenIDAuthenticationToken principal) throws JsonProcessingException {
 		User user = userRepository.getBySteamId(((User) principal.getPrincipal()).getSteamId());
 		user.setPayments(user.getPayments().stream().filter(payment -> payment.getStatus() == OrderStatus.COMPLETE).collect(Collectors.toList()));
-		user.setOrders(user.getOrders().stream().filter(order -> order.getStatus() == OrderStatus.COMPLETE).collect(Collectors.toList()));
-		return user;
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+		Map<String, Object> jsonUser = objectMapper.convertValue(user, Map.class);
+		List<OrderItem> orderItems = user.getOrders().stream().filter(order -> order.getStatus() == OrderStatus.COMPLETE).flatMap(order -> order.getOrderItems().stream()).collect(Collectors.toList());
+		jsonUser.put("orders", objectMapper.writeValueAsString(orderItems));
+		return jsonUser;
 	}
 
 	@Transactional
