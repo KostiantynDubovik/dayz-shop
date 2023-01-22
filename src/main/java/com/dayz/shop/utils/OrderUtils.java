@@ -45,10 +45,8 @@ public class OrderUtils {
 		List<Order> orders = orderRepository.findAllByUserAndStoreAndStatus(user, store, OrderStatus.PENDING);
 		if (CollectionUtils.isEmpty(orders)) {
 			orders = new ArrayList<>();
-			user.setOrders(orders);
 			Order order = createOrder(user, store);
-			orders.add(order);
-			orderRepository.save(order);
+			orders.add(orderRepository.save(order));
 		}
 		return orders.stream().findFirst().orElse(new Order());
 	}
@@ -89,13 +87,5 @@ public class OrderUtils {
 
 	public static void recalculateOrderItem(OrderItem orderItem) {
 		orderItem.setTotalPrice(orderItem.getPrice().multiply(BigDecimal.valueOf(orderItem.getCount())));
-	}
-
-	public static Order getOrder(String orderId) {
-		return getOrder(Long.valueOf(orderId));
-	}
-
-	public static Order getOrder(Long orderId) {
-		return orderRepository.getById(orderId);
 	}
 }

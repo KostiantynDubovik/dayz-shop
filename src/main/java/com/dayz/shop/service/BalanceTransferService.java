@@ -67,7 +67,9 @@ public class BalanceTransferService {
 		outgoingTransfer.setStatus(incomingTransfer.getStatus());
 		outgoingTransfer.setChargeTime(incomingTransfer.getChargeTime());
 		outgoingTransfer.setProperties(incomingTransfer.getProperties());
-		outgoingTransfer.setAmount(outgoingTransfer.getAmount().negate());
+		outgoingTransfer.setAmount(incomingTransfer.getAmount().negate());
+		outgoingTransfer.setStore(incomingTransfer.getStore());
+		outgoingTransfer.setType(incomingTransfer.getType());
 		outgoingTransfer.setDirection(PaymentDirection.OUTGOING);
 		outgoingTransfer.setBalanceBefore(userFrom.getBalance());
 		return outgoingTransfer;
