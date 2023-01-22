@@ -107,7 +107,7 @@ public class MCodeMapper {
 	public List<OrderItem> mapRootToOrderItems(Root root) {
 		List<Long> mCodes =  root.getM_CodeArray().stream().map(input -> Long.parseLong(input.getM_code())).collect(Collectors.toList());
 		List<OrderItem> orderItems = orderItemRepository.findAllByUserAndReceivedAndStatus(userRepository.getBySteamId(root.getUserId()), false, OrderStatus.COMPLETE);
-		orderItems.removeAll(orderItemRepository.findAllByIdIn(mCodes));
+		orderItems.removeAll(orderItemRepository.findAllById(mCodes));
 		orderItems.forEach(orderItem -> orderItem.setReceived(true));
 		orderItemRepository.saveAll(orderItems);
 		return orderItems;

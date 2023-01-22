@@ -42,6 +42,11 @@ public class OrderItem {
 	@JsonIgnore
 	private User user;
 
+	@ManyToOne(cascade = CascadeType.MERGE)
+	@JoinColumn(name = "STORE_ID", referencedColumnName = "STORE_ID")
+	@JsonIgnore
+	private Store store;
+
 	@Column(name = "BOUGHT_TIME")
 	@JsonIgnore
 	private LocalDateTime boughtTime;

@@ -262,8 +262,9 @@ create table order_items
 	ITEM_ID       bigint                      null,
 	USER_ID       bigint                      null,
 	ORDER_ID      bigint                      null,
+	STORE_ID      BIGINT                      not null,
 	SERVER_ID     bigint                      null,
-	M_CODE        varchar(255)                 not null,
+	M_CODE        varchar(255)                not null,
 	STATUS        varchar(20)                 not null,
 	COUNT         int            default 1    not null,
 	constraint order_items_ORDER_ITEM_ID_uindex
@@ -277,6 +278,9 @@ create table order_items
 	constraint FKnnrjyhgtcxoh0eo45qvl41ira
 		foreign key (ORDER_ID) references orders (ORDER_ID)
 			ON DELETE CASCADE ON UPDATE CASCADE,
+	constraint order_items_stores_STORE_ID_fk
+		foreign key (STORE_ID) references stores (STORE_ID)
+			on update cascade on delete cascade,
 	constraint FKssyx5rw664bnq7bwtjerw3wwy
 		foreign key (ITEM_ID) references items (ITEM_ID)
 			ON DELETE CASCADE ON UPDATE CASCADE

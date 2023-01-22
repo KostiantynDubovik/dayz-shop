@@ -16,6 +16,7 @@ public interface PaymentRepository extends PagingAndSortingRepository<Payment, L
 
 	List<Payment> findAllByUser(User user);
 	List<Payment> findAllByUserAndStoreAndTypeNotIn(User user, Store store, Collection<Type> paymentTypes);
-	List<Payment> findAllByUserAndStoreAndTypeNotIn(User user, Store store, Collection<Type> paymentTypes, Pageable pageable);
+	List<Payment> findAllByUserAndStoreAndStatusAndTypeIn(User user, Store store, OrderStatus status, Collection<Type> paymentTypes);
 	List<Payment> findAllByUserAndStoreAndStatusAndTypeIn(User user, Store store, OrderStatus status, Collection<Type> paymentTypes, Pageable pageable);
+	List<Payment> findAllByUserAndStoreAndStatusAndType(User user, Store store, OrderStatus status, Type paymentTypes, Pageable pageable);
 }

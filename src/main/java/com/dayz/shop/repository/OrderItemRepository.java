@@ -1,6 +1,7 @@
 package com.dayz.shop.repository;
 
 import com.dayz.shop.jpa.entities.*;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,5 +15,5 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 
 	List<OrderItem> findAllByUserAndReceivedAndStatus(User user, boolean received, OrderStatus status);
 
-	List<OrderItem> findAllByIdIn(Iterable<Long> codes);
+	List<OrderItem> getAllByUserAndStoreAndStatus(User principal, Store store, OrderStatus status, Pageable pageable);
 }
