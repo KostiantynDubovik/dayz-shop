@@ -322,6 +322,8 @@ create table payments
 	PAYMENT_TYPE   varchar(255) not null,
 	PAYMENT_STATUS varchar(20)  not null,
 	CURRENCY       VARCHAR(3)   not null,
+	BALANCE_BEFORE decimal      not null default 0,
+	BALANCE_AFTER  decimal      not null default 0,
 	constraint PAYMENTS_users_null_fk
 		foreign key (USER_ID) references users (USER_ID)
 			ON DELETE CASCADE ON UPDATE CASCADE,
