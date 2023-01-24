@@ -120,14 +120,35 @@ public class BalanceController {
 		return result;
 	}
 
-	@GetMapping("all/{steamId}/{page}")
+	@GetMapping("all/balance/{steamId}/{page}")
 	@PreAuthorize("hasAuthority('STORE_WRITE')")
-	public List<Payment> getAllTypePayments(@RequestAttribute Store store, @PathVariable String steamId, @PathVariable int page, @RequestParam(defaultValue = "20") int pageSize) {
+	public List<Payment> getAllUserBalance(@RequestAttribute Store store, @PathVariable String steamId, @PathVariable int page, @RequestParam(defaultValue = "20") int pageSize) {
 		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 20 ? 20 : pageSize, Sort.by("chargeTime"));
 		return paymentRepository.findAllByUserAndStoreAndStatusAndTypeIn(userRepository.getBySteamIdAndStore(steamId, store), store, OrderStatus.COMPLETE, Arrays.asList(Type.TRANSFER, Type.FREEKASSA), pageable);
 	}
 
-	@GetMapping("all/self/payments/{page}")
+	@GetMapping("all/payments/{steamId}/{page}")
+	@PreAuthorize("hasAuthority('STORE_READ')")
+	public List<Payment> getAllUserPaymeents(@RequestAttribute Store store, @PathVariable String steamId, @PathVariable int page, @RequestParam(defaultValue = "20") int pageSize) {
+		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 20 ? 20 : pageSize, Sort.by("chargeTime"));
+		return paymentRepository.findAllByUserAndStoreAndStatusAndType(userRepository.getBySteamIdAndStore(steamId, store), store, OrderStatus.COMPLETE, Type.FREEKASSA, pageable);
+	}
+
+	@GetMapping("all/transfers/{steamId}/{page}")
+	@PreAuthorize("hasAuthority('STORE_READ')")
+	public List<Payment> getAllUserTransfers(@RequestAttribute Store store, @PathVariable String steamId, @PathVariable int page, @RequestParam(defaultValue = "20") int pageSize) {
+		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 20 ? 20 : pageSize, Sort.by("chargeTime"));
+		return paymentRepository.findAllByUserAndStoreAndStatusAndType(userRepository.getBySteamIdAndStore(steamId, store), store, OrderStatus.COMPLETE, Type.TRANSFER, pageable);
+	}
+
+	@GetMapping("all/balance/self/{page}")
+	@PreAuthorize("hasAuthority('STORE_READ')")
+	public List<Payment> getAllSelfBalance(@RequestAttribute Store store, OpenIDAuthenticationToken principal, @PathVariable int page, @RequestParam(defaultValue = "20") int pageSize) {
+		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 20 ? 20 : pageSize, Sort.by("chargeTime"));
+		return paymentRepository.findAllByUserAndStoreAndStatusAndTypeIn((User) principal.getPrincipal(), store, OrderStatus.COMPLETE, Arrays.asList(Type.TRANSFER, Type.FREEKASSA), pageable);
+	}
+
+	@GetMapping("all/payments/self/{page}")
 	@SuppressWarnings("deprecation")
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public List<Payment> getSelfPayments(@RequestAttribute Store store, OpenIDAuthenticationToken principal, @PathVariable int page, @RequestParam(defaultValue = "20") int pageSize) {
@@ -135,7 +156,7 @@ public class BalanceController {
 		return paymentRepository.findAllByUserAndStoreAndStatusAndType((User) principal.getPrincipal(), store, OrderStatus.COMPLETE, Type.FREEKASSA, pageable);
 	}
 
-	@GetMapping("all/self/transfers/{page}")
+	@GetMapping("all/transfers/self/{page}")
 	@SuppressWarnings("deprecation")
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public List<Payment> getSelfTransfers(@RequestAttribute Store store, OpenIDAuthenticationToken principal, @PathVariable int page, @RequestParam(defaultValue = "20") int pageSize) {
