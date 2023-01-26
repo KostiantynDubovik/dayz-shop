@@ -48,7 +48,6 @@ public class OrderItem {
 	private Store store;
 
 	@Column(name = "BOUGHT_TIME")
-	@JsonIgnore
 	private LocalDateTime boughtTime;
 
 	@Column(name = "RECEIVED")
@@ -56,7 +55,6 @@ public class OrderItem {
 	private boolean received;
 
 	@Column(name = "RECEIVE_TIME")
-	@JsonIgnore
 	private LocalDateTime receiveDateTime;
 
 	@Column(name = "PRICE")

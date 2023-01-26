@@ -42,15 +42,15 @@ public class OrderItemController {
 
 	@GetMapping("all/{steamId}/{page}")
 	@PreAuthorize("hasAuthority('STORE_WRITE')")
-	public List<OrderItem> getAllUserOrderItemsBySteamId(@RequestAttribute Store store, @PathVariable String steamId, @PathVariable int page, @RequestParam(defaultValue = "20") int pageSize) {
-		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 20 ? 20 : pageSize, Sort.by("boughtTime"));
+	public List<OrderItem> getAllUserOrderItemsBySteamId(@RequestAttribute Store store, @PathVariable String steamId, @PathVariable int page, @RequestParam(defaultValue = "10") int pageSize) {
+		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 5 ? 5 : pageSize, Sort.by("boughtTime").descending());
 		return orderItemRepository.getAllByUserAndStoreAndStatus(userRepository.getBySteamIdAndStore(steamId, store), store,  OrderStatus.COMPLETE, pageable);
 	}
 
 	@GetMapping("all/self/{page}")
 	@SuppressWarnings("deprecation")
-	public List<OrderItem> getSelfOrderItems(OpenIDAuthenticationToken principal, @RequestAttribute Store store, @PathVariable int page, @RequestParam(defaultValue = "20") int pageSize) {
-		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 20 ? 20 : pageSize, Sort.by("boughtTime"));
+	public List<OrderItem> getSelfOrderItems(OpenIDAuthenticationToken principal, @RequestAttribute Store store, @PathVariable int page, @RequestParam(defaultValue = "10") int pageSize) {
+		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 5 ? 5 : pageSize, Sort.by("boughtTime").descending());
 		return orderItemRepository.getAllByUserAndStoreAndStatus((User) principal.getPrincipal(), store, OrderStatus.COMPLETE, pageable);
 	}
 }
