@@ -34,7 +34,7 @@ public class BalanceTransferService {
 				User userTo = incomingTransfer.getUser();
 				BigDecimal balanceBefore = userTo.getBalance();
 				incomingTransfer.setBalanceBefore(balanceBefore);
-				BigDecimal balanceAfter = balanceBefore.add(incomingTransfer.getAmount());
+				BigDecimal balanceAfter = storeAdmin && incomingTransfer.getAmount().compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : balanceBefore.add(incomingTransfer.getAmount());
 				userTo.setBalance(balanceAfter);
 				if (!storeAdmin) {
 					userFrom.setBalance(userFrom.getBalance().subtract(incomingTransfer.getAmount()));
