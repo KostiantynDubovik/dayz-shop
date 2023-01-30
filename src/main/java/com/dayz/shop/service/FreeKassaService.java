@@ -39,6 +39,9 @@ public class FreeKassaService {
 		payment.setStatus(OrderStatus.PENDING);
 		payment.setType(Type.FREEKASSA);
 		payment.setChargeTime(LocalDateTime.now());
+		payment.setBalanceBefore(payment.getUser().getBalance());
+		payment.setBalanceAfter(payment.getUser().getBalance().add(payment.getAmount()));
+		payment.setDirection(PaymentDirection.INCOMING);
 		payment = paymentRepository.save(payment);
 		return buildRedirectUrl(payment);
 	}
