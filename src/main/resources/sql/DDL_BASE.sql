@@ -112,6 +112,7 @@ create table item_description
 	STORE_ID       bigint       null,
 	ITEM_ID        bigint       null,
 	PUBLISHED      bit          null,
+	ITEM_NAME      VARCHAR(255) null,
 	constraint item_description_store_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID)
 			ON DELETE CASCADE ON UPDATE CASCADE,

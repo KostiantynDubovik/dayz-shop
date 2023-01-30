@@ -5,7 +5,9 @@ import com.dayz.shop.jpa.entities.Server;
 import com.jcraft.jsch.*;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 
 @Component
 public class SFTPUtils {

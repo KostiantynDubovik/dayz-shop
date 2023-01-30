@@ -3,7 +3,10 @@ package com.dayz.shop.jpa.entities;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
@@ -36,6 +39,9 @@ public class ItemDescription {
 	@JoinColumn(name = "ITEM_ID", referencedColumnName = "ITEM_ID", nullable = false)
 	@JsonBackReference
 	private Item item;
+
+	@Column(name = "ITEM_NAME", nullable = false)
+	private String name;
 
 	@Column(name = "DESCRIPTION")
 	private String description;

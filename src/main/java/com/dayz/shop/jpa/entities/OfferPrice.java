@@ -1,7 +1,10 @@
 package com.dayz.shop.jpa.entities;
 
+import com.dayz.shop.utils.OrderUtils;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -10,6 +13,7 @@ import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -44,8 +48,22 @@ public class OfferPrice {
 	@Column(name = "END_TIME")
 	private LocalDateTime endTime;
 
+	@ManyToOne(cascade = CascadeType.MERGE)
+	@JsonIgnore
+	@JoinColumn(name = "STORE_ID")
+	private Store store;
+
 	@Column(name = "PRIORITY")
 	private int priority;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "OFFER_PRICE_TYPE")
+	private OfferPriceType offerPriceType;
+
+	@JsonProperty("displayPrice")
+	public BigDecimal getDisplayPrice() {
+		return OrderUtils.getOfferPrice(this);
+	}
 
 	@Override
 	public boolean equals(Object o) {

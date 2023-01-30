@@ -46,10 +46,7 @@ public class Item {
 	@OneToOne(mappedBy = "item", cascade = CascadeType.ALL)
 	private ListPrice listPrice;
 
-	@OneToMany(cascade = CascadeType.MERGE)
-	@JoinTable(name = "offer_price",
-			joinColumns = @JoinColumn(name = "ITEM_ID", referencedColumnName = "ITEM_ID"),
-			inverseJoinColumns = @JoinColumn(name = "OFFER_ID", referencedColumnName = "ITEM_ID"))
+	@OneToMany(mappedBy = "item", cascade = CascadeType.MERGE)
 	@ToString.Exclude
 	private List<OfferPrice> offerPrices = new ArrayList<>();
 

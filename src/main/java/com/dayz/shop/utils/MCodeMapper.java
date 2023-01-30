@@ -7,10 +7,8 @@ import com.dayz.shop.json.MVehicles;
 import com.dayz.shop.json.Root;
 import com.dayz.shop.repository.OrderItemRepository;
 import com.dayz.shop.repository.UserRepository;
-import com.google.common.base.Function;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

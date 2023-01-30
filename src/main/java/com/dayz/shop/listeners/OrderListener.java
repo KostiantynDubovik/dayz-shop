@@ -1,13 +1,9 @@
 package com.dayz.shop.listeners;
 
 import com.dayz.shop.jpa.entities.Order;
-import com.dayz.shop.jpa.entities.OrderItem;
 import com.dayz.shop.utils.OrderUtils;
 import com.dayz.shop.utils.Utils;
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.AfterReturning;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.PrePersist;
