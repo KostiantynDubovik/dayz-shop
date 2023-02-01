@@ -36,7 +36,7 @@ class Ctrl {
 
 @Controller
 class RouteController {
-	@RequestMapping(value = "/{path:[^.]*}")
+	@RequestMapping(value = {"/{path:[^.]*}", "/profile/{path:[^.]*}","/settings/{path:[^.]*}"})
 	public String redirect() {
 		return "forward:/";
 	}
