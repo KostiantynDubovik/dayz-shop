@@ -123,21 +123,21 @@ public class BalanceController {
 	@GetMapping("all/balance/{steamId}/{page}")
 	@PreAuthorize("hasAuthority('STORE_WRITE')")
 	public Page<Payment> getAllUserBalance(@RequestAttribute Store store, @PathVariable String steamId, @PathVariable int page, @RequestParam(defaultValue = "10") int pageSize) {
-		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 5 ? 5 : pageSize, Sort.by("chargeTime").descending());
+		Pageable pageable = getPageable(page, pageSize);
 		return paymentRepository.findAllByUserAndStoreAndStatusAndTypeIn(userRepository.getBySteamIdAndStore(steamId, store), store, OrderStatus.COMPLETE, Arrays.asList(Type.TRANSFER, Type.FREEKASSA), pageable);
 	}
 
 	@GetMapping("all/payments/{steamId}/{page}")
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public Page<Payment> getAllUserPayments(@RequestAttribute Store store, @PathVariable String steamId, @PathVariable int page, @RequestParam(defaultValue = "10") int pageSize) {
-		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 5 ? 5 : pageSize, Sort.by("chargeTime").descending());
+		Pageable pageable = getPageable(page, pageSize);
 		return paymentRepository.findAllByUserAndStoreAndStatusAndType(userRepository.getBySteamIdAndStore(steamId, store), store, OrderStatus.COMPLETE, Type.FREEKASSA, pageable);
 	}
 
 	@GetMapping("all/transfers/{steamId}/{page}")
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public Page<Payment> getAllUserTransfers(@RequestAttribute Store store, @PathVariable String steamId, @PathVariable int page, @RequestParam(defaultValue = "10") int pageSize) {
-		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 5 ? 5 : pageSize, Sort.by("chargeTime").descending());
+		Pageable pageable = getPageable(page, pageSize);
 		return paymentRepository.findAllByUserAndStoreAndStatusAndType(userRepository.getBySteamIdAndStore(steamId, store), store, OrderStatus.COMPLETE, Type.TRANSFER, pageable);
 	}
 
@@ -145,7 +145,7 @@ public class BalanceController {
 	@SuppressWarnings("deprecation")
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public Page<Payment> getAllSelfBalance(@RequestAttribute Store store, OpenIDAuthenticationToken principal, @PathVariable int page, @RequestParam(defaultValue = "10") int pageSize) {
-		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 5 ? 5 : pageSize, Sort.by("chargeTime").descending());
+		Pageable pageable = getPageable(page, pageSize);
 		return paymentRepository.findAllByUserAndStoreAndStatusAndTypeIn((User) principal.getPrincipal(), store, OrderStatus.COMPLETE, Arrays.asList(Type.TRANSFER, Type.FREEKASSA), pageable);
 	}
 
@@ -153,7 +153,7 @@ public class BalanceController {
 	@SuppressWarnings("deprecation")
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public Page<Payment> getSelfPayments(@RequestAttribute Store store, OpenIDAuthenticationToken principal, @PathVariable int page, @RequestParam(defaultValue = "10") int pageSize) {
-		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 5 ? 5 : pageSize, Sort.by("chargeTime").descending());
+		Pageable pageable = getPageable(page, pageSize);
 		return paymentRepository.findAllByUserAndStoreAndStatusAndType((User) principal.getPrincipal(), store, OrderStatus.COMPLETE, Type.FREEKASSA, pageable);
 	}
 
@@ -161,7 +161,11 @@ public class BalanceController {
 	@SuppressWarnings("deprecation")
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public Page<Payment> getSelfTransfers(@RequestAttribute Store store, OpenIDAuthenticationToken principal, @PathVariable int page, @RequestParam(defaultValue = "10") int pageSize) {
-		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 5 ? 5 : pageSize, Sort.by("chargeTime").descending());
+		Pageable pageable = getPageable(page, pageSize);
 		return paymentRepository.findAllByUserAndStoreAndStatusAndType((User) principal.getPrincipal(), store, OrderStatus.COMPLETE, Type.TRANSFER, pageable);
+	}
+
+	private static Pageable getPageable(int page, int pageSize) {
+		return PageRequest.of(page > 0 ? page - 1 : 0, Math.max(pageSize, 5), Sort.by("chargeTime").descending());
 	}
 }

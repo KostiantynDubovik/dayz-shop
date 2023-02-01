@@ -13,8 +13,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -83,6 +85,13 @@ public class UserService {
 
 	public User findOne(Long id) {
 		return userRepository.getById(id);
+	}
+
+	public Map<String, String > findFriends(Long userFromId, Long storeId, int limit) {
+		List<List<String>> resultSet = userRepository.findFriends(userFromId, storeId, limit);
+		return resultSet.stream()
+				.map(input -> new AbstractMap.SimpleEntry<>(input.get(0), input.get(1)))
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 
 }
