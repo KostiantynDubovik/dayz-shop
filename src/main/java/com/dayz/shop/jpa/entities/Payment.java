@@ -1,6 +1,5 @@
 package com.dayz.shop.jpa.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +19,7 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler", "store", "user"})
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler", "store"})
 @Table(name = "payments")
 public class Payment {
 
@@ -43,12 +42,10 @@ public class Payment {
 
 	@JoinColumn(name = "USER_ID")
 	@ManyToOne
-	@JsonBackReference
 	private User user;
 
 	@JoinColumn(name = "USER_FROM")
 	@ManyToOne
-	@JsonBackReference("userFrom")
 	private User userFrom;
 
 	@JoinColumn(name = "STORE_ID")

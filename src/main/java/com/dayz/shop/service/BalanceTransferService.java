@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,7 +22,7 @@ public class BalanceTransferService {
 		this.userRepository = userRepository;
 	}
 
-	public void doTransfer(Payment incomingTransfer) {
+	public Payment doTransfer(Payment incomingTransfer) {
 		incomingTransfer.setStatus(OrderStatus.PENDING);
 		incomingTransfer.setDirection(PaymentDirection.INCOMING);
 		User userFrom = incomingTransfer.getUserFrom();
@@ -50,13 +49,14 @@ public class BalanceTransferService {
 				paymentRepository.save(incomingTransfer);
 				paymentRepository.save(outgoingTransfer);
 			} else {
-				saveFail(incomingTransfer, userFrom, "transfer.failed.noRealCharges");
-				saveFail(outgoingTransfer, userFrom, "transfer.failed.noRealCharges");
+				failPayment(incomingTransfer, userFrom, "transfer.failed.noRealCharges");
+				failPayment(outgoingTransfer, userFrom, "transfer.failed.noRealCharges");
 			}
 		} else {
-			saveFail(incomingTransfer, userFrom, "transfer.failed.insufficient");
-			saveFail(outgoingTransfer, userFrom, "transfer.failed.insufficient");
+			failPayment(incomingTransfer, userFrom, "transfer.failed.insufficient");
+			failPayment(outgoingTransfer, userFrom, "transfer.failed.insufficient");
 		}
+		return outgoingTransfer;
 	}
 
 	private static Payment buildOutgoingTransfer(Payment incomingTransfer, User userFrom) {
@@ -75,18 +75,14 @@ public class BalanceTransferService {
 		return outgoingTransfer;
 	}
 
-	private void saveFail(Payment payment, User currentUser, String messageKey) {
+	private void failPayment(Payment payment, User currentUser, String messageKey) {
 		payment.setStatus(OrderStatus.FAILED);
 		payment.getProperties().put("message", Utils.getMessage(messageKey, payment.getStore(), currentUser.getBalance(), payment.getAmount()));
-		payment.setChargeTime(LocalDateTime.now());
-		payment.setBalanceBefore(currentUser.getBalance());
-		payment.setBalanceAfter(currentUser.getBalance());
-		paymentRepository.save(payment);
 	}
 
 	private boolean doesHaveRealCharges(User currentUser, Store store) {
 		boolean result = true;
-		if (Utils.isStoreAdmin(currentUser) || Boolean.parseBoolean(Utils.getStoreConfig("checkRealCharges", store))) {
+		if (!Utils.isStoreAdmin(currentUser) || Boolean.parseBoolean(Utils.getStoreConfig("checkRealCharges", store))) {
 			List<Payment> payments = paymentRepository.findAllByUserAndStoreAndStatusAndTypeIn(currentUser, store, OrderStatus.COMPLETE, Collections.singletonList(Type.FREEKASSA));
 			int threshold = Integer.parseInt(Utils.getStoreConfig("realChargesThreshold", store));
 			result = threshold <= payments.size();

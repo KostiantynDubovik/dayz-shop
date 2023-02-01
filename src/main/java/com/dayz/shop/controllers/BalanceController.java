@@ -78,27 +78,30 @@ public class BalanceController {
 		payment.setStatus(OrderStatus.PENDING);
 		payment.setChargeTime(LocalDateTime.now());
 		User currentUser = Utils.getCurrentUser();
-		if (payment.getAmount().compareTo(BigDecimal.ZERO) > 0 || Utils.isStoreAdmin(currentUser)) {
+		boolean isSelfCharge = currentUser.getSteamId().equals(steamId);
+		if(isSelfCharge && !Utils.isStoreAdmin()) {
+			failPayment(payment, "transfer.failed.selfcharge", store);
+		} else if (payment.getAmount().compareTo(BigDecimal.ZERO) > 0 || Utils.isStoreAdmin(currentUser)) {
 			payment.setUserFrom(currentUser);
-			boolean isSelfCharge = Utils.isStoreAdmin() && currentUser.getSteamId().equals(steamId);
 			User userTo = isSelfCharge ? currentUser : userRepository.getBySteamIdAndStore(steamId, store);
 			if (userTo == null && Utils.isStoreAdmin(currentUser)) {
 				userTo = Utils.createUser(store, steamId);
 			}
 			if (userTo != null) {
 				payment.setUser(userTo);
-				balanceTransferService.doTransfer(payment);
+				payment = balanceTransferService.doTransfer(payment);
 			} else {
-				payment.setStatus(OrderStatus.FAILED);
-				payment.getProperties().put("message", Utils.getMessage("transfer.failed.no_user", store));
-				paymentRepository.save(payment);
+				failPayment(payment, "transfer.failed.no_user", store);
 			}
 		} else {
-			payment.setStatus(OrderStatus.FAILED);
-			payment.getProperties().put("message",  Utils.getMessage("transfer.failed.negative_amount", store));
-			paymentRepository.save(payment);
+			failPayment(payment, "transfer.failed.negative_amount", store);
 		}
 		return payment;
+	}
+
+	private static void failPayment(Payment payment, String key, Store store) {
+		payment.setStatus(OrderStatus.FAILED);
+		payment.getProperties().put("message",  Utils.getMessage(key, store));
 	}
 
 	@GetMapping("{paymentId}")
