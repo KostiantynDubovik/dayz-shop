@@ -120,12 +120,13 @@ public class OrderService {
 
 	private void saveServices(Map<ItemType, Order> separatedTypes) {
 		for (Map.Entry<ItemType, Order> itemTypeOrderEntry : separatedTypes.entrySet()) {
+			OrderItem orderItem = itemTypeOrderEntry.getValue().getOrderItems().get(0);
+			User user = orderItem.getUser();
+			Item item = orderItem.getItem();
 			switch (itemTypeOrderEntry.getKey()) {
 				case SET:
+
 				case VIP:
-					OrderItem orderItem = itemTypeOrderEntry.getValue().getOrderItems().get(0);
-					User user = orderItem.getUser();
-					Item item = orderItem.getItem();
 					ItemType itemType = item.getItemType();
 					Server server = orderItem.getServer();
 					LocalDateTime endDate;

@@ -15,3 +15,9 @@ alter table offer_price
 alter table offer_price
 	add OFFER_PRICE_TYPE VARCHAR(30) default 'ABSOLUTE' not null;
 
+alter table order_items
+	add COORDINATES VARCHAR(50) default '0' not null;
+
+UPDATE order_items SET RECEIVED = true, RECEIVE_TIME = '0001-01-01 00:00:00.000000' WHERE RECEIVED = false AND COORDINATES = '0' AND STATUS = 'COMPLETE'
+
+

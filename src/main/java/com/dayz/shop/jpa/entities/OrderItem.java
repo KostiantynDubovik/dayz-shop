@@ -75,4 +75,6 @@ public class OrderItem {
 	@Column(name = "COUNT")
 	private Integer count = 1;
 
+	@Column(name = "COORDINATES")
+	private String coordinates;
 }

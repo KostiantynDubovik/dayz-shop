@@ -16,10 +16,7 @@ import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -98,6 +95,12 @@ public class Utils {
 	public static boolean isFreeKassaIp(HttpServletRequest request) {
 		String reqIp = Utils.getClientIpAddress(request);
 		return Utils.getStoreConfig("freekassa.ips", -2L).contains(reqIp);
+	}
+
+	public static boolean isStoreServersRequest(HttpServletRequest request, Store store) {
+		List<String> ips = serverConfigRepository.findAllByStoreAndKey(store, "SSH_IP").stream().map(ServerConfig::getValue).collect(Collectors.toList());
+		String reqIp = Utils.getClientIpAddress(request);
+		return ips.contains(reqIp);
 	}
 
 	public static User getCurrentUser() {
