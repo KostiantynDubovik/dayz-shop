@@ -149,7 +149,7 @@ public class OrderService {
 							userService.setServer(server);
 							userService.setUser(user);
 							userService.setUserId(user.getId());
-							endDate = LocalDateTime.now().plusDays(30);
+							endDate = LocalDateTime.now();
 							repeat = false;
 						}
 					} while (repeat);
