@@ -56,6 +56,7 @@ public class OrderUtils {
 		orderItem.setUser(user);
 		orderItem.setOrder(order);
 		orderItem.setServer(order.getServer());
+		orderItem.setStore(order.getStore());
 		orderItem.setStatus(OrderStatus.PENDING);
 		orderItem.setReceived(false);
 		orderItem.setBoughtTime(LocalDateTime.now());
