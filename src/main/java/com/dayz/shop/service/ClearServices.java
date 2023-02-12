@@ -54,6 +54,6 @@ public class ClearServices {
 			case SET:
 				sendToServerService.set(order, steamId, false);
 		}
-		userServiceRepository.deleteUserServiceByUserAndItemTypeAndServer(userService.getUser(), userService.getItemType(), userService.getServer());
+		userServiceRepository.deleteUserServiceByUserAndItemTypeAndServer(userService.getUser().getId(), userService.getItemType().name(), userService.getServer().getId());
 	}
 }
