@@ -33,6 +33,7 @@ public class SendToServerService {
 	public static final String ZERO = "0";
 	public static final String SETS_FILE = "CustomSpawnPlayerConfig.txt";
 	public static final String VIP_FILE = "priority.txt";
+	private static final int RETRY_COUNT = 3;
 	final MCodeMapper mCodeMapper;
 
 	@Autowired
@@ -62,69 +63,100 @@ public class SendToServerService {
 	}
 
 	public void vip(Order order, String steamId, boolean add) throws JSchException, SftpException {
-		String pathToVip = SFTPUtils.getPathToVip(order);
-		String completePath = String.format(pathToVip, order.getServer().getInstanceName(), VIP_FILE);
-		ByteArrayInputStream fileContent = SFTPUtils.getFileContent(order, completePath);
-		if (fileContent != null) {
-			Scanner scanner = new Scanner(fileContent);
-			List<String> existingSteamIds = new ArrayList<>();
-			scanner.useDelimiter(SEMICOLON);
-			while (scanner.hasNext()) {
-				String existingSteamId = scanner.next();
-				if (Objects.equals(existingSteamId, steamId)) {
-					return;
-				} else {
-					existingSteamIds.add(existingSteamId);
+		vip(order, steamId, add, 1);
+	}
+
+	public void vip(Order order, String steamId, boolean add, int retryNumber) throws JSchException, SftpException {
+		try {
+			String pathToVip = SFTPUtils.getPathToVip(order);
+			String completePath = String.format(pathToVip, order.getServer().getInstanceName(), VIP_FILE);
+			ByteArrayInputStream fileContent = SFTPUtils.getFileContent(order, completePath);
+			if (fileContent != null) {
+				Scanner scanner = new Scanner(fileContent);
+				Set<String> existingSteamIds = new HashSet<>();
+				scanner.useDelimiter(SEMICOLON);
+				while (scanner.hasNext()) {
+					existingSteamIds.add(scanner.next());
 				}
+				if (add) {
+					existingSteamIds.add(steamId);
+				} else {
+					existingSteamIds.remove(steamId);
+				}
+				ByteArrayInputStream contentStream = new ByteArrayInputStream(String.join(SEMICOLON, existingSteamIds).concat(SEMICOLON).getBytes(StandardCharsets.UTF_8));
+				SFTPUtils.updateFile(order, completePath, contentStream);
 			}
-			if (add) {
-				existingSteamIds.add(steamId);
+		} catch (JSchException | SftpException e) {
+			if (retryNumber < RETRY_COUNT) {
+				vip(order, steamId, add, retryNumber + 1);
 			} else {
-				existingSteamIds.remove(steamId);
+				throw e;
 			}
-			ByteArrayInputStream contentStream = new ByteArrayInputStream(String.join(SEMICOLON, existingSteamIds).concat(SEMICOLON).getBytes(StandardCharsets.UTF_8));
-			SFTPUtils.updateFile(order, completePath, contentStream);
 		}
 	}
 
 	public void set(Order order, String steamId, boolean add) throws IOException, JSchException, SftpException {
-		String pathToSet = SFTPUtils.getPathToSet(order);
-		String completePath = String.format(pathToSet, order.getServer().getInstanceName(), SETS_FILE);
-		InputStream existingSets = SFTPUtils.getFileContent(order, completePath);
-		if (existingSets != null) {
-			Map<String, String> setMap = IOUtils.readLines(existingSets, StandardCharsets.UTF_8).stream().collect(Collectors.toMap(input -> StringUtils.split(input, PIPE)[0], input -> input));
-			if (add) {
-				setMap.put(steamId, String.join(PIPE, steamId, ZERO, order.getOrderItems().get(0).getItem().getInGameId(), ZERO));
-			} else {
-				setMap.remove(steamId);
+		set(order, steamId, add, 1);
+	}
+
+	private void set(Order order, String steamId, boolean add, int retryNumber) throws IOException, JSchException, SftpException {
+		try {
+			String pathToSet = SFTPUtils.getPathToSet(order);
+			String completePath = String.format(pathToSet, order.getServer().getInstanceName(), SETS_FILE);
+			InputStream existingSets = SFTPUtils.getFileContent(order, completePath);
+			if (existingSets != null) {
+				Map<String, String> setMap = IOUtils.readLines(existingSets, StandardCharsets.UTF_8).stream().collect(Collectors.toMap(input -> StringUtils.split(input, PIPE)[0], input -> input));
+				if (add) {
+					setMap.put(steamId, String.join(PIPE, steamId, ZERO, order.getOrderItems().get(0).getItem().getInGameId(), ZERO));
+				} else {
+					setMap.remove(steamId);
+				}
+				ByteArrayInputStream contentStream = new ByteArrayInputStream(String.join(System.lineSeparator(), setMap.values()).getBytes(StandardCharsets.UTF_8));
+				SFTPUtils.updateFile(order, completePath, contentStream);
 			}
-			ByteArrayInputStream contentStream = new ByteArrayInputStream(String.join(System.lineSeparator(), setMap.values()).getBytes(StandardCharsets.UTF_8));
-			SFTPUtils.updateFile(order, completePath, contentStream);
+		} catch (JSchException | SftpException | IOException e) {
+			if (retryNumber < RETRY_COUNT) {
+				set(order, steamId, add, retryNumber + 1);
+			} else {
+				throw e;
+			}
 		}
 	}
 
 	public void spawningItems(Order order, String steamId, boolean add) throws IOException, JSchException, SftpException {
-		String pathToJson = SFTPUtils.getPathToSpawningItemsJson(order);
-		String completePath = String.format(pathToJson, order.getServer().getInstanceName(), steamId);
-		InputStream existingItems = null;
-		try {
-			existingItems = SFTPUtils.getFileContent(order, completePath);
-		} catch (JSchException | SftpException e) {
-			LOGGER.info("There is no such file on server: " + order.getServer().getInstanceName() + ", will create for user: " + steamId);
-		}
-		Root root = new Root();
-		ObjectMapper om = new ObjectMapper();
-		om.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-		if (existingItems != null) {
-			root = om.readValue(existingItems, Root.class);
-		}
-		if (add) {
-			root.getM_CodeArray().addAll(mCodeMapper.mapOrderToRoot(order).getM_CodeArray());
-		} else {
-			root.getM_CodeArray().removeAll(mCodeMapper.mapOrderToRoot(order).getM_CodeArray());
-		}
+		spawningItems(order, steamId, add, 1);
+	}
 
-		InputStream content = new ByteArrayInputStream(om.writerWithDefaultPrettyPrinter().writeValueAsString(root).getBytes(StandardCharsets.UTF_8));
-		SFTPUtils.updateFile(order, completePath, content);
+	private void spawningItems(Order order, String steamId, boolean add, int retryNumber) throws IOException, JSchException, SftpException {
+		try {
+			String pathToJson = SFTPUtils.getPathToSpawningItemsJson(order);
+			String completePath = String.format(pathToJson, order.getServer().getInstanceName(), steamId);
+			InputStream existingItems = null;
+			try {
+				existingItems = SFTPUtils.getFileContent(order, completePath);
+			} catch (JSchException | SftpException e) {
+				LOGGER.info("There is no such file on server: " + order.getServer().getInstanceName() + ", will create for user: " + steamId);
+			}
+			Root root = new Root();
+			ObjectMapper om = new ObjectMapper();
+			om.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+			if (existingItems != null) {
+				root = om.readValue(existingItems, Root.class);
+			}
+			if (add) {
+				root.getM_CodeArray().addAll(mCodeMapper.mapOrderToRoot(order).getM_CodeArray());
+			} else {
+				root.getM_CodeArray().removeAll(mCodeMapper.mapOrderToRoot(order).getM_CodeArray());
+			}
+
+			InputStream content = new ByteArrayInputStream(om.writerWithDefaultPrettyPrinter().writeValueAsString(root).getBytes(StandardCharsets.UTF_8));
+			SFTPUtils.updateFile(order, completePath, content);
+		} catch (JSchException | SftpException | IOException e) {
+			if (retryNumber < RETRY_COUNT) {
+				spawningItems(order, steamId, add, retryNumber + 1);
+			} else {
+				throw e;
+			}
+		}
 	}
 }
