@@ -2,6 +2,7 @@ package com.dayz.shop.repository;
 
 import com.dayz.shop.jpa.entities.*;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -17,5 +18,7 @@ public interface UserServiceRepository extends JpaRepository<UserService, Long> 
 	List<UserService> findAllByStoreIdAndEndDateIsBefore(Long storeId, LocalDateTime endDate);
 	UserService findByUserAndItemTypeAndServer(User user, ItemType itemType, Server server);
 
-	UserService deleteUserServiceByUserAndItemTypeAndServer(User user, ItemType itemType, Server server);
+	@Modifying
+	@Query(value = "delete FROM user_services US where US.USER_ID = :userId AND US.ITEM_TYPE = :itemType AND US.SERVER_ID = :serverId", nativeQuery = true)
+	void deleteUserServiceByUserAndItemTypeAndServer(Long userId, String itemType, Long serverId);
 }
