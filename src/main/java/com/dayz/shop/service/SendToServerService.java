@@ -41,7 +41,7 @@ public class SendToServerService {
 		this.mCodeMapper = mCodeMapper;
 	}
 
-	public void sendOrder(Order order, Map<ItemType, Order> separatedTypes) throws JSchException, InterruptedException, IOException, SftpException {
+	public void sendOrder(Order order, Map<ItemType, Order> separatedTypes) throws JSchException, IOException, SftpException {
 		String steamId = order.getUser().getSteamId();
 		try {
 			for (ItemType itemType : separatedTypes.keySet()) {
@@ -57,8 +57,9 @@ public class SendToServerService {
 						set(order, steamId, true);
 				}
 			}
-		} catch (JSchException | SftpException e) {
+		} catch (JSchException | SftpException | IOException e) {
 			LOGGER.log(Level.SEVERE, "Cant send order", e);
+			throw e;
 		}
 	}
 
