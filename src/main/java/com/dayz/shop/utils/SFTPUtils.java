@@ -29,15 +29,25 @@ public class SFTPUtils {
 	}
 
 	public static String getPathToSet(Order order) {
-		return Utils.getServerConfig("PATH_TO_SET", order.getServer());
+		return getPathToSet(order.getServer());
+	}
+
+	public static String getPathToSet(Server server) {
+		return Utils.getServerConfig("PATH_TO_SET", server);
 	}
 
 	public static String getPathToVip(Order order) {
-		return Utils.getServerConfig("PATH_TO_VIP", order.getServer());
+		return getPathToVip(order.getServer());
+	}
+	public static String getPathToVip(Server server) {
+		return Utils.getServerConfig("PATH_TO_VIP", server);
 	}
 
 	public static ByteArrayInputStream getFileContent(Order order, String path) throws JSchException, SftpException {
-		Server server = order.getServer();
+		return getFileContent(order.getServer(), path);
+	}
+
+	public static ByteArrayInputStream getFileContent(Server server, String path) throws JSchException, SftpException {
 		String username = SFTPUtils.getUsr(server);
 		String password = SFTPUtils.getPwd(server);
 		String host = SFTPUtils.getIp(server);
@@ -58,9 +68,12 @@ public class SFTPUtils {
 		return result;
 	}
 
-	public static void updateFile(Order order, String path, InputStream contentStream)
+	public static void updateFile(Order order, String path, InputStream contentStream) throws JSchException, SftpException {
+		updateFile(order.getServer(), path, contentStream);
+	}
+
+	public static void updateFile(Server server, String path, InputStream contentStream)
 			throws JSchException, SftpException {
-		Server server = order.getServer();
 		String username = SFTPUtils.getUsr(server);
 		String password = SFTPUtils.getPwd(server);
 		String host = SFTPUtils.getIp(server);

@@ -2,6 +2,8 @@ package com.dayz.shop.service;
 
 import com.dayz.shop.jpa.entities.ItemType;
 import com.dayz.shop.jpa.entities.Order;
+import com.dayz.shop.jpa.entities.Server;
+import com.dayz.shop.jpa.entities.UserService;
 import com.dayz.shop.json.Root;
 import com.dayz.shop.utils.MCodeMapper;
 import com.dayz.shop.utils.SFTPUtils;
@@ -96,6 +98,32 @@ public class SendToServerService {
 		}
 	}
 
+	public void batchVip(Server server, List<UserService> vips) throws JSchException, SftpException {
+		batchVip(server, vips, 1);
+	}
+
+	private void batchVip(Server server, List<UserService> vips, int retryNumber) throws JSchException, SftpException {
+		try {
+			String pathToVip = SFTPUtils.getPathToVip(server);
+			String completePath = String.format(pathToVip, server.getInstanceName(), VIP_FILE);
+			ByteArrayInputStream fileContent = SFTPUtils.getFileContent(server, completePath);
+			if (fileContent != null) {
+				Set<String> existingSteamIds = new HashSet<>();
+				for (UserService vip : vips) {
+					existingSteamIds.add(vip.getUser().getSteamId());
+				}
+				ByteArrayInputStream contentStream = new ByteArrayInputStream(String.join(SEMICOLON, existingSteamIds).concat(SEMICOLON).getBytes(StandardCharsets.UTF_8));
+				SFTPUtils.updateFile(server, completePath, contentStream);
+			}
+		} catch (JSchException | SftpException e) {
+			if (retryNumber < RETRY_COUNT) {
+				batchVip(server, vips, retryNumber + 1);
+			} else {
+				throw e;
+			}
+		}
+	}
+
 	public void set(Order order, String steamId, boolean add) throws IOException, JSchException, SftpException {
 		set(order, steamId, add, 1);
 	}
@@ -118,6 +146,32 @@ public class SendToServerService {
 		} catch (JSchException | SftpException | IOException e) {
 			if (retryNumber < RETRY_COUNT) {
 				set(order, steamId, add, retryNumber + 1);
+			} else {
+				throw e;
+			}
+		}
+	}
+
+	public void batchSet(Server server, List<UserService> sets) throws JSchException, SftpException {
+		batchSet(server, sets, 1);
+	}
+
+	private void batchSet(Server server, List<UserService> sets, int retryNumber) throws JSchException, SftpException {
+		try {
+			String pathToSet = SFTPUtils.getPathToSet(server);
+			String completePath = String.format(pathToSet, server.getInstanceName(), SETS_FILE);
+			InputStream existingSets = SFTPUtils.getFileContent(server, completePath);
+			if (existingSets != null) {
+				Map<String, String> setMap = new HashMap<>();
+				for (UserService set : sets) {
+					setMap.put(set.getUser().getSteamId(), String.join(PIPE, set.getUser().getSteamId(), ZERO, set.getOrder().getOrderItems().get(0).getItem().getInGameId(), ZERO));
+				}
+				ByteArrayInputStream contentStream = new ByteArrayInputStream(String.join(System.lineSeparator(), setMap.values()).getBytes(StandardCharsets.UTF_8));
+				SFTPUtils.updateFile(server, completePath, contentStream);
+			}
+		} catch (JSchException | SftpException e) {
+			if (retryNumber < RETRY_COUNT) {
+				batchSet(server, sets, retryNumber + 1);
 			} else {
 				throw e;
 			}

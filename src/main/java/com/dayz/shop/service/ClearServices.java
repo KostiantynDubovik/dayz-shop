@@ -1,8 +1,6 @@
 package com.dayz.shop.service;
 
-import com.dayz.shop.jpa.entities.ItemType;
-import com.dayz.shop.jpa.entities.Order;
-import com.dayz.shop.jpa.entities.Store;
+import com.dayz.shop.jpa.entities.*;
 import com.dayz.shop.jpa.entities.UserService;
 import com.dayz.shop.repository.UserServiceRepository;
 import com.jcraft.jsch.JSchException;
@@ -13,7 +11,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class ClearServices {
@@ -36,10 +37,14 @@ public class ClearServices {
 		}
 	}
 
-	public void clearAll(Store store) throws JSchException, SftpException, IOException {
-		List<UserService> userServices = userServiceRepository.findAllByStoreIdAndEndDateIsBefore(store.getId(), LocalDateTime.now());
-		for (UserService userService : userServices) {
-			clear(userService);
+	public void synchronizeServices(Store store) throws JSchException, SftpException, IOException {
+		List<UserService> userServices = userServiceRepository.findAllByStoreIdAndEndDateInFuture(store.getId());
+		Map<Server, List<UserService>> splitByServer = userServices.stream().collect(Collectors.groupingBy(UserService::getServer, Collectors.toCollection(ArrayList::new)));
+		for (Map.Entry<Server, List<UserService>> userServicesByServer : splitByServer.entrySet()) {
+			Map<ItemType, List<UserService>> splitByType = userServicesByServer.getValue().stream().collect(Collectors.groupingBy(UserService::getItemType));
+			for (Map.Entry<ItemType, List<UserService>> userServicesByType : splitByType.entrySet()) {
+				batchSync(userServicesByType.getKey(), userServicesByServer.getKey(), userServicesByType.getValue());
+			}
 		}
 	}
 
@@ -55,5 +60,15 @@ public class ClearServices {
 				sendToServerService.set(order, steamId, false);
 		}
 		userServiceRepository.deleteUserServiceByUserAndItemTypeAndServer(userService.getUser().getId(), userService.getItemType().name(), userService.getServer().getId());
+	}
+
+	public void batchSync(ItemType itemType, Server server, List<UserService> userServices) throws JSchException, SftpException, IOException {
+		switch (itemType) {
+			case VIP:
+				sendToServerService.batchVip(server, userServices);
+				break;
+			case SET:
+				sendToServerService.batchSet(server, userServices);
+		}
 	}
 }
