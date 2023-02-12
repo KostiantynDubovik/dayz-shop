@@ -16,7 +16,6 @@ import java.util.List;
 
 @Service
 public class ClearServices {
-	private static final int RETRY_COUNT = 3;
 
 	private final UserServiceRepository userServiceRepository;
 	private final SendToServerService sendToServerService;
@@ -32,12 +31,11 @@ public class ClearServices {
 	public void clearAll() throws JSchException, SftpException, IOException {
 		List<UserService> userServices = userServiceRepository.findAllByEndDateIsBefore(LocalDateTime.now());
 		for (UserService userService : userServices) {
-			clear(userService, 1);
+			clear(userService);
 		}
 	}
 
-	public void clear(UserService userService, int retryNumber) throws JSchException, SftpException, IOException {
-		try {
+	public void clear(UserService userService) throws JSchException, SftpException, IOException {
 			Order order = userService.getOrder();
 			ItemType itemType = userService.getItemType();
 			String steamId = order.getUser().getSteamId();
@@ -49,12 +47,5 @@ public class ClearServices {
 					sendToServerService.set(order, steamId, false);
 			}
 			userServiceRepository.delete(userService);
-		} catch (JSchException | SftpException | IOException e) {
-			if (retryNumber < RETRY_COUNT) {
-				clear(userService, retryNumber + 1);
-			} else {
-				throw e;
-			}
-		}
 	}
 }
