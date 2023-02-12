@@ -27,9 +27,9 @@ public class UserService {
 	@Column(name = "ITEM_TYPE", nullable = false, insertable = false, updatable = false)
 	private String itemTypeStr;
 
-	@JoinColumn(name = "SERVER_ID")
-	@ManyToOne
-	private Server server;
+	@Id
+	@Column(name = "SERVER_ID", nullable = false, insertable = false, updatable = false)
+	private Long serverId;
 
 	@ManyToOne
 	@JsonBackReference
@@ -49,6 +49,10 @@ public class UserService {
 	@OneToOne
 	private Order order;
 
+	@JoinColumn(name = "SERVER_ID", nullable = false, insertable = false, updatable = false)
+	@ManyToOne
+	private Server server;
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
@@ -67,5 +71,5 @@ public class UserService {
 class UserServiceKey implements Serializable {
 	private Long userId;
 	private String itemTypeStr;
-	private Server server;
+	private Long serverId;
 }
