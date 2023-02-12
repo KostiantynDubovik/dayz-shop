@@ -20,6 +20,7 @@ public class ClearServices {
 	private final UserServiceRepository userServiceRepository;
 	private final SendToServerService sendToServerService;
 
+
 	@Autowired
 	public ClearServices(UserServiceRepository userServiceRepository, SendToServerService sendToServerService) {
 		this.userServiceRepository = userServiceRepository;
@@ -32,19 +33,19 @@ public class ClearServices {
 		for (UserService userService : userServices) {
 			clear(userService);
 		}
-		userServiceRepository.deleteAll(userServices);
 	}
 
 	public void clear(UserService userService) throws JSchException, SftpException, IOException {
-		Order order = userService.getOrder();
-		ItemType itemType = userService.getItemType();
-		String steamId = order.getUser().getSteamId();
-		switch (itemType) {
-			case VIP:
-				sendToServerService.vip(order, steamId, false);
-				break;
-			case SET:
-				sendToServerService.set(order, steamId, false);
-		}
+			Order order = userService.getOrder();
+			ItemType itemType = userService.getItemType();
+			String steamId = order.getUser().getSteamId();
+			switch (itemType) {
+				case VIP:
+					sendToServerService.vip(order, steamId, false);
+					break;
+				case SET:
+					sendToServerService.set(order, steamId, false);
+			}
+			userServiceRepository.delete(userService);
 	}
 }

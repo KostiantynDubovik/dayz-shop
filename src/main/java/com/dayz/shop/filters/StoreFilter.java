@@ -24,38 +24,42 @@ public class StoreFilter extends HttpFilter {
 
 	@Override
 	public void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-		Store requestedStore = Utils.extractStoreFromRequest(request);
-		if (requestedStore == null) {
-			response.sendError(404);
+		if (request.getRequestURL().toString().endsWith("fk-verify.html")) {
+			chain.doFilter(request, response);
 		} else {
-			if (!request.getParameterMap().containsKey(US_STORE_KEY) && !request.getServerName().startsWith(requestedStore.getStoreName())) {
-				String serverName = "https://".concat(request.getServerName().replace("dayz-shop", String.join(".", requestedStore.getStoreName(), "dayz-shop")));
-				String query = String.join("?", request.getRequestURI(), request.getQueryString());
-				response.sendRedirect(serverName.concat(query));
+			Store requestedStore = Utils.extractStoreFromRequest(request);
+			if (requestedStore == null) {
+				response.sendError(404);
 			} else {
-				request.setAttribute("store", requestedStore);
+				if (!request.getParameterMap().containsKey(US_STORE_KEY) && !request.getServerName().startsWith(requestedStore.getStoreName())) {
+					String serverName = "https://".concat(request.getServerName().replace("dayz-shop", String.join(".", requestedStore.getStoreName(), "dayz-shop")));
+					String query = String.join("?", request.getRequestURI(), request.getQueryString());
+					response.sendRedirect(serverName.concat(query));
+				} else {
+					request.setAttribute("store", requestedStore);
 
-				HttpSession session = request.getSession(false);
+					HttpSession session = request.getSession(false);
 
-				if (session != null) {
-					SecurityContext securityContext = (SecurityContext) session.getAttribute("SPRING_SECURITY_CONTEXT");
-					if (securityContext != null) {
-						Authentication authentication = securityContext.getAuthentication();
-						User user = (User) authentication.getPrincipal();
-						if (!Utils.isAppAdmin(user)) {
-							Store userStore = user.getStore();
-							if (!userStore.getId().equals(requestedStore.getId()) && !Utils.isAppAdmin(user)) {
-								SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
-								logoutHandler.setClearAuthentication(true);
-								logoutHandler.setInvalidateHttpSession(true);
-								logoutHandler.logout(request, response, authentication);
-								response.sendRedirect("/");
-								return;
+					if (session != null) {
+						SecurityContext securityContext = (SecurityContext) session.getAttribute("SPRING_SECURITY_CONTEXT");
+						if (securityContext != null) {
+							Authentication authentication = securityContext.getAuthentication();
+							User user = (User) authentication.getPrincipal();
+							if (!Utils.isAppAdmin(user)) {
+								Store userStore = user.getStore();
+								if (!userStore.getId().equals(requestedStore.getId()) && !Utils.isAppAdmin(user)) {
+									SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
+									logoutHandler.setClearAuthentication(true);
+									logoutHandler.setInvalidateHttpSession(true);
+									logoutHandler.logout(request, response, authentication);
+									response.sendRedirect("/");
+									return;
+								}
 							}
 						}
 					}
+					chain.doFilter(request, response);
 				}
-				chain.doFilter(request, response);
 			}
 		}
 	}
