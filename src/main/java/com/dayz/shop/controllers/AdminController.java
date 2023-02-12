@@ -26,9 +26,9 @@ public class AdminController {
 	}
 
 	@Transactional
-	@PostMapping("clearservice")
+	@PostMapping("sync/service")
 	@PreAuthorize("hasAuthority('STORE_WRITE')")
-	public void notify(@RequestAttribute("store") Store store) throws JSchException, SftpException, IOException {
-		clearServices.clearAll(store);
+	public void synchronizeServices(@RequestAttribute("store") Store store) throws JSchException, SftpException, IOException {
+		clearServices.synchronizeServices(store);
 	}
 }
