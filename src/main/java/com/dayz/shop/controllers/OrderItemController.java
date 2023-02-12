@@ -60,7 +60,7 @@ public class OrderItemController {
 	@PostMapping("/received")
 	public void markItemReceived(@RequestAttribute Store store, HttpServletRequest request, @RequestBody GameServerSideOrderItem requestOrderItem) {
 		if (Utils.isStoreServersRequest(request, store)) {
-			OrderItem orderItem = orderItemRepository.getById(Long.valueOf(requestOrderItem.getProduct().getM_code()));
+			OrderItem orderItem = orderItemRepository.getById(requestOrderItem.getProductCode());
 			orderItem.setReceived(true);
 			orderItem.setReceiveDateTime(requestOrderItem.getTime());
 			orderItemRepository.save(orderItem);

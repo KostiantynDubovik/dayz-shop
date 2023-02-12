@@ -13,6 +13,8 @@ public class GameServerSideOrderItem {
 	public String playerPosition;
 	@JsonProperty("PlayerSteamID")
 	public String playerSteamID;
-	@JsonProperty("Product")
-	public MCodeArray product;
+	@JsonProperty("ProductCode")
+	public Long productCode;
+	@JsonProperty("ProductName")
+	public String productName;
 }
