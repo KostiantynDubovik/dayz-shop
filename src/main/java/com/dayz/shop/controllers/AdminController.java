@@ -11,8 +11,7 @@ import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 import java.io.IOException;
 
 @RestController
@@ -26,6 +25,7 @@ public class AdminController {
 		this.clearServices = clearServices;
 	}
 
+	@Transactional
 	@PostMapping("clearservice")
 	@PreAuthorize("hasAuthority('STORE_WRITE')")
 	public void notify(@RequestAttribute("store") Store store) throws JSchException, SftpException, IOException {
