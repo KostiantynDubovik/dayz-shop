@@ -101,7 +101,7 @@ public class OrderService {
 				order.getOrderItems().forEach(orderItem -> orderItem.setStatus(OrderStatus.COMPLETE));
 
 				order.getProperties().put("message", Utils.getMessage(getKey(order), order.getStore()));
-			} catch (JSchException | InterruptedException | SftpException | IOException e) {
+			} catch (JSchException | SftpException | IOException e) {
 				LOGGER.log(Level.SEVERE, "Error during order placing", e);
 				order.getProperties().put("message", Utils.getMessage("order.failed", order.getStore()));
 				order.setStatus(OrderStatus.FAILED);
