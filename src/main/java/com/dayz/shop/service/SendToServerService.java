@@ -67,15 +67,10 @@ public class SendToServerService {
 		ByteArrayInputStream fileContent = SFTPUtils.getFileContent(order, completePath);
 		if (fileContent != null) {
 			Scanner scanner = new Scanner(fileContent);
-			List<String> existingSteamIds = new ArrayList<>();
+			Set<String> existingSteamIds = new HashSet<>();
 			scanner.useDelimiter(SEMICOLON);
 			while (scanner.hasNext()) {
-				String existingSteamId = scanner.next();
-				if (Objects.equals(existingSteamId, steamId)) {
-					return;
-				} else {
-					existingSteamIds.add(existingSteamId);
-				}
+					existingSteamIds.add(scanner.next());
 			}
 			if (add) {
 				existingSteamIds.add(steamId);
