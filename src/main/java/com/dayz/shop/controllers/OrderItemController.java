@@ -63,6 +63,7 @@ public class OrderItemController {
 			OrderItem orderItem = orderItemRepository.getById(requestOrderItem.getProductCode());
 			orderItem.setReceived(true);
 			orderItem.setReceiveDateTime(requestOrderItem.getTime());
+			orderItem.setCoordinates(requestOrderItem.getPlayerPosition());
 			orderItemRepository.save(orderItem);
 		}
 	}

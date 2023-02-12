@@ -8,13 +8,13 @@ import java.time.LocalDateTime;
 @Data
 public class GameServerSideOrderItem {
 	@JsonProperty("Time")
-	public LocalDateTime time;
+	private LocalDateTime time;
 	@JsonProperty("PlayerPosition")
-	public String playerPosition;
+	private String playerPosition;
 	@JsonProperty("PlayerSteamID")
-	public String playerSteamID;
+	private String playerSteamID;
 	@JsonProperty("ProductCode")
-	public Long productCode;
+	private Long productCode;
 	@JsonProperty("ProductName")
-	public String productName;
+	private String productName;
 }
