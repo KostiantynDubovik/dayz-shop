@@ -43,8 +43,6 @@ public class UserService {
 	@Column(name = "END_DATE")
 	private LocalDateTime endDate;
 
-
-
 	@JoinColumn(name = "ORDER_ID")
 	@OneToOne
 	private Order order;
@@ -52,6 +50,21 @@ public class UserService {
 	@JoinColumn(name = "SERVER_ID", nullable = false, insertable = false, updatable = false)
 	@ManyToOne
 	private Server server;
+
+	public void setUser(User user) {
+		this.user = user;
+		this.userId = user.getId();
+	}
+
+	public void setItemType(ItemType itemType) {
+		this.itemType = itemType;
+		this.itemTypeStr = itemType.toString();
+	}
+
+	public void setServer(Server server) {
+		this.server = server;
+		this.serverId = server.getId();
+	}
 
 	@Override
 	public boolean equals(Object o) {

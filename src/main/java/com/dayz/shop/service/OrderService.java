@@ -145,11 +145,8 @@ public class OrderService {
 							userService.setOrder(orderItem.getOrder());
 							userService.setUser(orderItem.getUser());
 							userService.setItemType(itemType);
-							userService.setItemTypeStr(itemType.toString());
 							userService.setServer(server);
-							userService.setServerId(server.getId());
 							userService.setUser(user);
-							userService.setUserId(user.getId());
 							endDate = LocalDateTime.now();
 							repeat = false;
 						}
