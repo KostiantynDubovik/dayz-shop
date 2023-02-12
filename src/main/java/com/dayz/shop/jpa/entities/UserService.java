@@ -27,7 +27,6 @@ public class UserService {
 	@Column(name = "ITEM_TYPE", nullable = false, insertable = false, updatable = false)
 	private String itemTypeStr;
 
-	@Id
 	@JoinColumn(name = "SERVER_ID")
 	@ManyToOne
 	private Server server;
