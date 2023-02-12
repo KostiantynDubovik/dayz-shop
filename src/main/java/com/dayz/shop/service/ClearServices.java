@@ -2,6 +2,7 @@ package com.dayz.shop.service;
 
 import com.dayz.shop.jpa.entities.ItemType;
 import com.dayz.shop.jpa.entities.Order;
+import com.dayz.shop.jpa.entities.Store;
 import com.dayz.shop.jpa.entities.UserService;
 import com.dayz.shop.repository.UserServiceRepository;
 import com.jcraft.jsch.JSchException;
@@ -30,6 +31,13 @@ public class ClearServices {
 	@Scheduled(cron = "0 0 */3 * * *")
 	public void clearAll() throws JSchException, SftpException, IOException {
 		List<UserService> userServices = userServiceRepository.findAllByEndDateIsBefore(LocalDateTime.now());
+		for (UserService userService : userServices) {
+			clear(userService);
+		}
+	}
+
+	public void clearAll(Store store) throws JSchException, SftpException, IOException {
+		List<UserService> userServices = userServiceRepository.findAllByStoreIdAndEndDateIsBefore(store.getId(), LocalDateTime.now());
 		for (UserService userService : userServices) {
 			clear(userService);
 		}
