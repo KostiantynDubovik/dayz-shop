@@ -27,6 +27,11 @@ public class UserService {
 	@Column(name = "ITEM_TYPE", nullable = false, insertable = false, updatable = false)
 	private String itemTypeStr;
 
+	@Id
+	@JoinColumn(name = "SERVER_ID")
+	@ManyToOne
+	private Server server;
+
 	@ManyToOne
 	@JsonBackReference
 	@JoinColumn(name = "USER_ID", nullable = false, insertable = false, updatable = false)
@@ -40,9 +45,6 @@ public class UserService {
 	private LocalDateTime endDate;
 
 
-	@JoinColumn(name = "SERVER_ID")
-	@ManyToOne
-	private Server server;
 
 	@JoinColumn(name = "ORDER_ID")
 	@OneToOne
@@ -66,4 +68,5 @@ public class UserService {
 class UserServiceKey implements Serializable {
 	private Long userId;
 	private String itemTypeStr;
+	private Server server;
 }

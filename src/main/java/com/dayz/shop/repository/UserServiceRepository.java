@@ -16,4 +16,6 @@ public interface UserServiceRepository extends JpaRepository<UserService, Long> 
 	@Query(value = "select * from user_services US join servers S on US.SERVER_ID = S.SERVER_ID where S.STORE_ID = :storeId and US.END_DATE < :endDate", nativeQuery = true)
 	List<UserService> findAllByStoreIdAndEndDateIsBefore(Long storeId, LocalDateTime endDate);
 	UserService findByUserAndItemTypeAndServer(User user, ItemType itemType, Server server);
+
+	UserService deleteUserServiceByUserAndItemTypeAndServer(User user, ItemType itemType, Server server);
 }
