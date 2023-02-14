@@ -7,10 +7,8 @@ import com.dayz.shop.json.MVehicles;
 import com.dayz.shop.json.Root;
 import com.dayz.shop.repository.OrderItemRepository;
 import com.dayz.shop.repository.UserRepository;
-import com.google.common.base.Function;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -107,7 +105,7 @@ public class MCodeMapper {
 	public List<OrderItem> mapRootToOrderItems(Root root) {
 		List<Long> mCodes =  root.getM_CodeArray().stream().map(input -> Long.parseLong(input.getM_code())).collect(Collectors.toList());
 		List<OrderItem> orderItems = orderItemRepository.findAllByUserAndReceivedAndStatus(userRepository.getBySteamId(root.getUserId()), false, OrderStatus.COMPLETE);
-		orderItems.removeAll(orderItemRepository.findAllByIdIn(mCodes));
+		orderItems.removeAll(orderItemRepository.findAllById(mCodes));
 		orderItems.forEach(orderItem -> orderItem.setReceived(true));
 		orderItemRepository.saveAll(orderItems);
 		return orderItems;

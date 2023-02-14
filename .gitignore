@@ -62,3 +62,4 @@ hs_err_pid*
 **/node_modules/
 /src/main/resources/static/
 /src/main/react/
+.DS_Store

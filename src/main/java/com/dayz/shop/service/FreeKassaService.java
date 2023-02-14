@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.UriBuilder;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -40,12 +39,16 @@ public class FreeKassaService {
 		payment.setStatus(OrderStatus.PENDING);
 		payment.setType(Type.FREEKASSA);
 		payment.setChargeTime(LocalDateTime.now());
+		payment.setBalanceBefore(payment.getUser().getBalance());
+		payment.setBalanceAfter(payment.getUser().getBalance().add(payment.getAmount()));
+		payment.setDirection(PaymentDirection.INCOMING);
 		payment = paymentRepository.save(payment);
 		return buildRedirectUrl(payment);
 	}
 
 	private String buildRedirectUrl(Payment payment) {
 		Store store = payment.getStore();
+		payment.setDirection(PaymentDirection.INCOMING);
 		String merchantId = Utils.getStoreConfig("freekassa.merchantId", store);
 		String secret = Utils.getStoreConfig("freekassa.secret", store);
 
@@ -81,8 +84,10 @@ public class FreeKassaService {
 						payment.setAmount(amount.multiply(BigDecimal.valueOf(1.33)));
 					}
 					payment.getProperties().put("message", Utils.getMessage("payment.success", payment.getStore(), payment.getAmount(), payment.getCurrency()));
-					paymentRepository.save(payment);
+					payment.setBalanceBefore(payment.getUser().getBalance());
 					userService.updateUserBalance(payment.getUser(), payment.getAmount());
+					payment.setBalanceAfter(payment.getUser().getBalance());
+					paymentRepository.save(payment);
 				}
 				result = "YES";
 			}
@@ -90,6 +95,8 @@ public class FreeKassaService {
 			if(paymentOptional.isPresent()) {
 				Payment payment = paymentOptional.get();
 				payment.getProperties().put("message", Utils.getMessage("payment.failed", payment.getStore()));
+				payment.setBalanceBefore(payment.getUser().getBalance());
+				payment.setBalanceAfter(payment.getUser().getBalance());
 				paymentRepository.save(payment);
 			}
 			return "NO";

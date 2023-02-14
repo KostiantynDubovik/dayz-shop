@@ -97,6 +97,12 @@ public class Utils {
 		return Utils.getStoreConfig("freekassa.ips", -2L).contains(reqIp);
 	}
 
+	public static boolean isStoreServersRequest(HttpServletRequest request, Store store) {
+		List<String> ips = serverConfigRepository.findAllByStoreAndKey(store, "SSH_IP").stream().map(ServerConfig::getValue).collect(Collectors.toList());
+		String reqIp = Utils.getClientIpAddress(request);
+		return ips.contains(reqIp);
+	}
+
 	public static User getCurrentUser() {
 		return userRepository.getBySteamId(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getSteamId());
 	}

@@ -112,6 +112,7 @@ create table item_description
 	STORE_ID       bigint       null,
 	ITEM_ID        bigint       null,
 	PUBLISHED      bit          null,
+	ITEM_NAME      VARCHAR(255) null,
 	constraint item_description_store_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID)
 			ON DELETE CASCADE ON UPDATE CASCADE,
@@ -262,8 +263,9 @@ create table order_items
 	ITEM_ID       bigint                      null,
 	USER_ID       bigint                      null,
 	ORDER_ID      bigint                      null,
+	STORE_ID      BIGINT                      not null,
 	SERVER_ID     bigint                      null,
-	M_CODE        varchar(255)                 not null,
+	M_CODE        varchar(255)                not null,
 	STATUS        varchar(20)                 not null,
 	COUNT         int            default 1    not null,
 	constraint order_items_ORDER_ITEM_ID_uindex
@@ -277,6 +279,9 @@ create table order_items
 	constraint FKnnrjyhgtcxoh0eo45qvl41ira
 		foreign key (ORDER_ID) references orders (ORDER_ID)
 			ON DELETE CASCADE ON UPDATE CASCADE,
+	constraint order_items_stores_STORE_ID_fk
+		foreign key (STORE_ID) references stores (STORE_ID)
+			on update cascade on delete cascade,
 	constraint FKssyx5rw664bnq7bwtjerw3wwy
 		foreign key (ITEM_ID) references items (ITEM_ID)
 			ON DELETE CASCADE ON UPDATE CASCADE
@@ -322,6 +327,8 @@ create table payments
 	PAYMENT_TYPE   varchar(255) not null,
 	PAYMENT_STATUS varchar(20)  not null,
 	CURRENCY       VARCHAR(3)   not null,
+	BALANCE_BEFORE decimal      not null default 0,
+	BALANCE_AFTER  decimal      not null default 0,
 	constraint PAYMENTS_users_null_fk
 		foreign key (USER_ID) references users (USER_ID)
 			ON DELETE CASCADE ON UPDATE CASCADE,

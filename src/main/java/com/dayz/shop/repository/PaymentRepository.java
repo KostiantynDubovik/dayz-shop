@@ -1,11 +1,10 @@
 package com.dayz.shop.repository;
 
 
-import com.dayz.shop.jpa.entities.Payment;
-import com.dayz.shop.jpa.entities.Store;
-import com.dayz.shop.jpa.entities.Type;
-import com.dayz.shop.jpa.entities.User;
+import com.dayz.shop.jpa.entities.*;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,7 +16,12 @@ public interface PaymentRepository extends PagingAndSortingRepository<Payment, L
 
 	Payment findByIdAndUser(Long id, User user);
 
-	List<Payment> findAllByUser(User user);
-	List<Payment> findAllByUserAndStoreAndTypeNotIn(User user, Store store, Collection<Type> paymentTypes);
-	List<Payment> findAllByUserAndStoreAndTypeNotIn(User user, Store store, Collection<Type> paymentTypes, Pageable pageable);
+	@Query("SELECT P FROM Payment P WHERE (P.type = 'TRANSFER' AND P.user <> P.userFrom) AND (((P.user = :user AND P.direction = 'INCOMING') OR (P.userFrom = :user AND P.direction = 'OUTGOING')) AND P.store = :store AND P.status = :status AND P.type in :paymentTypes)")
+	List<Payment> findAllByUserAndStoreAndStatusAndTypeIn(User user, Store store, OrderStatus status, Collection<Type> paymentTypes);
+
+	@Query("SELECT P FROM Payment P WHERE (P.type = 'TRANSFER' AND P.user <> P.userFrom) AND (((P.user = :user AND P.direction = 'INCOMING') OR (P.userFrom = :user AND P.direction = 'OUTGOING')) AND P.store = :store AND P.status = :status AND P.type in :paymentTypes)")
+	Page<Payment> findAllByUserAndStoreAndStatusAndTypeIn(User user, Store store, OrderStatus status, Collection<Type> paymentTypes, Pageable pageable);
+
+	@Query("SELECT P FROM Payment P WHERE (P.type = 'TRANSFER' AND P.user <> P.userFrom) AND (((P.user = :user AND P.direction = 'INCOMING') OR (P.userFrom = :user AND P.direction = 'OUTGOING')) AND P.store = :store AND P.status = :status AND P.type = :paymentTypes)")
+	Page<Payment> findAllByUserAndStoreAndStatusAndType(User user, Store store, OrderStatus status, Type paymentTypes, Pageable pageable);
 }

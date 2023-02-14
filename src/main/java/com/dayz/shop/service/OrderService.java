@@ -11,6 +11,7 @@ import com.dayz.shop.utils.Utils;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -119,12 +120,13 @@ public class OrderService {
 
 	private void saveServices(Map<ItemType, Order> separatedTypes) {
 		for (Map.Entry<ItemType, Order> itemTypeOrderEntry : separatedTypes.entrySet()) {
+			OrderItem orderItem = itemTypeOrderEntry.getValue().getOrderItems().get(0);
+			User user = orderItem.getUser();
+			Item item = orderItem.getItem();
 			switch (itemTypeOrderEntry.getKey()) {
 				case SET:
+
 				case VIP:
-					OrderItem orderItem = itemTypeOrderEntry.getValue().getOrderItems().get(0);
-					User user = orderItem.getUser();
-					Item item = orderItem.getItem();
 					ItemType itemType = item.getItemType();
 					Server server = orderItem.getServer();
 					LocalDateTime endDate;
@@ -181,7 +183,7 @@ public class OrderService {
 		return separatedItems;
 	}
 
-	public List<Order> getAllUserOrders(User user, Store store, Pageable pageable) {
+	public Page<Order> getAllUserOrders(User user, Store store, Pageable pageable) {
 		return orderRepository.findAllByUserAndStoreAndStatus(user, store, OrderStatus.COMPLETE, pageable);
 	}
 }

@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,42 +22,68 @@ public class BalanceTransferService {
 		this.userRepository = userRepository;
 	}
 
-	public void doTransfer(Payment payment) {
-		payment.setStatus(OrderStatus.PENDING);
-		User userFrom = payment.getUserFrom();
+	public Payment doTransfer(Payment incomingTransfer) {
+		incomingTransfer.setStatus(OrderStatus.PENDING);
+		incomingTransfer.setDirection(PaymentDirection.INCOMING);
+		User userFrom = incomingTransfer.getUserFrom();
+		Payment outgoingTransfer = buildOutgoingTransfer(incomingTransfer, userFrom);
 		boolean storeAdmin = Utils.isStoreAdmin(userFrom);
-		if (storeAdmin || (userFrom.getBalance().compareTo(payment.getAmount()) >= 0)) {
-			if (doesHaveRealCharges(userFrom, payment.getStore())) {
-				User paymentUser = payment.getUser();
-				BigDecimal newBalance = paymentUser.getBalance().add(payment.getAmount());
-				paymentUser.setBalance(newBalance.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : newBalance);
+		if (storeAdmin || (userFrom.getBalance().compareTo(incomingTransfer.getAmount()) >= 0)) {
+			if (doesHaveRealCharges(userFrom, incomingTransfer.getStore())) {
+				User userTo = incomingTransfer.getUser();
+				BigDecimal balanceBefore = userTo.getBalance();
+				incomingTransfer.setBalanceBefore(balanceBefore);
+				BigDecimal balanceAfter = storeAdmin && incomingTransfer.getAmount().compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : balanceBefore.add(incomingTransfer.getAmount());
+				userTo.setBalance(balanceAfter);
 				if (!storeAdmin) {
-					userFrom.setBalance(userFrom.getBalance().subtract(payment.getAmount()));
+					userFrom.setBalance(userFrom.getBalance().subtract(incomingTransfer.getAmount()));
 				}
-				payment.setStatus(OrderStatus.COMPLETE);
-				payment.getProperties().put("message", Utils.getMessage("transfer.success", payment.getStore()));
+				outgoingTransfer.setBalanceAfter(userFrom.getBalance());
+				incomingTransfer.setStatus(OrderStatus.COMPLETE);
+				outgoingTransfer.setStatus(OrderStatus.COMPLETE);
+				incomingTransfer.getProperties().put("message", Utils.getMessage("transfer.success", incomingTransfer.getStore()));
+				outgoingTransfer.getProperties().put("message", Utils.getMessage("transfer.success", incomingTransfer.getStore()));
 				userRepository.save(userFrom);
-				userRepository.save(paymentUser);
-				paymentRepository.save(payment);
+				userRepository.save(userTo);
+				incomingTransfer.setBalanceAfter(userTo.getBalance());
+				paymentRepository.save(incomingTransfer);
+				paymentRepository.save(outgoingTransfer);
 			} else {
-				saveFail(payment, userFrom, "transfer.failed.noRealCharges");
+				failPayment(incomingTransfer, userFrom, "transfer.failed.noRealCharges");
+				failPayment(outgoingTransfer, userFrom, "transfer.failed.noRealCharges");
 			}
 		} else {
-			saveFail(payment, userFrom, "transfer.failed.insufficient");
+			failPayment(incomingTransfer, userFrom, "transfer.failed.insufficient");
+			failPayment(outgoingTransfer, userFrom, "transfer.failed.insufficient");
 		}
+		return outgoingTransfer;
 	}
 
-	private void saveFail(Payment payment, User currentUser, String messageKey) {
+	private static Payment buildOutgoingTransfer(Payment incomingTransfer, User userFrom) {
+		Payment outgoingTransfer = new Payment();
+		outgoingTransfer.setCurrency(incomingTransfer.getCurrency());
+		outgoingTransfer.setUserFrom(incomingTransfer.getUserFrom());
+		outgoingTransfer.setUser(incomingTransfer.getUser());
+		outgoingTransfer.setStatus(incomingTransfer.getStatus());
+		outgoingTransfer.setChargeTime(incomingTransfer.getChargeTime());
+		outgoingTransfer.setProperties(incomingTransfer.getProperties());
+		outgoingTransfer.setAmount(incomingTransfer.getAmount().negate());
+		outgoingTransfer.setStore(incomingTransfer.getStore());
+		outgoingTransfer.setType(incomingTransfer.getType());
+		outgoingTransfer.setDirection(PaymentDirection.OUTGOING);
+		outgoingTransfer.setBalanceBefore(userFrom.getBalance());
+		return outgoingTransfer;
+	}
+
+	private void failPayment(Payment payment, User currentUser, String messageKey) {
 		payment.setStatus(OrderStatus.FAILED);
 		payment.getProperties().put("message", Utils.getMessage(messageKey, payment.getStore(), currentUser.getBalance(), payment.getAmount()));
-		payment.setChargeTime(LocalDateTime.now());
-		paymentRepository.save(payment);
 	}
 
 	private boolean doesHaveRealCharges(User currentUser, Store store) {
 		boolean result = true;
-		if (Utils.isStoreAdmin(currentUser) || Boolean.parseBoolean(Utils.getStoreConfig("checkRealCharges", store))) {
-			List<Payment> payments = paymentRepository.findAllByUserAndStoreAndTypeNotIn(currentUser, store, Collections.singletonList(Type.TRANSFER));
+		if (!Utils.isStoreAdmin(currentUser) || Boolean.parseBoolean(Utils.getStoreConfig("checkRealCharges", store))) {
+			List<Payment> payments = paymentRepository.findAllByUserAndStoreAndStatusAndTypeIn(currentUser, store, OrderStatus.COMPLETE, Collections.singletonList(Type.FREEKASSA));
 			int threshold = Integer.parseInt(Utils.getStoreConfig("realChargesThreshold", store));
 			result = threshold <= payments.size();
 		}

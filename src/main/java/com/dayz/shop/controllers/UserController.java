@@ -3,6 +3,7 @@ package com.dayz.shop.controllers;
 import com.dayz.shop.jpa.entities.Store;
 import com.dayz.shop.jpa.entities.User;
 import com.dayz.shop.repository.UserRepository;
+import com.dayz.shop.service.UserService;
 import com.dayz.shop.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,21 +12,24 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
 
 	private final UserRepository userRepository;
+	private final UserService userService;
 
 	@Autowired
-	public UserController(UserRepository userRepository) {
+	public UserController(UserRepository userRepository, UserService userService) {
 		this.userRepository = userRepository;
+		this.userService = userService;
 	}
 
 	@Transactional
 	@GetMapping("/self")
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({"deprecation"})
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public User getSelf(OpenIDAuthenticationToken principal) {
 		return userRepository.getBySteamId(((User) principal.getPrincipal()).getSteamId());
@@ -66,5 +70,12 @@ public class UserController {
 	@PreAuthorize("hasAuthority('APP_WRITE')")
 	public User updateUser(@RequestBody User user) {
 		return userRepository.save(user);
+	}
+
+	@GetMapping("friends")
+	@SuppressWarnings("deprecation")
+	@PreAuthorize("hasAuthority('STORE_READ')")
+	public Map<String, String> findFriends(@RequestAttribute Store store, OpenIDAuthenticationToken principal, @RequestParam(defaultValue = "2") int limit) {
+		return userService.findFriends(((User) principal.getPrincipal()).getId(), store.getId(), limit);
 	}
 }

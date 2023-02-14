@@ -7,6 +7,7 @@ import com.dayz.shop.service.BalanceTransferService;
 import com.dayz.shop.service.FreeKassaService;
 import com.dayz.shop.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -22,7 +23,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -30,14 +30,12 @@ import java.util.Optional;
 public class BalanceController {
 	private final FreeKassaService freeKassaService;
 	private final BalanceTransferService balanceTransferService;
-
 	private final PaymentRepository paymentRepository;
 	private final UserRepository userRepository;
 
 	@Autowired
-	public BalanceController(FreeKassaService freeKassaService,
-	                         PaymentRepository paymentRepository, BalanceTransferService balanceTransferService,
-	                         UserRepository userRepository) {
+	public BalanceController(FreeKassaService freeKassaService, PaymentRepository paymentRepository,
+								BalanceTransferService balanceTransferService, UserRepository userRepository) {
 		this.freeKassaService = freeKassaService;
 		this.paymentRepository = paymentRepository;
 		this.balanceTransferService = balanceTransferService;
@@ -80,27 +78,30 @@ public class BalanceController {
 		payment.setStatus(OrderStatus.PENDING);
 		payment.setChargeTime(LocalDateTime.now());
 		User currentUser = Utils.getCurrentUser();
-		if (payment.getAmount().compareTo(BigDecimal.ZERO) > 0 || Utils.isStoreAdmin(currentUser)) {
+		boolean isSelfCharge = currentUser.getSteamId().equals(steamId);
+		if(isSelfCharge && !Utils.isStoreAdmin()) {
+			failPayment(payment, "transfer.failed.selfcharge", store);
+		} else if (payment.getAmount().compareTo(BigDecimal.ZERO) > 0 || Utils.isStoreAdmin(currentUser)) {
 			payment.setUserFrom(currentUser);
-			boolean isSelfCharge = Utils.isStoreAdmin() && currentUser.getSteamId().equals(steamId);
 			User userTo = isSelfCharge ? currentUser : userRepository.getBySteamIdAndStore(steamId, store);
 			if (userTo == null && Utils.isStoreAdmin(currentUser)) {
 				userTo = Utils.createUser(store, steamId);
 			}
 			if (userTo != null) {
 				payment.setUser(userTo);
-				balanceTransferService.doTransfer(payment);
+				payment = balanceTransferService.doTransfer(payment);
 			} else {
-				payment.setStatus(OrderStatus.FAILED);
-				payment.getProperties().put("message", Utils.getMessage("transfer.failed.no_user", store));
-				paymentRepository.save(payment);
+				failPayment(payment, "transfer.failed.no_user", store);
 			}
 		} else {
-			payment.setStatus(OrderStatus.FAILED);
-			payment.getProperties().put("message",  Utils.getMessage("transfer.failed.negative_amount", store));
-			paymentRepository.save(payment);
+			failPayment(payment, "transfer.failed.negative_amount", store);
 		}
 		return payment;
+	}
+
+	private static void failPayment(Payment payment, String key, Store store) {
+		payment.setStatus(OrderStatus.FAILED);
+		payment.getProperties().put("message",  Utils.getMessage(key, store));
 	}
 
 	@GetMapping("{paymentId}")
@@ -122,11 +123,52 @@ public class BalanceController {
 		return result;
 	}
 
-	@GetMapping("all/{page}")
+	@GetMapping("all/balance/{steamId}/{page}")
+	@PreAuthorize("hasAuthority('STORE_WRITE')")
+	public Page<Payment> getAllUserBalance(@RequestAttribute Store store, @PathVariable String steamId, @PathVariable int page, @RequestParam(defaultValue = "10") int pageSize) {
+		Pageable pageable = getPageable(page, pageSize);
+		return paymentRepository.findAllByUserAndStoreAndStatusAndTypeIn(userRepository.getBySteamIdAndStore(steamId, store), store, OrderStatus.COMPLETE, Arrays.asList(Type.TRANSFER, Type.FREEKASSA), pageable);
+	}
+
+	@GetMapping("all/payments/{steamId}/{page}")
+	@PreAuthorize("hasAuthority('STORE_READ')")
+	public Page<Payment> getAllUserPayments(@RequestAttribute Store store, @PathVariable String steamId, @PathVariable int page, @RequestParam(defaultValue = "10") int pageSize) {
+		Pageable pageable = getPageable(page, pageSize);
+		return paymentRepository.findAllByUserAndStoreAndStatusAndType(userRepository.getBySteamIdAndStore(steamId, store), store, OrderStatus.COMPLETE, Type.FREEKASSA, pageable);
+	}
+
+	@GetMapping("all/transfers/{steamId}/{page}")
+	@PreAuthorize("hasAuthority('STORE_READ')")
+	public Page<Payment> getAllUserTransfers(@RequestAttribute Store store, @PathVariable String steamId, @PathVariable int page, @RequestParam(defaultValue = "10") int pageSize) {
+		Pageable pageable = getPageable(page, pageSize);
+		return paymentRepository.findAllByUserAndStoreAndStatusAndType(userRepository.getBySteamIdAndStore(steamId, store), store, OrderStatus.COMPLETE, Type.TRANSFER, pageable);
+	}
+
+	@GetMapping("all/balance/self/{page}")
 	@SuppressWarnings("deprecation")
 	@PreAuthorize("hasAuthority('STORE_READ')")
-	public List<Payment> getPaymentById(@RequestAttribute Store store, OpenIDAuthenticationToken principal, @PathVariable int page, @RequestParam(defaultValue = "20") int pageSize) {
-		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 20 ? 20 : pageSize, Sort.by("chargeTime"));
-		return paymentRepository.findAllByUserAndStoreAndTypeNotIn((User) principal.getPrincipal(), store, Arrays.asList(Type.TRANSFER, Type.ORDER), pageable);
+	public Page<Payment> getAllSelfBalance(@RequestAttribute Store store, OpenIDAuthenticationToken principal, @PathVariable int page, @RequestParam(defaultValue = "10") int pageSize) {
+		Pageable pageable = getPageable(page, pageSize);
+		return paymentRepository.findAllByUserAndStoreAndStatusAndTypeIn((User) principal.getPrincipal(), store, OrderStatus.COMPLETE, Arrays.asList(Type.TRANSFER, Type.FREEKASSA), pageable);
+	}
+
+	@GetMapping("all/payments/self/{page}")
+	@SuppressWarnings("deprecation")
+	@PreAuthorize("hasAuthority('STORE_READ')")
+	public Page<Payment> getSelfPayments(@RequestAttribute Store store, OpenIDAuthenticationToken principal, @PathVariable int page, @RequestParam(defaultValue = "10") int pageSize) {
+		Pageable pageable = getPageable(page, pageSize);
+		return paymentRepository.findAllByUserAndStoreAndStatusAndType((User) principal.getPrincipal(), store, OrderStatus.COMPLETE, Type.FREEKASSA, pageable);
+	}
+
+	@GetMapping("all/transfers/self/{page}")
+	@SuppressWarnings("deprecation")
+	@PreAuthorize("hasAuthority('STORE_READ')")
+	public Page<Payment> getSelfTransfers(@RequestAttribute Store store, OpenIDAuthenticationToken principal, @PathVariable int page, @RequestParam(defaultValue = "10") int pageSize) {
+		Pageable pageable = getPageable(page, pageSize);
+		return paymentRepository.findAllByUserAndStoreAndStatusAndType((User) principal.getPrincipal(), store, OrderStatus.COMPLETE, Type.TRANSFER, pageable);
+	}
+
+	private static Pageable getPageable(int page, int pageSize) {
+		return PageRequest.of(page > 0 ? page - 1 : 0, Math.max(pageSize, 5), Sort.by("chargeTime").descending());
 	}
 }

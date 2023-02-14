@@ -42,8 +42,12 @@ public class OrderItem {
 	@JsonIgnore
 	private User user;
 
-	@Column(name = "BOUGHT_TIME")
+	@ManyToOne(cascade = CascadeType.MERGE)
+	@JoinColumn(name = "STORE_ID", referencedColumnName = "STORE_ID")
 	@JsonIgnore
+	private Store store;
+
+	@Column(name = "BOUGHT_TIME")
 	private LocalDateTime boughtTime;
 
 	@Column(name = "RECEIVED")
@@ -51,7 +55,6 @@ public class OrderItem {
 	private boolean received;
 
 	@Column(name = "RECEIVE_TIME")
-	@JsonIgnore
 	private LocalDateTime receiveDateTime;
 
 	@Column(name = "PRICE")
@@ -62,7 +65,6 @@ public class OrderItem {
 
 	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "SERVER_ID")
-	@JsonIgnore
 	private Server server;
 
 	@Enumerated(EnumType.STRING)
@@ -73,4 +75,6 @@ public class OrderItem {
 	@Column(name = "COUNT")
 	private Integer count = 1;
 
+	@Column(name = "COORDINATES")
+	private String coordinates;
 }

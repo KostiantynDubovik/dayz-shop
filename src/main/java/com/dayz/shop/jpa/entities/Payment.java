@@ -19,7 +19,7 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler", "store", "user"})
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler", "store"})
 @Table(name = "payments")
 public class Payment {
 
@@ -30,6 +30,12 @@ public class Payment {
 
 	@Column(name = "AMOUNT")
 	private BigDecimal amount;
+
+	@Column(name = "BALANCE_AFTER")
+	private BigDecimal balanceAfter;
+
+	@Column(name = "BALANCE_BEFORE")
+	private BigDecimal balanceBefore;
 
 	@Column(name = "CHARGE_TIME")
 	private LocalDateTime chargeTime;
@@ -64,6 +70,10 @@ public class Payment {
 	@MapKeyColumn(name = "name")
 	@Column(name = "VALUE")
 	private Map<String, String> properties = new HashMap<>();
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "PAYMENT_DIRECTION")
+	private PaymentDirection direction;
 
 	@Override
 	public boolean equals(Object o) {
