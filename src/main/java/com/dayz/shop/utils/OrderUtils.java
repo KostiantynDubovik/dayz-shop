@@ -4,6 +4,7 @@ import com.dayz.shop.jpa.entities.*;
 import com.dayz.shop.repository.OfferPriceRepository;
 import com.dayz.shop.repository.OrderRepository;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -59,6 +60,7 @@ public class OrderUtils {
 		orderItem.setStore(order.getStore());
 		orderItem.setStatus(OrderStatus.PENDING);
 		orderItem.setReceived(false);
+		orderItem.setCoordinates(StringUtils.EMPTY);
 		orderItem.setBoughtTime(LocalDateTime.now());
 		orderItem.setItem(item);
 		orderItem.setPrice(getCurrentPrice(order.getStore(), item));
