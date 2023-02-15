@@ -94,8 +94,8 @@ public class OrderService {
 		} else {
 			try {
 				Map<ItemType, Order> separatedTypes = splitTypes(order);
-				saveServices(separatedTypes);
 				sendToServerService.sendOrder(order, separatedTypes);
+				saveServices(separatedTypes);
 				user.setBalance(user.getBalance().subtract(order.getOrderTotal()));
 				order.setStatus(OrderStatus.COMPLETE);
 				order.getOrderItems().forEach(orderItem -> orderItem.setStatus(OrderStatus.COMPLETE));
