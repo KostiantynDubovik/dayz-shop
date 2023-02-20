@@ -9,11 +9,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.Consumes;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/item")
@@ -82,5 +85,12 @@ public class ItemController {
 	@PreAuthorize("hasAuthority('STORE_WRITE')")
 	public void deleteItem(@PathVariable Item item) {
 		itemRepository.delete(item);
+	}
+
+
+	@GetMapping("revenue")
+	@PreAuthorize("hasAnyAuthority('STORE_WRITE')")
+	public Map<String, String> getServersRevenue(@RequestAttribute Store store, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+		return itemRepository.getItemRevenue(store.getId(), from, to);
 	}
 }
