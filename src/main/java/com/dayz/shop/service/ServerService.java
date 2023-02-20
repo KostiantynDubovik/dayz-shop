@@ -3,6 +3,7 @@ package com.dayz.shop.service;
 import com.dayz.shop.jpa.entities.Server;
 import com.dayz.shop.jpa.entities.Store;
 import com.dayz.shop.repository.ServerRepository;
+import com.dayz.shop.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,16 +30,12 @@ public class ServerService {
 	public Map<String, String> getServersRevenue(Long id, LocalDate from, LocalDate to) {
 		List<List<String>> resultSet = serverRepository.getServersRevenue(id, from, to);
 
-		return resultSet.stream()
-				.map(input -> new AbstractMap.SimpleEntry<>(input.get(0), input.get(1)))
-				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, LinkedHashMap::new));
+		return Utils.transformResultSetToMap(resultSet);
 	}
 
 	public Map<String, String> getServersRevenueNoConstantine(Long id, LocalDate from, LocalDate to) {
 		List<List<String>> resultSet = serverRepository.getServersRevenueNoConstantine(id, from, to);
 
-		return resultSet.stream()
-				.map(input -> new AbstractMap.SimpleEntry<>(input.get(0), input.get(1)))
-				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, LinkedHashMap::new));
+		return Utils.transformResultSetToMap(resultSet);
 	}
 }

@@ -155,11 +155,13 @@ public class Utils {
 	public static String getMessage(String key, Store store, Object... args) {
 		ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 		Locale locale = LocalizationConfiguration.DEFAULT_LOCALE;
-//		if (requestAttributes != null) {
-//			HttpServletRequest request = requestAttributes.getRequest();
-//			locale = localeResolver.resolveLocale(request);
-//		}
 		return messageSource.getMessage(key, args, locale);
+	}
+
+	public static Map<String, String> transformResultSetToMap(List<List<String>> resultSet) {
+		return resultSet.stream()
+				.map(input -> new AbstractMap.SimpleEntry<>(input.get(0), input.get(1)))
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, LinkedHashMap::new));
 	}
 
 	public static User createUser(Store store, String steamId) {
