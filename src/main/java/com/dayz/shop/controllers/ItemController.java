@@ -3,6 +3,7 @@ package com.dayz.shop.controllers;
 import com.dayz.shop.jpa.entities.*;
 import com.dayz.shop.repository.CategoryRepository;
 import com.dayz.shop.repository.ItemRepository;
+import com.dayz.shop.service.ItemService;
 import com.dayz.shop.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,14 +23,16 @@ import java.util.Map;
 @RequestMapping("/api/item")
 public class ItemController {
 
+	private final ItemService itemService;
 	private final ItemRepository itemRepository;
 	private final CategoryRepository categoryRepository;
 	private final LanguageRepository languageRepository;
 	private final ItemDescriptionRepository itemDescriptionRepository;
 
 	@Autowired
-	public ItemController(ItemRepository itemRepository, CategoryRepository categoryRepository,
+	public ItemController(ItemService itemService, ItemRepository itemRepository, CategoryRepository categoryRepository,
 	                      LanguageRepository languageRepository, ItemDescriptionRepository itemDescriptionRepository) {
+		this.itemService = itemService;
 		this.itemRepository = itemRepository;
 		this.categoryRepository = categoryRepository;
 		this.languageRepository = languageRepository;
@@ -91,6 +94,6 @@ public class ItemController {
 	@GetMapping("revenue")
 	@PreAuthorize("hasAnyAuthority('STORE_WRITE')")
 	public Map<String, String> getServersRevenue(@RequestAttribute Store store, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
-		return itemRepository.getItemRevenue(store.getId(), from, to);
+		return itemService.getItemRevenue(store.getId(), from, to);
 	}
 }
