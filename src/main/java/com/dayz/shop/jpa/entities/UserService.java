@@ -18,6 +18,7 @@ import java.util.Objects;
 public class UserService {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	@Column(name = "USER_SERVICE_ID", nullable = false, insertable = false, updatable = false)
 	private Long userServiceId;
 
