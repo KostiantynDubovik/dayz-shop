@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -16,20 +15,11 @@ import java.util.Objects;
 @Entity
 @Table(name = "user_services")
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
-@IdClass(UserServiceKey.class)
 public class UserService {
 
 	@Id
-	@Column(name = "USER_ID", nullable = false, insertable = false, updatable = false)
-	private Long userId;
-
-	@Id
-	@Column(name = "ITEM_TYPE", nullable = false, insertable = false, updatable = false)
-	private String itemTypeStr;
-
-	@Id
-	@Column(name = "SERVER_ID", nullable = false, insertable = false, updatable = false)
-	private Long serverId;
+	@Column(name = "USER_SERVICE_ID", nullable = false, insertable = false, updatable = false)
+	private Long userServiceId;
 
 	@ManyToOne
 	@JsonBackReference
@@ -51,21 +41,6 @@ public class UserService {
 	@ManyToOne
 	private Server server;
 
-	public void setUser(User user) {
-		this.user = user;
-		this.userId = user.getId();
-	}
-
-	public void setItemType(ItemType itemType) {
-		this.itemType = itemType;
-		this.itemTypeStr = itemType.toString();
-	}
-
-	public void setServer(Server server) {
-		this.server = server;
-		this.serverId = server.getId();
-	}
-
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
@@ -78,11 +53,4 @@ public class UserService {
 	public int hashCode() {
 		return Objects.hash(user, itemType, endDate, server);
 	}
-}
-
-@Data
-class UserServiceKey implements Serializable {
-	private Long userId;
-	private String itemTypeStr;
-	private Long serverId;
 }

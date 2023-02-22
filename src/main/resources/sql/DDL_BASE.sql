@@ -365,18 +365,19 @@ create table if not exists server_config
 );
 
 
-create table if not exists user_services
+create table if not exists user_services_2
 (
-	USER_ID   bigint      not null,
-	ITEM_TYPE varchar(25) not null,
-	END_DATE  timestamp   not null,
-	SERVER_ID bigint      not null,
-	ORDER_ID bigint not null,
-	primary key (USER_ID, ITEM_TYPE),
+	USER_SERVICE_ID bigint auto_increment not null,
+	USER_ID         bigint                not null,
+	ITEM_TYPE       varchar(25)           not null,
+	END_DATE        timestamp             not null,
+	SERVER_ID       bigint                not null,
+	ORDER_ID        bigint                not null,
+	primary key (USER_SERVICE_ID),
 	constraint user_services_users_USER_ID_fk
 		foreign key (USER_ID) references users (USER_ID)
 			on delete cascade on update cascade,
-	constraint user_services_orders_null_fk
+	constraint user_services_orders_ORDER_ID_fk
 		foreign key (ORDER_ID) references orders (ORDER_ID)
 			on update cascade on delete cascade,
 	constraint user_services_servers_SERVER_ID_fk
