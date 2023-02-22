@@ -19,16 +19,16 @@ public class UserService {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
-	@Column(name = "USER_SERVICE_ID", nullable = false, insertable = false, updatable = false)
+	@Column(name = "USER_SERVICE_ID")
 	private Long userServiceId;
 
 	@ManyToOne
 	@JsonBackReference
-	@JoinColumn(name = "USER_ID", nullable = false, insertable = false, updatable = false)
+	@JoinColumn(name = "USER_ID")
 	private User user;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "ITEM_TYPE", nullable = false, insertable = false, updatable = false)
+	@Column(name = "ITEM_TYPE")
 	private ItemType itemType;
 
 	@Column(name = "END_DATE")
@@ -38,7 +38,7 @@ public class UserService {
 	@OneToOne
 	private Order order;
 
-	@JoinColumn(name = "SERVER_ID", nullable = false, insertable = false, updatable = false)
+	@JoinColumn(name = "SERVER_ID")
 	@ManyToOne
 	private Server server;
 
