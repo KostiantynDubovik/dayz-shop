@@ -38,7 +38,6 @@ public class ClearServices {
 	}
 
 	public void synchronizeServices(Store store) throws JSchException, SftpException {
-		userServiceRepository.deleteAllByEndDateIsBefore(LocalDateTime.now());
 		List<UserService> userServices = userServiceRepository.findAllByStoreIdAndEndDateInFuture(store.getId());
 		Map<Server, List<UserService>> splitByServer = userServices.stream().collect(Collectors.groupingBy(UserService::getServer, Collectors.toCollection(ArrayList::new)));
 		for (Map.Entry<Server, List<UserService>> userServicesByServer : splitByServer.entrySet()) {
@@ -47,6 +46,7 @@ public class ClearServices {
 				batchSync(userServicesByType.getKey(), userServicesByServer.getKey(), userServicesByType.getValue());
 			}
 		}
+		userServiceRepository.deleteAllByUserServiceIdIsNotIn(userServices.stream().map(UserService::getUserServiceId).collect(Collectors.toList()));
 	}
 
 	public void clear(UserService userService) throws JSchException, SftpException, IOException {
