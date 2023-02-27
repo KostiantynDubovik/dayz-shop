@@ -106,15 +106,9 @@ public class SendToServerService {
 		try {
 			String pathToVip = SFTPUtils.getPathToVip(server);
 			String completePath = String.format(pathToVip, server.getInstanceName(), VIP_FILE);
-			ByteArrayInputStream fileContent = SFTPUtils.getFileContent(server, completePath);
-			if (fileContent != null) {
-				Set<String> existingSteamIds = new HashSet<>();
-				for (UserService vip : vips) {
-					existingSteamIds.add(vip.getUser().getSteamId());
-				}
-				ByteArrayInputStream contentStream = new ByteArrayInputStream(String.join(SEMICOLON, existingSteamIds).concat(SEMICOLON).getBytes(StandardCharsets.UTF_8));
-				SFTPUtils.updateFile(server, completePath, contentStream);
-			}
+			Set<String> vipsSteamIds = vips.stream().map(userService -> userService.getUser().getSteamId()).collect(Collectors.toSet());
+			ByteArrayInputStream contentStream = new ByteArrayInputStream(String.join(SEMICOLON, vipsSteamIds).concat(SEMICOLON).getBytes(StandardCharsets.UTF_8));
+			SFTPUtils.updateFile(server, completePath, contentStream);
 		} catch (JSchException | SftpException e) {
 			if (retryNumber < RETRY_COUNT) {
 				batchVip(server, vips, retryNumber + 1);
@@ -160,15 +154,12 @@ public class SendToServerService {
 		try {
 			String pathToSet = SFTPUtils.getPathToSet(server);
 			String completePath = String.format(pathToSet, server.getInstanceName(), SETS_FILE);
-			InputStream existingSets = SFTPUtils.getFileContent(server, completePath);
-			if (existingSets != null) {
-				Map<String, String> setMap = new HashMap<>();
-				for (UserService set : sets) {
-					setMap.put(set.getUser().getSteamId(), String.join(PIPE, set.getUser().getSteamId(), ZERO, set.getOrder().getOrderItems().get(0).getItem().getInGameId(), ZERO));
-				}
-				ByteArrayInputStream contentStream = new ByteArrayInputStream(String.join(System.lineSeparator(), setMap.values()).getBytes(StandardCharsets.UTF_8));
-				SFTPUtils.updateFile(server, completePath, contentStream);
+			Map<String, String> setMap = new HashMap<>();
+			for (UserService set : sets) {
+				setMap.put(set.getUser().getSteamId(), String.join(PIPE, set.getUser().getSteamId(), ZERO, set.getOrder().getOrderItems().get(0).getItem().getInGameId(), ZERO));
 			}
+			ByteArrayInputStream contentStream = new ByteArrayInputStream(String.join(System.lineSeparator(), setMap.values()).getBytes(StandardCharsets.UTF_8));
+			SFTPUtils.updateFile(server, completePath, contentStream);
 		} catch (JSchException | SftpException e) {
 			if (retryNumber < RETRY_COUNT) {
 				batchSet(server, sets, retryNumber + 1);
