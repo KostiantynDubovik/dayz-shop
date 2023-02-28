@@ -134,14 +134,14 @@ public class BalanceController {
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public Page<Payment> getAllUserPayments(@RequestAttribute Store store, @PathVariable String steamId, @PathVariable int page, @RequestParam(defaultValue = "10") int pageSize) {
 		Pageable pageable = getPageable(page, pageSize);
-		return paymentRepository.findAllByUserAndStoreAndStatusAndType(userRepository.getBySteamIdAndStore(steamId, store), store, OrderStatus.COMPLETE, Type.FREEKASSA, pageable);
+		return paymentRepository.findAllByUserAndStoreAndStatusAndTypeIn(userRepository.getBySteamIdAndStore(steamId, store), store, OrderStatus.COMPLETE, Arrays.asList(Type.FREEKASSA), pageable);
 	}
 
 	@GetMapping("all/transfers/{steamId}/{page}")
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public Page<Payment> getAllUserTransfers(@RequestAttribute Store store, @PathVariable String steamId, @PathVariable int page, @RequestParam(defaultValue = "10") int pageSize) {
 		Pageable pageable = getPageable(page, pageSize);
-		return paymentRepository.findAllByUserAndStoreAndStatusAndType(userRepository.getBySteamIdAndStore(steamId, store), store, OrderStatus.COMPLETE, Type.TRANSFER, pageable);
+		return paymentRepository.findAllByUserAndStoreAndStatusAndTypeIn(userRepository.getBySteamIdAndStore(steamId, store), store, OrderStatus.COMPLETE, Arrays.asList(Type.TRANSFER), pageable);
 	}
 
 	@GetMapping("all/balance/self/{page}")
@@ -157,7 +157,7 @@ public class BalanceController {
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public Page<Payment> getSelfPayments(@RequestAttribute Store store, OpenIDAuthenticationToken principal, @PathVariable int page, @RequestParam(defaultValue = "10") int pageSize) {
 		Pageable pageable = getPageable(page, pageSize);
-		return paymentRepository.findAllByUserAndStoreAndStatusAndType((User) principal.getPrincipal(), store, OrderStatus.COMPLETE, Type.FREEKASSA, pageable);
+		return paymentRepository.findAllByUserAndStoreAndStatusAndTypeIn((User) principal.getPrincipal(), store, OrderStatus.COMPLETE, Arrays.asList(Type.FREEKASSA), pageable);
 	}
 
 	@GetMapping("all/transfers/self/{page}")
@@ -165,7 +165,7 @@ public class BalanceController {
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public Page<Payment> getSelfTransfers(@RequestAttribute Store store, OpenIDAuthenticationToken principal, @PathVariable int page, @RequestParam(defaultValue = "10") int pageSize) {
 		Pageable pageable = getPageable(page, pageSize);
-		return paymentRepository.findAllByUserAndStoreAndStatusAndType((User) principal.getPrincipal(), store, OrderStatus.COMPLETE, Type.TRANSFER, pageable);
+		return paymentRepository.findAllByUserAndStoreAndStatusAndTypeIn((User) principal.getPrincipal(), store, OrderStatus.COMPLETE, Arrays.asList(Type.TRANSFER), pageable);
 	}
 
 	private static Pageable getPageable(int page, int pageSize) {
