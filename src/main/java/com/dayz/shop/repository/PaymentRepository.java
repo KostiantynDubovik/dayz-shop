@@ -16,12 +16,9 @@ public interface PaymentRepository extends PagingAndSortingRepository<Payment, L
 
 	Payment findByIdAndUser(Long id, User user);
 
-	@Query("SELECT P FROM Payment P WHERE (P.type = 'TRANSFER' AND P.user <> P.userFrom) AND (((P.user = :user AND P.direction = 'INCOMING') OR (P.userFrom = :user AND P.direction = 'OUTGOING')) AND P.store = :store AND P.status = :status AND P.type in :paymentTypes)")
+	@Query("SELECT P FROM Payment P WHERE (P.type in :paymentTypes AND P.user <> P.userFrom) AND (((P.user = :user AND P.direction = 'INCOMING') OR (P.userFrom = :user AND P.direction = 'OUTGOING')) AND P.store = :store AND P.status = :status AND P.type in :paymentTypes)")
 	List<Payment> findAllByUserAndStoreAndStatusAndTypeIn(User user, Store store, OrderStatus status, Collection<Type> paymentTypes);
 
-	@Query("SELECT P FROM Payment P WHERE (P.type = 'TRANSFER' AND P.user <> P.userFrom) AND (((P.user = :user AND P.direction = 'INCOMING') OR (P.userFrom = :user AND P.direction = 'OUTGOING')) AND P.store = :store AND P.status = :status AND P.type in :paymentTypes)")
-	Page<Payment> findAllByUserAndStoreAndStatusAndTypeIn(User user, Store store, OrderStatus status, Collection<Type> paymentTypes, Pageable pageable);
-
-	@Query("SELECT P FROM Payment P WHERE (P.type = 'TRANSFER' AND P.user <> P.userFrom) AND (((P.user = :user AND P.direction = 'INCOMING') OR (P.userFrom = :user AND P.direction = 'OUTGOING')) AND P.store = :store AND P.status = :status AND P.type = :paymentTypes)")
-	Page<Payment> findAllByUserAndStoreAndStatusAndType(User user, Store store, OrderStatus status, Type paymentTypes, Pageable pageable);
+	@Query("SELECT P FROM Payment P WHERE (P.type in :paymentTypes AND P.user <> P.userFrom) AND (((P.user = :user AND P.direction = 'INCOMING') OR (P.userFrom = :user AND P.direction = 'OUTGOING')) AND P.store = :store AND P.status = :status AND P.type = :paymentTypes)")
+	Page<Payment> findAllByUserAndStoreAndStatusAndTypeIn(User user, Store store, OrderStatus status, List<Type> paymentTypes, Pageable pageable);
 }
