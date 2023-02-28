@@ -19,6 +19,6 @@ public interface PaymentRepository extends PagingAndSortingRepository<Payment, L
 	@Query("SELECT P FROM Payment P WHERE (P.type in :paymentTypes AND P.user <> P.userFrom) AND (((P.user = :user AND P.direction = 'INCOMING') OR (P.userFrom = :user AND P.direction = 'OUTGOING')) AND P.store = :store AND P.status = :status AND P.type in :paymentTypes)")
 	List<Payment> findAllByUserAndStoreAndStatusAndTypeIn(User user, Store store, OrderStatus status, Collection<Type> paymentTypes);
 
-	@Query("SELECT P FROM Payment P WHERE (P.type in :paymentTypes AND P.user <> P.userFrom) AND (((P.user = :user AND P.direction = 'INCOMING') OR (P.userFrom = :user AND P.direction = 'OUTGOING')) AND P.store = :store AND P.status = :status AND P.type = :paymentTypes)")
+	@Query("SELECT P FROM Payment P WHERE (P.type in :paymentTypes AND P.user <> P.userFrom) AND (((P.user = :user AND P.direction = 'INCOMING') OR (P.userFrom = :user AND P.direction = 'OUTGOING')) AND P.store = :store AND P.status = :status AND P.type in :paymentTypes)")
 	Page<Payment> findAllByUserAndStoreAndStatusAndTypeIn(User user, Store store, OrderStatus status, List<Type> paymentTypes, Pageable pageable);
 }
