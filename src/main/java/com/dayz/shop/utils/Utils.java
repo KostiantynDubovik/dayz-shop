@@ -53,7 +53,7 @@ public class Utils {
 		Utils.localeResolver = localeResolver;
 		Utils.roleRepository = roleRepository;
 		Utils.userRepository = userRepository;
-		DEFAULT_USER = userRepository.getById(-100L);
+		DEFAULT_USER = userRepository.getById(-1000L);
 	}
 
 	public static boolean isAppAdmin(User user) {
