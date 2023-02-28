@@ -5,6 +5,7 @@ import com.dayz.shop.repository.PaymentRepository;
 import com.dayz.shop.repository.UserRepository;
 import com.dayz.shop.service.BalanceTransferService;
 import com.dayz.shop.service.FreeKassaService;
+import com.dayz.shop.service.YooMoneyService;
 import com.dayz.shop.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,20 +24,23 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/balance")
 public class BalanceController {
 	private final FreeKassaService freeKassaService;
+	private final YooMoneyService yooMoneyService;
 	private final BalanceTransferService balanceTransferService;
 	private final PaymentRepository paymentRepository;
 	private final UserRepository userRepository;
 
 	@Autowired
-	public BalanceController(FreeKassaService freeKassaService, PaymentRepository paymentRepository,
+	public BalanceController(FreeKassaService freeKassaService, YooMoneyService yooMoneyService, PaymentRepository paymentRepository,
 								BalanceTransferService balanceTransferService, UserRepository userRepository) {
 		this.freeKassaService = freeKassaService;
+		this.yooMoneyService = yooMoneyService;
 		this.paymentRepository = paymentRepository;
 		this.balanceTransferService = balanceTransferService;
 		this.userRepository = userRepository;
@@ -62,6 +66,9 @@ public class BalanceController {
 		switch (payment.getType()) {
 			case FREEKASSA:
 				redirectUrl = freeKassaService.initPayment(payment);
+				break;
+			case YOOMONEY:
+				redirectUrl = yooMoneyService.initPayment(payment);
 				break;
 			default:
 				redirectUrl = "/profile";
@@ -134,14 +141,14 @@ public class BalanceController {
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public Page<Payment> getAllUserPayments(@RequestAttribute Store store, @PathVariable String steamId, @PathVariable int page, @RequestParam(defaultValue = "10") int pageSize) {
 		Pageable pageable = getPageable(page, pageSize);
-		return paymentRepository.findAllByUserAndStoreAndStatusAndTypeIn(userRepository.getBySteamIdAndStore(steamId, store), store, OrderStatus.COMPLETE, Arrays.asList(Type.FREEKASSA), pageable);
+		return paymentRepository.findAllByUserAndStoreAndStatusAndTypeIn(userRepository.getBySteamIdAndStore(steamId, store), store, OrderStatus.COMPLETE, Collections.singletonList(Type.FREEKASSA), pageable);
 	}
 
 	@GetMapping("all/transfers/{steamId}/{page}")
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public Page<Payment> getAllUserTransfers(@RequestAttribute Store store, @PathVariable String steamId, @PathVariable int page, @RequestParam(defaultValue = "10") int pageSize) {
 		Pageable pageable = getPageable(page, pageSize);
-		return paymentRepository.findAllByUserAndStoreAndStatusAndTypeIn(userRepository.getBySteamIdAndStore(steamId, store), store, OrderStatus.COMPLETE, Arrays.asList(Type.TRANSFER), pageable);
+		return paymentRepository.findAllByUserAndStoreAndStatusAndTypeIn(userRepository.getBySteamIdAndStore(steamId, store), store, OrderStatus.COMPLETE, Collections.singletonList(Type.TRANSFER), pageable);
 	}
 
 	@GetMapping("all/balance/self/{page}")
@@ -157,7 +164,7 @@ public class BalanceController {
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public Page<Payment> getSelfPayments(@RequestAttribute Store store, OpenIDAuthenticationToken principal, @PathVariable int page, @RequestParam(defaultValue = "10") int pageSize) {
 		Pageable pageable = getPageable(page, pageSize);
-		return paymentRepository.findAllByUserAndStoreAndStatusAndTypeIn((User) principal.getPrincipal(), store, OrderStatus.COMPLETE, Arrays.asList(Type.FREEKASSA), pageable);
+		return paymentRepository.findAllByUserAndStoreAndStatusAndTypeIn((User) principal.getPrincipal(), store, OrderStatus.COMPLETE, Collections.singletonList(Type.FREEKASSA), pageable);
 	}
 
 	@GetMapping("all/transfers/self/{page}")
@@ -165,7 +172,7 @@ public class BalanceController {
 	@PreAuthorize("hasAuthority('STORE_READ')")
 	public Page<Payment> getSelfTransfers(@RequestAttribute Store store, OpenIDAuthenticationToken principal, @PathVariable int page, @RequestParam(defaultValue = "10") int pageSize) {
 		Pageable pageable = getPageable(page, pageSize);
-		return paymentRepository.findAllByUserAndStoreAndStatusAndTypeIn((User) principal.getPrincipal(), store, OrderStatus.COMPLETE, Arrays.asList(Type.TRANSFER), pageable);
+		return paymentRepository.findAllByUserAndStoreAndStatusAndTypeIn((User) principal.getPrincipal(), store, OrderStatus.COMPLETE, Collections.singletonList(Type.TRANSFER), pageable);
 	}
 
 	private static Pageable getPageable(int page, int pageSize) {
