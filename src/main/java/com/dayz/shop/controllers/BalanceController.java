@@ -58,7 +58,7 @@ public class BalanceController {
 		if (payment.getUser() == null) {
 			User currentUser = Utils.getCurrentUser();
 			payment.setUser(currentUser);
-			payment.setUserFrom(currentUser);
+			payment.setUserFrom(Utils.DEFAULT_USER);
 		}
 		payment.setStore(store);
 		payment.setCurrency(Currency.RUB);

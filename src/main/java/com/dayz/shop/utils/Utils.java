@@ -25,6 +25,7 @@ public class Utils {
 	public static final Long rootStoreId = -1L;
 	public static final String MERCHANT_ORDER_ID_KEY = "MERCHANT_ORDER_ID";
 	public static final String US_STORE_KEY = "us_store";
+	public static User DEFAULT_USER;
 	private static Map<String, Store> storeNameStoreMap;
 
 	private static PrivilegeRepository privilegeRepository;
@@ -52,6 +53,7 @@ public class Utils {
 		Utils.localeResolver = localeResolver;
 		Utils.roleRepository = roleRepository;
 		Utils.userRepository = userRepository;
+		DEFAULT_USER = userRepository.getById(-100L);
 	}
 
 	public static boolean isAppAdmin(User user) {
