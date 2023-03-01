@@ -60,7 +60,7 @@ public class ClearServices {
 			case SET:
 				sendToServerService.set(order, steamId, false);
 		}
-		userServiceRepository.deleteUserServiceByUserAndItemTypeAndServer(userService.getUser().getId(), userService.getItemType().name(), userService.getServer().getId());
+		userServiceRepository.delete(userService);
 	}
 
 	public void batchSync(ItemType itemType, Server server, List<UserService> userServices) throws JSchException, SftpException {
