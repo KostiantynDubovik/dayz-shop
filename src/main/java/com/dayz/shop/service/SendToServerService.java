@@ -1,9 +1,7 @@
 package com.dayz.shop.service;
 
-import com.dayz.shop.jpa.entities.ItemType;
-import com.dayz.shop.jpa.entities.Order;
-import com.dayz.shop.jpa.entities.Server;
-import com.dayz.shop.jpa.entities.UserService;
+import com.dayz.shop.jpa.entities.*;
+import com.dayz.shop.json.MCodeArray;
 import com.dayz.shop.json.Root;
 import com.dayz.shop.utils.MCodeMapper;
 import com.dayz.shop.utils.SFTPUtils;
@@ -43,7 +41,7 @@ public class SendToServerService {
 		this.mCodeMapper = mCodeMapper;
 	}
 
-	public void sendOrder(Order order, Map<ItemType, Order> separatedTypes) throws JSchException, IOException, SftpException {
+	public void sendOrder(Order order, Map<ItemType, Order> separatedTypes) throws JSchException, IOException, SftpException, InterruptedException {
 		String steamId = order.getUser().getSteamId();
 		try {
 			for (ItemType itemType : separatedTypes.keySet()) {
@@ -65,14 +63,14 @@ public class SendToServerService {
 		}
 	}
 
-	public void vip(Order order, String steamId, boolean add) throws JSchException, SftpException {
+	public void vip(Order order, String steamId, boolean add) throws JSchException, SftpException, InterruptedException {
 		vip(order, steamId, add, 1);
 	}
 
-	public void vip(Order order, String steamId, boolean add, int retryNumber) throws JSchException, SftpException {
+	public void vip(Order order, String steamId, boolean add, int retryNumber) throws JSchException, SftpException, InterruptedException {
+		String pathToVip = SFTPUtils.getPathToVip(order);
+		String completePath = String.format(pathToVip, order.getServer().getInstanceName(), VIP_FILE);
 		try {
-			String pathToVip = SFTPUtils.getPathToVip(order);
-			String completePath = String.format(pathToVip, order.getServer().getInstanceName(), VIP_FILE);
 			ByteArrayInputStream fileContent = SFTPUtils.getFileContent(order, completePath);
 			if (fileContent != null) {
 				Scanner scanner = new Scanner(fileContent);
@@ -91,41 +89,23 @@ public class SendToServerService {
 			}
 		} catch (JSchException | SftpException e) {
 			if (retryNumber < RETRY_COUNT) {
+				Thread.sleep(3000);
 				vip(order, steamId, add, retryNumber + 1);
 			} else {
+				logSendError(order, completePath);
 				throw e;
 			}
 		}
 	}
 
-	public void batchVip(Server server, List<UserService> vips) throws JSchException, SftpException {
-		batchVip(server, vips, 1);
-	}
-
-	private void batchVip(Server server, List<UserService> vips, int retryNumber) throws JSchException, SftpException {
-		try {
-			String pathToVip = SFTPUtils.getPathToVip(server);
-			String completePath = String.format(pathToVip, server.getInstanceName(), VIP_FILE);
-			Set<String> vipsSteamIds = vips.stream().map(userService -> userService.getUser().getSteamId()).collect(Collectors.toSet());
-			ByteArrayInputStream contentStream = new ByteArrayInputStream(String.join(SEMICOLON, vipsSteamIds).concat(SEMICOLON).getBytes(StandardCharsets.UTF_8));
-			SFTPUtils.updateFile(server, completePath, contentStream);
-		} catch (JSchException | SftpException e) {
-			if (retryNumber < RETRY_COUNT) {
-				batchVip(server, vips, retryNumber + 1);
-			} else {
-				throw e;
-			}
-		}
-	}
-
-	public void set(Order order, String steamId, boolean add) throws IOException, JSchException, SftpException {
+	public void set(Order order, String steamId, boolean add) throws IOException, JSchException, SftpException, InterruptedException {
 		set(order, steamId, add, 1);
 	}
 
-	private void set(Order order, String steamId, boolean add, int retryNumber) throws IOException, JSchException, SftpException {
+	private void set(Order order, String steamId, boolean add, int retryNumber) throws IOException, JSchException, SftpException, InterruptedException {
+		String pathToSet = SFTPUtils.getPathToSet(order);
+		String completePath = String.format(pathToSet, order.getServer().getInstanceName(), SETS_FILE);
 		try {
-			String pathToSet = SFTPUtils.getPathToSet(order);
-			String completePath = String.format(pathToSet, order.getServer().getInstanceName(), SETS_FILE);
 			InputStream existingSets = SFTPUtils.getFileContent(order, completePath);
 			if (existingSets != null) {
 				Map<String, String> setMap = IOUtils.readLines(existingSets, StandardCharsets.UTF_8).stream().collect(Collectors.toMap(input -> StringUtils.split(input, PIPE)[0], input -> input));
@@ -139,44 +119,33 @@ public class SendToServerService {
 			}
 		} catch (JSchException | SftpException | IOException e) {
 			if (retryNumber < RETRY_COUNT) {
+				Thread.sleep(3000);
 				set(order, steamId, add, retryNumber + 1);
 			} else {
+				logSendError(order, completePath);
 				throw e;
 			}
 		}
 	}
 
-	public void batchSet(Server server, List<UserService> sets) throws JSchException, SftpException {
-		batchSet(server, sets, 1);
+	private void logSendError(Order order, String completePath) {
+		List<Object> msgParams = new ArrayList<>();
+		msgParams.add(order.getServer().getId());
+		msgParams.add(completePath);
+		msgParams.add(order.getOrderItems().stream().map(OrderItem::getId).collect(Collectors.toSet()));
+		msgParams.add(order.getUser().getSteamId());
+		LOGGER.log(Level.SEVERE, "Cannot write SET to server: {0}, with path {1}, using order items: {2}, for user steam id:{3}", msgParams.toArray());
 	}
 
-	private void batchSet(Server server, List<UserService> sets, int retryNumber) throws JSchException, SftpException {
-		try {
-			String pathToSet = SFTPUtils.getPathToSet(server);
-			String completePath = String.format(pathToSet, server.getInstanceName(), SETS_FILE);
-			Map<String, String> setMap = new HashMap<>();
-			for (UserService set : sets) {
-				setMap.put(set.getUser().getSteamId(), String.join(PIPE, set.getUser().getSteamId(), ZERO, set.getOrder().getOrderItems().get(0).getItem().getInGameId(), ZERO));
-			}
-			ByteArrayInputStream contentStream = new ByteArrayInputStream(String.join(System.lineSeparator(), setMap.values()).getBytes(StandardCharsets.UTF_8));
-			SFTPUtils.updateFile(server, completePath, contentStream);
-		} catch (JSchException | SftpException e) {
-			if (retryNumber < RETRY_COUNT) {
-				batchSet(server, sets, retryNumber + 1);
-			} else {
-				throw e;
-			}
-		}
-	}
-
-	public void spawningItems(Order order, String steamId, boolean add) throws IOException, JSchException, SftpException {
+	public void spawningItems(Order order, String steamId, boolean add) throws IOException, JSchException, SftpException, InterruptedException {
 		spawningItems(order, steamId, add, 1);
 	}
 
-	private void spawningItems(Order order, String steamId, boolean add, int retryNumber) throws IOException, JSchException, SftpException {
+	private void spawningItems(Order order, String steamId, boolean add, int retryNumber) throws IOException, JSchException, SftpException, InterruptedException {
+		Thread.sleep(3000);
+		String pathToJson = SFTPUtils.getPathToSpawningItemsJson(order);
+		String completePath = String.format(pathToJson, order.getServer().getInstanceName(), steamId);
 		try {
-			String pathToJson = SFTPUtils.getPathToSpawningItemsJson(order);
-			String completePath = String.format(pathToJson, order.getServer().getInstanceName(), steamId);
 			InputStream existingItems = null;
 			try {
 				existingItems = SFTPUtils.getFileContent(order, completePath);
@@ -189,18 +158,45 @@ public class SendToServerService {
 			if (existingItems != null) {
 				root = om.readValue(existingItems, Root.class);
 			}
+			List<MCodeArray> m_codeArray = mCodeMapper.mapOrderToRoot(order).getM_CodeArray();
 			if (add) {
-				root.getM_CodeArray().addAll(mCodeMapper.mapOrderToRoot(order).getM_CodeArray());
+				root.getM_CodeArray().addAll(m_codeArray);
 			} else {
-				root.getM_CodeArray().removeAll(mCodeMapper.mapOrderToRoot(order).getM_CodeArray());
+				root.getM_CodeArray().removeAll(m_codeArray);
 			}
 
 			InputStream content = new ByteArrayInputStream(om.writerWithDefaultPrettyPrinter().writeValueAsString(root).getBytes(StandardCharsets.UTF_8));
 			SFTPUtils.updateFile(order, completePath, content);
+			try {
+				existingItems = SFTPUtils.getFileContent(order, completePath);
+			} catch (JSchException | SftpException e) {
+				LOGGER.info("There is no such file on server: " + order.getServer().getInstanceName() + ", will create for user: " + steamId);
+			}
+
+			root = new Root();
+			om = new ObjectMapper();
+			if (existingItems != null) {
+				root = om.readValue(existingItems, Root.class);
+			}
+			if (root.getM_CodeArray().stream().filter(mCodeArray -> {
+				boolean result = false;
+				for (MCodeArray codeArray : m_codeArray) {
+					result = mCodeArray.getM_code().equals(codeArray.getM_code());
+					if (result) {
+						break;
+					}
+				}
+				return result;
+			}).collect(Collectors.toSet()).isEmpty()) {
+				throw new SftpException(-1, "no such item in file");
+			}
+
 		} catch (JSchException | SftpException | IOException e) {
 			if (retryNumber < RETRY_COUNT) {
+				Thread.sleep(3000);
 				spawningItems(order, steamId, add, retryNumber + 1);
 			} else {
+				logSendError(order, completePath);
 				throw e;
 			}
 		}
