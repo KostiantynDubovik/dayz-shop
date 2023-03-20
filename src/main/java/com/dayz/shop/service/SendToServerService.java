@@ -1,6 +1,8 @@
 package com.dayz.shop.service;
 
-import com.dayz.shop.jpa.entities.*;
+import com.dayz.shop.jpa.entities.ItemType;
+import com.dayz.shop.jpa.entities.Order;
+import com.dayz.shop.jpa.entities.OrderItem;
 import com.dayz.shop.json.MCodeArray;
 import com.dayz.shop.json.Root;
 import com.dayz.shop.utils.MCodeMapper;
@@ -19,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -68,6 +71,7 @@ public class SendToServerService {
 	}
 
 	public void vip(Order order, String steamId, boolean add, int retryNumber) throws JSchException, SftpException, InterruptedException {
+		TimeUnit.SECONDS.sleep(3);
 		String pathToVip = SFTPUtils.getPathToVip(order);
 		String completePath = String.format(pathToVip, order.getServer().getInstanceName(), VIP_FILE);
 		try {
@@ -102,7 +106,6 @@ public class SendToServerService {
 			}
 		} catch (JSchException | SftpException e) {
 			if (retryNumber < RETRY_COUNT) {
-				Thread.sleep(3000);
 				vip(order, steamId, add, retryNumber + 1);
 			} else {
 				logSendError(order, completePath);
@@ -116,6 +119,7 @@ public class SendToServerService {
 	}
 
 	private void set(Order order, String steamId, boolean add, int retryNumber) throws IOException, JSchException, SftpException, InterruptedException {
+		TimeUnit.SECONDS.sleep(3);
 		String pathToSet = SFTPUtils.getPathToSet(order);
 		String completePath = String.format(pathToSet, order.getServer().getInstanceName(), SETS_FILE);
 		try {
@@ -140,7 +144,6 @@ public class SendToServerService {
 			}
 		} catch (JSchException | SftpException | IOException e) {
 			if (retryNumber < RETRY_COUNT) {
-				Thread.sleep(3000);
 				set(order, steamId, add, retryNumber + 1);
 			} else {
 				logSendError(order, completePath);
@@ -163,7 +166,7 @@ public class SendToServerService {
 	}
 
 	private void spawningItems(Order order, String steamId, boolean add, int retryNumber) throws IOException, JSchException, SftpException, InterruptedException {
-		Thread.sleep(3000);
+		TimeUnit.SECONDS.sleep(3);
 		String pathToJson = SFTPUtils.getPathToSpawningItemsJson(order);
 		String completePath = String.format(pathToJson, order.getServer().getInstanceName(), steamId);
 		try {
@@ -214,7 +217,6 @@ public class SendToServerService {
 
 		} catch (JSchException | SftpException | IOException e) {
 			if (retryNumber < RETRY_COUNT) {
-				Thread.sleep(3000);
 				spawningItems(order, steamId, add, retryNumber + 1);
 			} else {
 				logSendError(order, completePath);
