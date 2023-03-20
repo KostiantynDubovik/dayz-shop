@@ -3,21 +3,30 @@ package com.dayz.shop.service;
 import com.dayz.shop.jpa.entities.*;
 import com.dayz.shop.jpa.entities.UserService;
 import com.dayz.shop.repository.UserServiceRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.format.DateTimeFormatters;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
 public class ClearServices {
+	private static final java.util.logging.Logger LOGGER = Logger.getLogger(ClearServices.class.getName());
 
 	private final UserServiceRepository userServiceRepository;
 	private final SendToServerService sendToServerService;
@@ -30,26 +39,19 @@ public class ClearServices {
 	}
 
 	@Scheduled(cron = "0 0 */3 * * *")
-	public void clearAll() throws JSchException, SftpException, IOException {
+	public void clearAll() throws JSchException, SftpException, IOException, InterruptedException {
 		List<UserService> userServices = userServiceRepository.findAllByEndDateIsBefore(LocalDateTime.now());
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		String values = objectMapper.writeValueAsString(userServices.stream().map((Function<UserService, Map.Entry<String, String>>) userService -> new AbstractMap.SimpleEntry<>(userService.getUser().getSteamId().concat("-").concat(userService.getItemType().name()), userService.getEndDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd' 'HH:mm:ss")))));
+		Object[] msgParams = {LocalDateTime.now(), values};
+		LOGGER.log(Level.WARNING, "Current date: {0}, services going to delete: {1}", msgParams);
 		for (UserService userService : userServices) {
 			clear(userService);
 		}
 	}
 
-	public void synchronizeServices(Store store) throws JSchException, SftpException {
-		List<UserService> userServices = userServiceRepository.findAllByStoreIdAndEndDateInFuture(store.getId());
-		Map<Server, List<UserService>> splitByServer = userServices.stream().collect(Collectors.groupingBy(UserService::getServer, Collectors.toCollection(ArrayList::new)));
-		for (Map.Entry<Server, List<UserService>> userServicesByServer : splitByServer.entrySet()) {
-			Map<ItemType, List<UserService>> splitByType = userServicesByServer.getValue().stream().collect(Collectors.groupingBy(UserService::getItemType));
-			for (Map.Entry<ItemType, List<UserService>> userServicesByType : splitByType.entrySet()) {
-				batchSync(userServicesByType.getKey(), userServicesByServer.getKey(), userServicesByType.getValue());
-			}
-		}
-		userServiceRepository.deleteAllByUserServiceIdIsNotIn(userServices.stream().map(UserService::getUserServiceId).collect(Collectors.toList()));
-	}
-
-	public void clear(UserService userService) throws JSchException, SftpException, IOException {
+	public void clear(UserService userService) throws JSchException, SftpException, IOException, InterruptedException {
 		Order order = userService.getOrder();
 		ItemType itemType = userService.getItemType();
 		String steamId = order.getUser().getSteamId();
@@ -61,15 +63,5 @@ public class ClearServices {
 				sendToServerService.set(order, steamId, false);
 		}
 		userServiceRepository.delete(userService);
-	}
-
-	public void batchSync(ItemType itemType, Server server, List<UserService> userServices) throws JSchException, SftpException {
-		switch (itemType) {
-			case VIP:
-				sendToServerService.batchVip(server, userServices);
-				break;
-			case SET:
-				sendToServerService.batchSet(server, userServices);
-		}
 	}
 }

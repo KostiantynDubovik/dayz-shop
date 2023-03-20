@@ -68,7 +68,7 @@ public class OrderService {
 		return orderRepository.save(order);
 	}
 
-	public Order buyItemNow(Item item, Store store, Server server) {
+	public Order buyItemNow(Item item, Store store, Server server) throws InterruptedException {
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Order order = OrderUtils.createOrder(user, store);
 		order.setServer(server);
@@ -80,11 +80,11 @@ public class OrderService {
 		return placeOrder(orderRepository.save(order));
 	}
 
-	public Order placeOrder(Store store) {
+	public Order placeOrder(Store store) throws InterruptedException {
 		return placeOrder(OrderUtils.getCurrentOrder(Utils.getCurrentUser(), store));
 	}
 
-	public Order placeOrder(Order order) {
+	public Order placeOrder(Order order) throws InterruptedException {
 		User user = userRepository.getById(order.getUser().getId());
 		if (user.getBalance().compareTo(order.getOrderTotal()) < 0) {
 			LOGGER.log(Level.WARNING, "Insufficient funds to place order");
@@ -120,12 +120,12 @@ public class OrderService {
 
 	private void saveServices(Map<ItemType, Order> separatedTypes) {
 		for (Map.Entry<ItemType, Order> itemTypeOrderEntry : separatedTypes.entrySet()) {
-			OrderItem orderItem = itemTypeOrderEntry.getValue().getOrderItems().get(0);
+			Order order = itemTypeOrderEntry.getValue();
+			OrderItem orderItem = order.getOrderItems().get(0);
 			User user = orderItem.getUser();
 			Item item = orderItem.getItem();
 			switch (itemTypeOrderEntry.getKey()) {
 				case SET:
-
 				case VIP:
 					ItemType itemType = item.getItemType();
 					Server server = orderItem.getServer();
@@ -147,6 +147,7 @@ public class OrderService {
 							userService.setItemType(itemType);
 							userService.setServer(server);
 							userService.setUser(user);
+							userService.setOrder(order);
 							endDate = LocalDateTime.now();
 							repeat = false;
 						}
