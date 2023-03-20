@@ -86,6 +86,19 @@ public class SendToServerService {
 				}
 				ByteArrayInputStream contentStream = new ByteArrayInputStream(String.join(SEMICOLON, existingSteamIds).concat(SEMICOLON).getBytes(StandardCharsets.UTF_8));
 				SFTPUtils.updateFile(order, completePath, contentStream);
+
+
+				fileContent = SFTPUtils.getFileContent(order, completePath);
+				scanner = new Scanner(fileContent);
+
+				existingSteamIds = new HashSet<>();
+				scanner.useDelimiter(SEMICOLON);
+				while (scanner.hasNext()) {
+					existingSteamIds.add(scanner.next());
+				}
+				if (!existingSteamIds.contains(steamId)) {
+					throw new SftpException(-1, "no such item in file");
+				}
 			}
 		} catch (JSchException | SftpException e) {
 			if (retryNumber < RETRY_COUNT) {
@@ -116,6 +129,14 @@ public class SendToServerService {
 				}
 				ByteArrayInputStream contentStream = new ByteArrayInputStream(String.join(System.lineSeparator(), setMap.values()).getBytes(StandardCharsets.UTF_8));
 				SFTPUtils.updateFile(order, completePath, contentStream);
+
+				existingSets = SFTPUtils.getFileContent(order, completePath);
+				if (existingSets != null) {
+					setMap = IOUtils.readLines(existingSets, StandardCharsets.UTF_8).stream().collect(Collectors.toMap(input -> StringUtils.split(input, PIPE)[0], input -> input));
+					if (!setMap.containsKey(steamId)) {
+						throw new SftpException(-1, "no such item in file");
+					}
+				}
 			}
 		} catch (JSchException | SftpException | IOException e) {
 			if (retryNumber < RETRY_COUNT) {
