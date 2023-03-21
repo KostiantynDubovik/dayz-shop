@@ -92,24 +92,26 @@ public class OrderService {
 			order.getOrderItems().forEach(orderItem -> orderItem.setStatus(OrderStatus.FAILED));
 			order.getProperties().put("message", Utils.getMessage("order.failed.insufficient", order.getStore(), user.getBalance(), order.getOrderTotal()));
 		} else {
+			order.setTimePlaced(LocalDateTime.now());
 			try {
 				Map<ItemType, Order> separatedTypes = splitTypes(order);
 				sendToServerService.sendOrder(order, separatedTypes);
-				saveServices(separatedTypes);
 				user.setBalance(user.getBalance().subtract(order.getOrderTotal()));
 				order.setStatus(OrderStatus.COMPLETE);
 				order.getOrderItems().forEach(orderItem -> orderItem.setStatus(OrderStatus.COMPLETE));
 
 				order.getProperties().put("message", Utils.getMessage(getKey(order), order.getStore()));
+				order = orderRepository.save(order);
+				saveServices(separatedTypes);
 			} catch (JSchException | SftpException | IOException e) {
 				LOGGER.log(Level.SEVERE, "Error during order placing", e);
 				order.getProperties().put("message", Utils.getMessage("order.failed", order.getStore()));
 				order.setStatus(OrderStatus.FAILED);
 				order.getOrderItems().forEach(orderItem -> orderItem.setStatus(OrderStatus.FAILED));
+				order = orderRepository.save(order);
 			}
 		}
-		order.setTimePlaced(LocalDateTime.now());
-		return orderRepository.save(order);
+		return order;
 	}
 
 	private static String getKey(Order order) {
