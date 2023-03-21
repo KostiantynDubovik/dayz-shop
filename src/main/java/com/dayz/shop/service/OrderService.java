@@ -149,7 +149,7 @@ public class OrderService {
 							userService.setItemType(itemType);
 							userService.setServer(server);
 							userService.setUser(user);
-							userService.setOrder(order);
+							userService.setOrder(orderRepository.save(order));
 							endDate = LocalDateTime.now();
 							repeat = false;
 						}
