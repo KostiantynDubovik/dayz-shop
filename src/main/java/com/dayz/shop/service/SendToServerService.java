@@ -71,7 +71,6 @@ public class SendToServerService {
 	}
 
 	public void vip(Order order, String steamId, boolean add, int retryNumber) throws JSchException, SftpException, InterruptedException {
-		TimeUnit.SECONDS.sleep(3);
 		String pathToVip = SFTPUtils.getPathToVip(order);
 		String completePath = String.format(pathToVip, order.getServer().getInstanceName(), VIP_FILE);
 		try {
@@ -106,6 +105,7 @@ public class SendToServerService {
 			}
 		} catch (JSchException | SftpException e) {
 			if (retryNumber < RETRY_COUNT) {
+				TimeUnit.SECONDS.sleep(1);
 				vip(order, steamId, add, retryNumber + 1);
 			} else {
 				logSendError(order, completePath);
@@ -119,7 +119,6 @@ public class SendToServerService {
 	}
 
 	private void set(Order order, String steamId, boolean add, int retryNumber) throws IOException, JSchException, SftpException, InterruptedException {
-		TimeUnit.SECONDS.sleep(3);
 		String pathToSet = SFTPUtils.getPathToSet(order);
 		String completePath = String.format(pathToSet, order.getServer().getInstanceName(), SETS_FILE);
 		try {
@@ -144,6 +143,7 @@ public class SendToServerService {
 			}
 		} catch (JSchException | SftpException | IOException e) {
 			if (retryNumber < RETRY_COUNT) {
+				TimeUnit.SECONDS.sleep(1);
 				set(order, steamId, add, retryNumber + 1);
 			} else {
 				logSendError(order, completePath);
@@ -166,7 +166,6 @@ public class SendToServerService {
 	}
 
 	private void spawningItems(Order order, String steamId, boolean add, int retryNumber) throws IOException, JSchException, SftpException, InterruptedException {
-		TimeUnit.SECONDS.sleep(3);
 		String pathToJson = SFTPUtils.getPathToSpawningItemsJson(order);
 		String completePath = String.format(pathToJson, order.getServer().getInstanceName(), steamId);
 		try {
@@ -217,6 +216,7 @@ public class SendToServerService {
 
 		} catch (JSchException | SftpException | IOException e) {
 			if (retryNumber < RETRY_COUNT) {
+				TimeUnit.SECONDS.sleep(1);
 				spawningItems(order, steamId, add, retryNumber + 1);
 			} else {
 				logSendError(order, completePath);
