@@ -99,7 +99,7 @@ public class SendToServerService {
 				while (scanner.hasNext()) {
 					existingSteamIds.add(scanner.next());
 				}
-				if (!existingSteamIds.contains(steamId)) {
+				if (add && !existingSteamIds.contains(steamId)) {
 					throw new SftpException(-1, "no such item in file");
 				}
 			}
