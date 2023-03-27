@@ -124,7 +124,7 @@ public class SendToServerService {
 		try {
 			InputStream existingSets = SFTPUtils.getFileContent(order, completePath);
 			if (existingSets != null) {
-				Map<String, String> setMap = IOUtils.readLines(existingSets, StandardCharsets.UTF_8).stream().collect(Collectors.toMap(input -> StringUtils.split(input, PIPE)[0], input -> input));
+				Map<String, String> setMap = IOUtils.readLines(existingSets, StandardCharsets.UTF_8).stream().collect(Collectors.toMap(input -> StringUtils.split(input, PIPE)[0], input -> input, (s, s2) -> s2, LinkedHashMap::new));
 				if (add) {
 					setMap.put(steamId, String.join(PIPE, steamId, ZERO, order.getOrderItems().get(0).getItem().getInGameId(), ZERO));
 				} else {
@@ -136,7 +136,7 @@ public class SendToServerService {
 				existingSets = SFTPUtils.getFileContent(order, completePath);
 				if (existingSets != null) {
 					setMap = IOUtils.readLines(existingSets, StandardCharsets.UTF_8).stream().collect(Collectors.toMap(input -> StringUtils.split(input, PIPE)[0], input -> input));
-					if (!setMap.containsKey(steamId)) {
+					if (add && !setMap.containsKey(steamId)) {
 						throw new SftpException(-1, "no such item in file");
 					}
 				}
