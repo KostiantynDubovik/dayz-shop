@@ -2,20 +2,24 @@ package com.dayz.shop.utils;
 
 import com.dayz.shop.config.LocalizationConfiguration;
 import com.dayz.shop.jpa.entities.*;
+import com.dayz.shop.jpa.entities.Currency;
 import com.dayz.shop.repository.*;
 import com.google.common.base.Function;
+import nonapi.io.github.classgraph.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.context.support.ResourceBundleMessageSourceExt;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.openid.OpenIDAuthenticationToken;
 import org.springframework.stereotype.Component;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -176,5 +180,18 @@ public class Utils {
 		paymentUser.setSteamAvatarUrl("https://avatars.cloudflare.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg");
 		paymentUser.getRoles().add(roleRepository.getById(-6L));
 		return userRepository.save(paymentUser);
+	}
+
+	public static String getFreekassaSignature(Payment payment) {
+		Store store = payment.getStore();
+		String merchantId = Utils.getStoreConfig("freekassa.merchantId", store);
+		String secret = Utils.getStoreConfig("freekassa.secret", store);
+
+		String amount = payment.getAmount().setScale(2, RoundingMode.UNNECESSARY).toString();
+		Long paymentId = payment.getId();
+		Currency currency = payment.getCurrency();
+		String sign = StringUtils.join(":", merchantId, amount, secret, currency, paymentId);
+
+		return DigestUtils.md5DigestAsHex(sign.getBytes());
 	}
 }

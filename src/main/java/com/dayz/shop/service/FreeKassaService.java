@@ -28,11 +28,13 @@ public class FreeKassaService {
 	public static final String CURRENCY_KEY = "currency";
 	private final PaymentRepository paymentRepository;
 	private final UserService userService;
+	private final FundTransferService fundTransferService;
 
 	@Autowired
-	public FreeKassaService(PaymentRepository paymentRepository, UserService userService) {
+	public FreeKassaService(PaymentRepository paymentRepository, UserService userService, FundTransferService fundTransferService) {
 		this.paymentRepository = paymentRepository;
 		this.userService = userService;
+		this.fundTransferService = fundTransferService;
 	}
 
 	public String initPayment(Payment payment) {
@@ -47,17 +49,15 @@ public class FreeKassaService {
 	}
 
 	private String buildRedirectUrl(Payment payment) {
-		Store store = payment.getStore();
 		payment.setDirection(PaymentDirection.INCOMING);
-		String merchantId = Utils.getStoreConfig("freekassa.merchantId", store);
-		String secret = Utils.getStoreConfig("freekassa.secret", store);
+		Store store = payment.getStore();
 
+		String merchantId = Utils.getStoreConfig("freekassa.merchantId", store);
 		String amount = payment.getAmount().setScale(2, RoundingMode.UNNECESSARY).toString();
 		Long paymentId = payment.getId();
 		Currency currency = payment.getCurrency();
-		String sign = StringUtils.join(":", merchantId, amount, secret, currency, paymentId);
+		String signHashed = Utils.getFreekassaSignature(payment);
 
-		String signHashed = DigestUtils.md5DigestAsHex(sign.getBytes());
 		paymentRepository.save(payment);
 		return UriBuilder.fromUri(Utils.getStoreConfig("freekassa.baseUrl", store))
 				.queryParam(MERCHAND_ID_KEY, merchantId)
@@ -88,8 +88,12 @@ public class FreeKassaService {
 					userService.updateUserBalance(payment.getUser(), payment.getAmount());
 					payment.setBalanceAfter(payment.getUser().getBalance());
 					paymentRepository.save(payment);
+					boolean commissionEnabled = Boolean.parseBoolean(Utils.getStoreConfig("comisson.enabled", payment.getStore()));
+					if (commissionEnabled) {
+						fee(payment);
+					}
+					result = "YES";
 				}
-				result = "YES";
 			}
 		} catch (Exception e) {
 			if(paymentOptional.isPresent()) {
@@ -99,8 +103,12 @@ public class FreeKassaService {
 				payment.setBalanceAfter(payment.getUser().getBalance());
 				paymentRepository.save(payment);
 			}
-			return "NO";
+			return result;
 		}
 		return result;
+	}
+
+	private void fee(Payment payment) {
+		fundTransferService.transfer(payment);
 	}
 }

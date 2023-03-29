@@ -15,7 +15,7 @@ public interface OfferPriceRepository extends JpaRepository<OfferPrice, Long> {
 
 
 
-	@Query("SELECT OP from OfferPrice OP where OP.store = :store and OP.item = :item and CURRENT_TIME between OP.startTime AND OP.endTime ORDER BY OP.priority")
+	@Query("SELECT OP from OfferPrice OP where OP.store = :store and OP.item = :item and CURRENT_TIME between OP.startTime AND OP.endTime ORDER BY OP.priority DESC ")
 	List<OfferPrice> findAllActiveOfferPrices(Store store, Item item);
 
 	List<OfferPrice> findAllByStoreAndItemId(Store store, Long itemId);
