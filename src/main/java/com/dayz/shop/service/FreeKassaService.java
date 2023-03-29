@@ -3,15 +3,14 @@ package com.dayz.shop.service;
 import com.dayz.shop.jpa.entities.*;
 import com.dayz.shop.repository.PaymentRepository;
 import com.dayz.shop.utils.Utils;
-import nonapi.io.github.classgraph.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.DigestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.UriBuilder;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
@@ -56,7 +55,7 @@ public class FreeKassaService {
 		String amount = payment.getAmount().setScale(2, RoundingMode.UNNECESSARY).toString();
 		Long paymentId = payment.getId();
 		Currency currency = payment.getCurrency();
-		String signHashed = Utils.getFreekassaSignature(payment);
+		String signHashed = Utils.getFreekassaSignatureMD5(payment);
 
 		paymentRepository.save(payment);
 		return UriBuilder.fromUri(Utils.getStoreConfig("freekassa.baseUrl", store))
@@ -90,7 +89,7 @@ public class FreeKassaService {
 					paymentRepository.save(payment);
 					boolean commissionEnabled = Boolean.parseBoolean(Utils.getStoreConfig("comisson.enabled", payment.getStore()));
 					if (commissionEnabled) {
-						fee(payment);
+//						fee(payment); //TODO
 					}
 					result = "YES";
 				}
@@ -108,7 +107,7 @@ public class FreeKassaService {
 		return result;
 	}
 
-	private void fee(Payment payment) {
+	private void fee(Payment payment) throws NoSuchAlgorithmException {
 		fundTransferService.transfer(payment);
 	}
 }

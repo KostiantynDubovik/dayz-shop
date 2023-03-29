@@ -20,6 +20,9 @@ import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -182,7 +185,7 @@ public class Utils {
 		return userRepository.save(paymentUser);
 	}
 
-	public static String getFreekassaSignature(Payment payment) {
+	public static String getFreekassaSignatureMD5(Payment payment) {
 		Store store = payment.getStore();
 		String merchantId = Utils.getStoreConfig("freekassa.merchantId", store);
 		String secret = Utils.getStoreConfig("freekassa.secret", store);
@@ -193,5 +196,18 @@ public class Utils {
 		String sign = StringUtils.join(":", merchantId, amount, secret, currency, paymentId);
 
 		return DigestUtils.md5DigestAsHex(sign.getBytes());
+	}
+
+	public static String getFreekassaSignaturesSHA256(Map<String, String> data, Store store) throws NoSuchAlgorithmException {
+		SortedSet<String> keys = new TreeSet<>(data.keySet());
+		List<String> sortedValues = new ArrayList<>();
+		for (String key : keys) {
+			sortedValues.add(data.get(key));
+		}
+		String sign = StringUtils.join("|", sortedValues);
+		MessageDigest digest = MessageDigest.getInstance("SHA-256");
+		digest.update(getStoreConfig("freekassa.api_key", store).getBytes());
+		
+		return new String(digest.digest(sign.getBytes(StandardCharsets.UTF_8)));
 	}
 }
