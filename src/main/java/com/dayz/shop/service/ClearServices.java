@@ -3,6 +3,7 @@ package com.dayz.shop.service;
 import com.dayz.shop.jpa.entities.*;
 import com.dayz.shop.jpa.entities.UserService;
 import com.dayz.shop.repository.UserServiceRepository;
+import com.dayz.shop.utils.OrderUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
@@ -60,7 +61,7 @@ public class ClearServices {
 				sendToServerService.vip(order, steamId, false);
 				break;
 			case SET:
-				sendToServerService.set(order, steamId, false);
+				sendToServerService.set(OrderUtils.getItemsByType(order, ItemType.SET), steamId, false);
 		}
 		userServiceRepository.delete(userService);
 	}

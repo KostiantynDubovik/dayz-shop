@@ -31,6 +31,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.dayz.shop.service.SendToServerService.PIPE;
+
 @Component
 public class Utils {
 	public static final Long rootStoreId = -1L;
@@ -208,7 +210,7 @@ public class Utils {
 		for (String key : keys) {
 			sortedValues.add(data.get(key));
 		}
-		String sign = StringUtils.join("|", sortedValues);
+		String sign = StringUtils.join(PIPE, sortedValues);
 
 		return encode(getStoreConfig("freekassa.api_key", store), sign);
 	}

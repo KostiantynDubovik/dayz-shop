@@ -44,20 +44,20 @@ public class SendToServerService {
 		this.mCodeMapper = mCodeMapper;
 	}
 
-	public void sendOrder(Order order, Map<ItemType, Order> separatedTypes) throws JSchException, IOException, SftpException, InterruptedException {
+	public void sendOrder(Order order, Map<ItemType, List<OrderItem>> separatedTypes) throws JSchException, IOException, SftpException, InterruptedException {
 		String steamId = order.getUser().getSteamId();
 		try {
 			for (ItemType itemType : separatedTypes.keySet()) {
 				switch (itemType) {
 					case ITEM:
 					case VEHICLE:
-						spawningItems(order, steamId, true);
+						spawningItems(separatedTypes.get(itemType), true);
 						break;
 					case VIP:
 						vip(order, steamId, true);
 						break;
 					case SET:
-						set(order, steamId, true);
+						set(separatedTypes.get(itemType), steamId, true);
 				}
 			}
 		} catch (JSchException | SftpException | IOException e) {
@@ -114,11 +114,12 @@ public class SendToServerService {
 		}
 	}
 
-	public void set(Order order, String steamId, boolean add) throws IOException, JSchException, SftpException, InterruptedException {
-		set(order, steamId, add, 1);
+	public void set(List<OrderItem> orderItems, String steamId, boolean add) throws IOException, JSchException, SftpException, InterruptedException {
+		set(orderItems, steamId, add, 1);
 	}
 
-	private void set(Order order, String steamId, boolean add, int retryNumber) throws IOException, JSchException, SftpException, InterruptedException {
+	private void set(List<OrderItem> orderItems, String steamId, boolean add, int retryNumber) throws IOException, JSchException, SftpException, InterruptedException {
+		Order order = orderItems.stream().findFirst().get().getOrder();
 		String pathToSet = SFTPUtils.getPathToSet(order);
 		String completePath = String.format(pathToSet, order.getServer().getInstanceName(), SETS_FILE);
 		try {
@@ -126,7 +127,7 @@ public class SendToServerService {
 			if (existingSets != null) {
 				Map<String, String> setMap = IOUtils.readLines(existingSets, StandardCharsets.UTF_8).stream().collect(Collectors.toMap(input -> StringUtils.split(input, PIPE)[0], input -> input, (s, s2) -> s2, LinkedHashMap::new));
 				if (add) {
-					setMap.put(steamId, String.join(PIPE, steamId, ZERO, order.getOrderItems().get(0).getItem().getInGameId(), ZERO));
+					setMap.put(steamId, String.join(PIPE, steamId, ZERO, orderItems.stream().findFirst().get().getItem().getInGameId(), ZERO));
 				} else {
 					setMap.remove(steamId);
 				}
@@ -144,7 +145,7 @@ public class SendToServerService {
 		} catch (JSchException | SftpException | IOException e) {
 			if (retryNumber < RETRY_COUNT) {
 				TimeUnit.SECONDS.sleep(1);
-				set(order, steamId, add, retryNumber + 1);
+				set(orderItems, steamId, add, retryNumber + 1);
 			} else {
 				logSendError(order, completePath);
 				throw e;
@@ -161,12 +162,14 @@ public class SendToServerService {
 		LOGGER.log(Level.SEVERE, "Cannot write SET to server: {0}, with path {1}, using order items: {2}, for user steam id:{3}", msgParams.toArray());
 	}
 
-	public void spawningItems(Order order, String steamId, boolean add) throws IOException, JSchException, SftpException, InterruptedException {
-		spawningItems(order, steamId, add, 1);
+	public void spawningItems(List<OrderItem> orderItems, boolean add) throws IOException, JSchException, SftpException, InterruptedException {
+		spawningItems(orderItems, add, 1);
 	}
 
-	private void spawningItems(Order order, String steamId, boolean add, int retryNumber) throws IOException, JSchException, SftpException, InterruptedException {
+	private void spawningItems(List<OrderItem> orderItems, boolean add, int retryNumber) throws IOException, JSchException, SftpException, InterruptedException {
+		Order order = orderItems.stream().findFirst().get().getOrder();
 		String pathToJson = SFTPUtils.getPathToSpawningItemsJson(order);
+		String steamId = order.getUser().getSteamId();
 		String completePath = String.format(pathToJson, order.getServer().getInstanceName(), steamId);
 		try {
 			InputStream existingItems = null;
@@ -181,7 +184,7 @@ public class SendToServerService {
 			if (existingItems != null) {
 				root = om.readValue(existingItems, Root.class);
 			}
-			List<MCodeArray> m_codeArray = mCodeMapper.mapOrderToRoot(order).getM_CodeArray();
+			List<MCodeArray> m_codeArray = mCodeMapper.mapOrderToRoot(orderItems).getM_CodeArray();
 			if (add) {
 				root.getM_CodeArray().addAll(m_codeArray);
 			} else {
@@ -217,7 +220,7 @@ public class SendToServerService {
 		} catch (JSchException | SftpException | IOException e) {
 			if (retryNumber < RETRY_COUNT) {
 				TimeUnit.SECONDS.sleep(1);
-				spawningItems(order, steamId, add, retryNumber + 1);
+				spawningItems(orderItems, add, retryNumber + 1);
 			} else {
 				logSendError(order, completePath);
 				throw e;

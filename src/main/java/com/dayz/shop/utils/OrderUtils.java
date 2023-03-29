@@ -14,6 +14,7 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Aspect
 @Component
@@ -42,6 +43,10 @@ public class OrderUtils {
 		return orders.stream().findFirst().orElse(new Order());
 	}
 
+	public static List<OrderItem> getItemsByType(Order order, ItemType itemType) {
+		return order.getOrderItems().stream().filter(orderItem -> orderItem.getItem().getItemType().equals(itemType)).collect(Collectors.toList());
+	}
+
 	public static Order createOrder(User user, Store store) {
 		Order order = new Order();
 		order.setOrderItems(new ArrayList<>());
@@ -64,9 +69,7 @@ public class OrderUtils {
 		orderItem.setBoughtTime(LocalDateTime.now());
 		orderItem.setItem(item);
 		orderItem.setPrice(getCurrentPrice(order.getStore(), item));
-		if (ItemType.ITEM.equals(item.getItemType())) {
-			orderItem.setCount(count);
-		}
+		orderItem.setCount(Math.max(count, 1));
 		return orderItem;
 	}
 
@@ -74,7 +77,7 @@ public class OrderUtils {
 		BigDecimal result;
 		List<OfferPrice> offerPrices = offerPriceRepository.findAllActiveOfferPrices(store, item);
 		if(CollectionUtils.isNotEmpty(offerPrices)) {
-			OfferPrice offerPrice = offerPrices.get(0);
+			OfferPrice offerPrice = offerPrices.stream().findFirst().get();
 			result = getOfferPrice(offerPrice);
 		} else {
 			result = item.getListPrice().getPrice();

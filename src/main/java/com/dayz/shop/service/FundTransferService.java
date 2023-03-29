@@ -30,8 +30,8 @@ public class FundTransferService {
 	}
 
 	public void transfer(Payment payment) throws NoSuchAlgorithmException, InvalidKeyException {
-//		buildFundTransfer(payment);
 		buildFundWithdraw(payment);
+//		buildFundTransfer(payment);
 	}
 
 	private void buildFundTransfer(Payment payment) {

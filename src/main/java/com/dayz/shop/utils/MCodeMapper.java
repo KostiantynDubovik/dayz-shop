@@ -1,6 +1,9 @@
 package com.dayz.shop.utils;
 
-import com.dayz.shop.jpa.entities.*;
+import com.dayz.shop.jpa.entities.ItemType;
+import com.dayz.shop.jpa.entities.OrderItem;
+import com.dayz.shop.jpa.entities.OrderStatus;
+import com.dayz.shop.jpa.entities.SubItem;
 import com.dayz.shop.json.MCodeArray;
 import com.dayz.shop.json.MItemsArray;
 import com.dayz.shop.json.MVehicles;
@@ -16,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.dayz.shop.service.SendToServerService.PIPE;
+
 @Service
 public class MCodeMapper {
 
@@ -28,21 +33,22 @@ public class MCodeMapper {
 		this.userRepository = userRepository;
 	}
 
-	public Root mapOrderToRoot(Order order) {
+	public Root mapOrderToRoot(List<OrderItem> orderItems) {
 		Root root = new Root();
-		root.setM_CodeArray(mapMCodeArray(order));
+		root.setM_CodeArray(mapMCodeArray(orderItems));
 		return root;
 	}
 
-	private List<MCodeArray> mapMCodeArray(Order order) {
-		List<OrderItem> orderItems = order.getOrderItems();
+	private List<MCodeArray> mapMCodeArray(List<OrderItem> orderItems) {
 		List<MCodeArray> mCodeArrays = new ArrayList<>();
 		for (OrderItem orderItem : orderItems) {
-			MCodeArray mCodeArray = new MCodeArray();
-			mCodeArray.setM_code(orderItem.getId().toString());
-			mCodeArray.setM_name(orderItem.getItem().getName());
-			fillSubItems(orderItem, mCodeArray);
-			mCodeArrays.add(mCodeArray);
+			for (int i = 0; i < orderItem.getCount(); i++) {
+				MCodeArray mCodeArray = new MCodeArray();
+				mCodeArray.setM_code(StringUtils.joinWith(PIPE, orderItem.getId().toString(), i + 1));
+				mCodeArray.setM_name(orderItem.getItem().getName());
+				fillSubItems(orderItem, mCodeArray);
+				mCodeArrays.add(mCodeArray);
+			}
 		}
 		return mCodeArrays;
 	}
@@ -103,7 +109,7 @@ public class MCodeMapper {
 	}
 
 	public List<OrderItem> mapRootToOrderItems(Root root) {
-		List<Long> mCodes =  root.getM_CodeArray().stream().map(input -> Long.parseLong(input.getM_code())).collect(Collectors.toList());
+		List<Long> mCodes = root.getM_CodeArray().stream().map(input -> Long.parseLong(input.getM_code())).collect(Collectors.toList());
 		List<OrderItem> orderItems = orderItemRepository.findAllByUserAndReceivedAndStatus(userRepository.getBySteamId(root.getUserId()), false, OrderStatus.COMPLETE);
 		orderItems.removeAll(orderItemRepository.findAllById(mCodes));
 		orderItems.forEach(orderItem -> orderItem.setReceived(true));
