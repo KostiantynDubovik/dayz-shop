@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.UriBuilder;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -107,7 +108,7 @@ public class FreeKassaService {
 		return result;
 	}
 
-	private void fee(Payment payment) throws NoSuchAlgorithmException {
+	private void fee(Payment payment) throws NoSuchAlgorithmException, InvalidKeyException {
 		fundTransferService.transfer(payment);
 	}
 }

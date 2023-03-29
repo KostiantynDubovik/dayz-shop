@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.ws.rs.core.MediaType;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -28,7 +29,7 @@ public class FundTransferService {
 		this.fundTransferRepository = fundTransferRepository;
 	}
 
-	public void transfer(Payment payment) throws NoSuchAlgorithmException {
+	public void transfer(Payment payment) throws NoSuchAlgorithmException, InvalidKeyException {
 //		buildFundTransfer(payment);
 		buildFundWithdraw(payment);
 	}
@@ -52,7 +53,7 @@ public class FundTransferService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void buildFundWithdraw(Payment payment) throws NoSuchAlgorithmException {
+	private void buildFundWithdraw(Payment payment) throws NoSuchAlgorithmException, InvalidKeyException {
 		FundTransfer fundWithdraw = new FundTransfer();
 		fundWithdraw.setCurrency(payment.getCurrency());
 		fundWithdraw.setTransferTime(LocalDateTime.now());

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.context.support.ResourceBundleMessageSourceExt;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.codec.Hex;
 import org.springframework.security.openid.OpenIDAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.util.DigestUtils;
@@ -17,10 +18,13 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -198,16 +202,22 @@ public class Utils {
 		return DigestUtils.md5DigestAsHex(sign.getBytes());
 	}
 
-	public static String getFreekassaSignaturesSHA256(Map<String, String> data, Store store) throws NoSuchAlgorithmException {
+	public static String getFreekassaSignaturesSHA256(Map<String, String> data, Store store) throws NoSuchAlgorithmException, InvalidKeyException {
 		SortedSet<String> keys = new TreeSet<>(data.keySet());
 		List<String> sortedValues = new ArrayList<>();
 		for (String key : keys) {
 			sortedValues.add(data.get(key));
 		}
 		String sign = StringUtils.join("|", sortedValues);
-		MessageDigest digest = MessageDigest.getInstance("SHA-256");
-		digest.update(getStoreConfig("freekassa.api_key", store).getBytes());
-		
-		return new String(digest.digest(sign.getBytes(StandardCharsets.UTF_8)));
+
+		return encode(getStoreConfig("freekassa.api_key", store), sign);
+	}
+
+	public static String encode(String key, String data) throws NoSuchAlgorithmException, InvalidKeyException {
+		Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
+		SecretKeySpec secret_key = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+		sha256_HMAC.init(secret_key);
+
+		return new String(Hex.encode(sha256_HMAC.doFinal(data.getBytes(StandardCharsets.UTF_8))));
 	}
 }
