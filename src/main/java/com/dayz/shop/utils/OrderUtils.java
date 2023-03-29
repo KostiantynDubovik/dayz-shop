@@ -52,7 +52,7 @@ public class OrderUtils {
 		return order;
 	}
 
-	public static OrderItem createOrderItem(Item item, User user, Order order) {
+	public static OrderItem createOrderItem(Item item, User user, Order order, int count) {
 		OrderItem orderItem = new OrderItem();
 		orderItem.setUser(user);
 		orderItem.setOrder(order);
@@ -64,6 +64,9 @@ public class OrderUtils {
 		orderItem.setBoughtTime(LocalDateTime.now());
 		orderItem.setItem(item);
 		orderItem.setPrice(getCurrentPrice(order.getStore(), item));
+		if (ItemType.ITEM.equals(item.getItemType())) {
+			orderItem.setCount(count);
+		}
 		return orderItem;
 	}
 

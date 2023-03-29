@@ -50,10 +50,10 @@ public class OrderService {
 		this.userRepository = userRepository;
 	}
 
-	public Order addOrderItem(Item item, Store store) {
+	public Order addOrderItem(Item item, Store store, int count) {
 		User user = Utils.getCurrentUser();
 		Order order = OrderUtils.getCurrentOrder(user, store);
-		OrderItem orderItem = OrderUtils.createOrderItem(item, user, order);
+		OrderItem orderItem = OrderUtils.createOrderItem(item, user, order, count);
 		orderItemRepository.save(orderItem);
 		OrderUtils.recalculateOrder(order);
 		return orderRepository.save(order);
@@ -68,12 +68,12 @@ public class OrderService {
 		return orderRepository.save(order);
 	}
 
-	public Order buyItemNow(Item item, Store store, Server server) throws InterruptedException {
+	public Order buyItemNow(Item item, Store store, Server server, int count) throws InterruptedException {
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Order order = OrderUtils.createOrder(user, store);
 		order.setServer(server);
 		orderRepository.save(order);
-		OrderItem orderItem = OrderUtils.createOrderItem(item, user, order);
+		OrderItem orderItem = OrderUtils.createOrderItem(item, user, order, count);
 		List<OrderItem> orderItems = new ArrayList<>(order.getOrderItems());
 		orderItems.add(orderItemRepository.save(orderItem));
 		order.setOrderItems(orderItems);
@@ -86,6 +86,7 @@ public class OrderService {
 
 	public Order placeOrder(Order order) throws InterruptedException {
 		User user = userRepository.getById(order.getUser().getId());
+		OrderUtils.recalculateOrder(order);
 		if (user.getBalance().compareTo(order.getOrderTotal()) < 0) {
 			LOGGER.log(Level.WARNING, "Insufficient funds to place order");
 			order.setStatus(OrderStatus.FAILED);
