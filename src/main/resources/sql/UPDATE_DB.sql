@@ -62,3 +62,8 @@ create table funds_transfer_properties
 			ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+
+
+INSERT INTO shop.store_config (STORE_ID,`KEY`,VALUE) VALUES
+	(-2,'freekassa.withdraw.api.url','https://api.freekassa.ru/v1/withdrawals/create'),
+	(-2,'freekassa.wallet.api.url','https://fkwallet.com/api_v1.php');

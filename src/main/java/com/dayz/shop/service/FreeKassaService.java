@@ -56,7 +56,7 @@ public class FreeKassaService {
 		String amount = payment.getAmount().setScale(2, RoundingMode.UNNECESSARY).toString();
 		Long paymentId = payment.getId();
 		Currency currency = payment.getCurrency();
-		String signHashed = Utils.getFreekassaSignatureMD5(payment);
+		String signHashed = Utils.getFreekassaSignatureForPayment(payment);
 
 		paymentRepository.save(payment);
 		return UriBuilder.fromUri(Utils.getStoreConfig("freekassa.baseUrl", store))
@@ -90,7 +90,7 @@ public class FreeKassaService {
 					paymentRepository.save(payment);
 					boolean commissionEnabled = Boolean.parseBoolean(Utils.getStoreConfig("comisson.enabled", payment.getStore()));
 					if (commissionEnabled) {
-//						fee(payment); //TODO
+						fee(payment);
 					}
 					result = "YES";
 				}

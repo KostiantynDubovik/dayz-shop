@@ -5,7 +5,7 @@ import com.dayz.shop.jpa.entities.*;
 import com.dayz.shop.jpa.entities.Currency;
 import com.dayz.shop.repository.*;
 import com.google.common.base.Function;
-import nonapi.io.github.classgraph.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.context.support.ResourceBundleMessageSourceExt;
@@ -25,7 +25,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -50,6 +49,13 @@ public class Utils {
 	private static AcceptHeaderLocaleResolver localeResolver;
 	private static RoleRepository roleRepository;
 	private static UserRepository userRepository;
+
+	public static final Map<Currency, String> fkWalletCurrencyIds;
+
+	static {
+		fkWalletCurrencyIds = new HashMap<>();
+		fkWalletCurrencyIds.put(Currency.RUB, "133");
+	}
 
 	@Autowired
 	public Utils(StoreRepository storeRepository, PrivilegeRepository privilegeRepository,
@@ -191,7 +197,7 @@ public class Utils {
 		return userRepository.save(paymentUser);
 	}
 
-	public static String getFreekassaSignatureMD5(Payment payment) {
+	public static String getFreekassaSignatureForPayment(Payment payment) {
 		Store store = payment.getStore();
 		String merchantId = Utils.getStoreConfig("freekassa.merchantId", store);
 		String secret = Utils.getStoreConfig("freekassa.secret", store);
@@ -199,18 +205,30 @@ public class Utils {
 		String amount = payment.getAmount().setScale(2, RoundingMode.UNNECESSARY).toString();
 		Long paymentId = payment.getId();
 		Currency currency = payment.getCurrency();
-		String sign = StringUtils.join(":", merchantId, amount, secret, currency, paymentId);
+		String sign = StringUtils.joinWith(":", merchantId, amount, secret, currency, paymentId);
 
 		return DigestUtils.md5DigestAsHex(sign.getBytes());
 	}
 
-	public static String getFreekassaSignaturesSHA256(Map<String, String> data, Store store) throws NoSuchAlgorithmException, InvalidKeyException {
+	public static String getFreekassaSignatureForTransfer(FundTransfer fundTransfer) {
+		Store store = fundTransfer.getStoreFrom();
+		String apiKey = Utils.getStoreConfig("freekassa.wallet.api.key", store);
+
+		String amount = fundTransfer.getAmount().setScale(2, RoundingMode.UNNECESSARY).toString();
+		String walletTo = fundTransfer.getWalletTo();
+		String ownWallet = Utils.getStoreConfig("freekassa.wallet.own.id", store);
+		String sign = StringUtils.joinWith(StringUtils.EMPTY, ownWallet, amount, walletTo, apiKey);
+
+		return DigestUtils.md5DigestAsHex(sign.getBytes());
+	}
+
+	public static String getFreekassaSignatureForWithdraw(Map<String, String> data, Store store) throws NoSuchAlgorithmException, InvalidKeyException {
 		SortedSet<String> keys = new TreeSet<>(data.keySet());
 		List<String> sortedValues = new ArrayList<>();
 		for (String key : keys) {
 			sortedValues.add(data.get(key));
 		}
-		String sign = StringUtils.join(PIPE, sortedValues);
+		String sign = StringUtils.joinWith(PIPE, sortedValues);
 
 		return encode(getStoreConfig("freekassa.api_key", store), sign);
 	}
