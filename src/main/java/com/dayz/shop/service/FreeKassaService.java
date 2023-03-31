@@ -3,6 +3,7 @@ package com.dayz.shop.service;
 import com.dayz.shop.jpa.entities.*;
 import com.dayz.shop.repository.PaymentRepository;
 import com.dayz.shop.utils.Utils;
+import org.apache.wink.json4j.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -108,7 +109,7 @@ public class FreeKassaService {
 		return result;
 	}
 
-	private void fee(Payment payment) throws NoSuchAlgorithmException, InvalidKeyException {
+	private void fee(Payment payment) throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
 		fundTransferService.transfer(payment);
 	}
 }

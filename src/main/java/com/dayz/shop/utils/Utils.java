@@ -228,7 +228,7 @@ public class Utils {
 		for (String key : keys) {
 			sortedValues.add(data.get(key));
 		}
-		String sign = StringUtils.joinWith(PIPE, sortedValues);
+		String sign = StringUtils.joinWith(PIPE, sortedValues.toArray());
 
 		return encode(getStoreConfig("freekassa.api_key", store), sign);
 	}
