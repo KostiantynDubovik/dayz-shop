@@ -6,15 +6,7 @@ import com.dayz.shop.jpa.entities.Payment;
 import com.dayz.shop.jpa.entities.Store;
 import com.dayz.shop.repository.FundTransferRepository;
 import com.dayz.shop.utils.Utils;
-import org.apache.commons.io.IOUtils;
-import org.apache.hc.client5.http.classic.methods.HttpPost;
-import org.apache.hc.client5.http.entity.EntityBuilder;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.core5.http.ContentType;
-import org.apache.hc.core5.http.HttpEntity;
-import org.apache.hc.core5.http.message.BasicNameValuePair;
+import okhttp3.*;
 import org.apache.wink.client.ClientWebException;
 import org.apache.wink.client.RestClient;
 import org.apache.wink.json4j.JSONException;
@@ -24,15 +16,14 @@ import org.springframework.stereotype.Service;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -105,34 +96,29 @@ public class FundTransferService {
 			String fkWalletApi = Utils.getStoreConfig("freekassa.wallet.api.url", payment.getStore());
 			String response = sendMultipart(fkWalletApi, requestObject);
 			processResponse(fundTransfer, response);
-		} catch (
-				ClientWebException e) {
+		} catch (ClientWebException e) {
 			processWebException(fundTransfer, e);
 			LOGGER.logp(Level.SEVERE, CLASSNAME, methodName, "Fund transfer failed with following response: ", fundTransfer.getProperties());
 		}
-
 	}
 
 	private String sendMultipart(String url, Map<String, String> parameters) {
-		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-			HttpPost postMethod = new HttpPost(url);
-			postMethod.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA);
-			EntityBuilder entityBuilder = EntityBuilder.create();
-			entityBuilder.setContentType(ContentType.MULTIPART_FORM_DATA);
-			Set<Map.Entry<String, String>> entries = parameters.entrySet();
-			List<BasicNameValuePair> params = new ArrayList<>();
-			for (Map.Entry<String, String> stringStringEntry : entries) {
-				params.add(new BasicNameValuePair(stringStringEntry.getKey(), stringStringEntry.getValue()));
-			}
+		OkHttpClient httpClient = new OkHttpClient();
+		FormBody.Builder builder = new FormBody.Builder();
+		for (String s : parameters.keySet()) {
+			builder.add(s, parameters.get(s));
+		}
+		RequestBody formBody = builder.build();
 
-			entityBuilder.setParameters(params.toArray(new BasicNameValuePair[0]));
-			entityBuilder.setFile(new File("resources/empty.txt"));
-			HttpEntity httpEntity = entityBuilder.build();
-			postMethod.setEntity(httpEntity);
+		Request request = new Request.Builder()
+				.url(url)
+				.addHeader("User-Agent", "OkHttp Bot")
+				.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA)
+				.post(formBody)
+				.build();
 
-			CloseableHttpResponse httpResponse = httpClient.execute(postMethod);
-			HttpEntity responseEntity = httpResponse.getEntity();
-			return IOUtils.toString(responseEntity.getContent(), Charset.defaultCharset());
+		try (Response response = httpClient.newCall(request).execute()) {
+			return response.body().string();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
