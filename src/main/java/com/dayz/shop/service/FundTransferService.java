@@ -6,8 +6,15 @@ import com.dayz.shop.jpa.entities.Payment;
 import com.dayz.shop.jpa.entities.Store;
 import com.dayz.shop.repository.FundTransferRepository;
 import com.dayz.shop.utils.Utils;
+import org.apache.commons.io.IOUtils;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.wink.client.ClientWebException;
-import org.apache.wink.client.Resource;
 import org.apache.wink.client.RestClient;
 import org.apache.wink.json4j.JSONException;
 import org.apache.wink.json4j.JSONObject;
@@ -15,8 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.core.MediaType;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
@@ -49,10 +58,7 @@ public class FundTransferService {
 		FundTransfer fundWithdraw = buildFundWithdraw(payment);
 		try {
 			Map<String, String> requestObject = buildWithdrawRequest(fundWithdraw);
-			String response = new RestClient()
-					.resource(Utils.getStoreConfig("freekassa.withdraw.api.url", payment.getStore()))
-					.contentType(MediaType.APPLICATION_JSON_TYPE)
-					.post(String.class, new JSONObject(requestObject).toString());
+			String response = new RestClient().resource(Utils.getStoreConfig("freekassa.withdraw.api.url", payment.getStore())).contentType(MediaType.APPLICATION_JSON_TYPE).post(String.class, new JSONObject(requestObject).toString());
 			processResponse(fundWithdraw, response);
 		} catch (ClientWebException e) {
 			processWebException(fundWithdraw, e);
@@ -95,15 +101,30 @@ public class FundTransferService {
 		try {
 			Map<String, String> requestObject = buildTransferRequest(fundTransfer);
 			String fkWalletApi = Utils.getStoreConfig("freekassa.wallet.api.url", payment.getStore());
-			Resource resource = new RestClient().resource(fkWalletApi);
-			for (Map.Entry<String, String> stringStringEntry : requestObject.entrySet()) {
-				resource.queryParam(stringStringEntry.getKey(), stringStringEntry.getValue());
-			}
-			String response = resource.post(null).getEntity(String.class);
+			String response = sendMultipart(fkWalletApi, requestObject);
 			processResponse(fundTransfer, response);
 		} catch (ClientWebException e) {
 			processWebException(fundTransfer, e);
 			LOGGER.logp(Level.SEVERE, CLASSNAME, methodName, "Fund transfer failed with following response: ", fundTransfer.getProperties());
+		}
+	}
+
+	private String sendMultipart(String url, Map<String, String> parameters) {
+		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+			HttpPost uploadFile = new HttpPost(url);
+			MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+
+			for (Map.Entry<String, String> stringStringEntry : parameters.entrySet()) {
+				builder.addTextBody(stringStringEntry.getKey(), stringStringEntry.getValue(), ContentType.TEXT_PLAIN);
+			}
+
+			HttpEntity multipart = builder.build();
+			uploadFile.setEntity(multipart);
+			CloseableHttpResponse response = httpClient.execute(uploadFile);
+			HttpEntity responseEntity = response.getEntity();
+			return IOUtils.toString(responseEntity.getContent(), Charset.defaultCharset());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -127,7 +148,7 @@ public class FundTransferService {
 		fundTransfer.setPercentage(percentage);
 		String walletTo = Utils.getStoreConfig("freekassa.own.wallet.id", store);
 		fundTransfer.setWalletTo(walletTo);
-		BigDecimal fee = fundTransfer.getInitialAmount().multiply(percentage).setScale( 0, RoundingMode.DOWN);
+		BigDecimal fee = fundTransfer.getInitialAmount().multiply(percentage).setScale(0, RoundingMode.DOWN);
 		BigDecimal amount = fundTransfer.getInitialAmount().subtract(fee);
 		fundTransfer.setAmount(amount);
 		fundTransfer.setStatus(OrderStatus.PENDING);
