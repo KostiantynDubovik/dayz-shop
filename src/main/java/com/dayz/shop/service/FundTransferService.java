@@ -23,6 +23,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -125,11 +126,11 @@ public class FundTransferService {
 	}
 
 	private Map<String, String> buildTransferRequest(FundTransfer fundTransfer) {
-		Map<String, String> requestObject = new HashMap<>();
+		Map<String, String> requestObject = new LinkedHashMap<>();
 		putAsString("wallet_id", Utils.getStoreConfig("freekassa.wallet.id", fundTransfer.getStoreFrom()), requestObject);
 		putAsString("purse", fundTransfer.getWalletTo(), requestObject);
 		putAsString("amount", fundTransfer.getAmount().setScale(2, RoundingMode.UNNECESSARY), requestObject);
-		putAsString("signature", Utils.getFreekassaSignatureForTransfer(fundTransfer), requestObject);
+		putAsString("sign", Utils.getFreekassaSignatureForTransfer(fundTransfer), requestObject);
 		putAsString("action", "transfer", requestObject);
 		return requestObject;
 	}
@@ -142,8 +143,8 @@ public class FundTransferService {
 		Store store = payment.getStore();
 		BigDecimal percentage = new BigDecimal(Utils.getStoreConfig("freekassa.comission", store));
 		fundTransfer.setPercentage(percentage);
-		String walletTo = Utils.getStoreConfig("freekassa.own.wallet.id", store);
-		fundTransfer.setWalletTo(walletTo);
+		String purse = Utils.getStoreConfig("freekassa.purse", store);
+		fundTransfer.setWalletTo(purse);
 		BigDecimal fee = fundTransfer.getInitialAmount().multiply(percentage).setScale(0, RoundingMode.DOWN);
 		BigDecimal amount = fundTransfer.getInitialAmount().subtract(fee);
 		fundTransfer.setAmount(amount);
@@ -172,12 +173,13 @@ public class FundTransferService {
 		Map<String, String> properties;
 		try {
 			properties = new JSONObject(response);
+			properties.remove("data");
 		} catch (JSONException je) {
 			properties = new HashMap<>();
 			properties.put("response", response);
 		}
 		fundTransfer.setProperties(properties);
-		fundTransfer.setStatus(OrderStatus.COMPLETE);
+		fundTransfer.setStatus(!"error".equals(properties.get("status")) ? OrderStatus.COMPLETE : OrderStatus.FAILED);
 		fundTransferRepository.save(fundTransfer);
 	}
 

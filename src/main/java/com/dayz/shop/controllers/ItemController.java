@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.ws.rs.Consumes;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/item")
@@ -51,7 +53,10 @@ public class ItemController {
 	                                @RequestParam(defaultValue = "100") int pageSize,
 	                                @RequestAttribute Store store) {
 		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 3 ? 3 : pageSize, Sort.by(sortBy));
-		return itemRepository.findAllByStoreAndBuyableAndCategory(store, categoryRepository.findByCategoryName(categoryName), pageable);
+		Page<Item> allByStoreAndBuyableAndCategory = itemRepository.findAllByStoreAndBuyableAndCategory(store, categoryRepository.findByCategoryName(categoryName), pageable);
+		LocalDateTime now = LocalDateTime.now();
+		allByStoreAndBuyableAndCategory.getContent().forEach(item -> item.setOfferPrices(item.getOfferPrices().stream().filter(offerPrice -> offerPrice.getStartTime().isBefore(now) && offerPrice.getEndTime().isAfter(now)).collect(Collectors.toList())));
+		return allByStoreAndBuyableAndCategory;
 	}
 
 	@PostMapping()

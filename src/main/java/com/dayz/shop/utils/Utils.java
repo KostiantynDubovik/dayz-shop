@@ -212,12 +212,12 @@ public class Utils {
 
 	public static String getFreekassaSignatureForTransfer(FundTransfer fundTransfer) {
 		Store store = fundTransfer.getStoreFrom();
-		String apiKey = Utils.getStoreConfig("freekassa.wallet.api.key", store);
 
+		String wallet_id = Utils.getStoreConfig("freekassa.wallet.id", store);
 		String amount = fundTransfer.getAmount().setScale(2, RoundingMode.UNNECESSARY).toString();
-		String walletTo = fundTransfer.getWalletTo();
-		String ownWallet = Utils.getStoreConfig("freekassa.wallet.own.id", store);
-		String sign = StringUtils.joinWith(StringUtils.EMPTY, ownWallet, amount, walletTo, apiKey);
+		String purse = fundTransfer.getWalletTo();
+		String apiKey = Utils.getStoreConfig("freekassa.wallet.api.key", store);
+		String sign = StringUtils.joinWith(StringUtils.EMPTY, wallet_id, amount, purse, apiKey);
 
 		return DigestUtils.md5DigestAsHex(sign.getBytes());
 	}

@@ -25,9 +25,8 @@ UPDATE order_items SET RECEIVED = true, RECEIVE_TIME = '0001-01-01 00:00:00.0000
 
 INSERT INTO shop.store_config (STORE_ID,`KEY`,VALUE) VALUES
 	                                                     (-2,'freekassa.wallet.api.key','96A2E56A31F0ABB61D9BDDB4C69A8218'),
-	                                                     (-1,'freekassa.wallet.id','F112359797'),
+	                                                     (-2,'freekassa.purse','F112359797'),
 	                                                     (-2,'freekassa.wallet.id','F112229662'),
-	                                                     (-2,'freekassa.wallet.own.id','F112229662'),
 	                                                     (-1,'comisson.enabled','true'),
 	                                                     (-2,'comisson.enabled','false'),
 	                                                     (-1,'freekassa.comission','0.63'),
@@ -37,15 +36,15 @@ INSERT INTO shop.store_config (STORE_ID,`KEY`,VALUE) VALUES
 
 create table funds_transfers
 (
-	fund_transfer_id BIGINT      not null,
-	store_from       BIGINT      not null,
-	wallet_to        varchar(50) not null,
-	initial_amount   decimal     not null,
-	percentage       decimal     not null,
-	amount           decimal     not null,
-	currency         varchar(3)  not null,
-	transfer_status  varchar(20) not null,
-	transfer_time    timestamp   not null,
+	fund_transfer_id BIGINT         not null,
+	store_from       BIGINT         not null,
+	wallet_to        varchar(50)    not null,
+	initial_amount   decimal(19, 2) not null,
+	percentage       decimal(19, 2) not null,
+	amount           decimal(19, 2) not null,
+	currency         varchar(3)     not null,
+	transfer_status  varchar(20)    not null,
+	transfer_time    timestamp      not null,
 	constraint funds_transfers_pk
 		primary key (fund_transfer_id),
 	constraint funds_transfers_stores_from_fk
