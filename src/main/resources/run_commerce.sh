@@ -11,7 +11,7 @@ curl --request GET -sL -o nul\
 cd ../react/voyage || return
 git pull
 npm run build
-cd ../../../
+cd ../../../../
 git pull
 ./gradlew clean
 ./gradlew bootRun $DEBUG
