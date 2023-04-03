@@ -2,23 +2,35 @@ package com.dayz.shop.utils;
 
 import com.dayz.shop.config.LocalizationConfiguration;
 import com.dayz.shop.jpa.entities.*;
+import com.dayz.shop.jpa.entities.Currency;
 import com.dayz.shop.repository.*;
 import com.google.common.base.Function;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.context.support.ResourceBundleMessageSourceExt;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.codec.Hex;
 import org.springframework.security.openid.OpenIDAuthenticationToken;
 import org.springframework.stereotype.Component;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.dayz.shop.service.SendToServerService.PIPE;
 
 @Component
 public class Utils {
@@ -37,6 +49,13 @@ public class Utils {
 	private static AcceptHeaderLocaleResolver localeResolver;
 	private static RoleRepository roleRepository;
 	private static UserRepository userRepository;
+
+	public static final Map<Currency, String> fkWalletCurrencyIds;
+
+	static {
+		fkWalletCurrencyIds = new HashMap<>();
+		fkWalletCurrencyIds.put(Currency.RUB, "133");
+	}
 
 	@Autowired
 	public Utils(StoreRepository storeRepository, PrivilegeRepository privilegeRepository,
@@ -176,5 +195,49 @@ public class Utils {
 		paymentUser.setSteamAvatarUrl("https://avatars.cloudflare.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg");
 		paymentUser.getRoles().add(roleRepository.getById(-6L));
 		return userRepository.save(paymentUser);
+	}
+
+	public static String getFreekassaSignatureForPayment(Payment payment) {
+		Store store = payment.getStore();
+		String merchantId = Utils.getStoreConfig("freekassa.merchantId", store);
+		String secret = Utils.getStoreConfig("freekassa.secret", store);
+
+		String amount = payment.getAmount().setScale(2, RoundingMode.UNNECESSARY).toString();
+		Long paymentId = payment.getId();
+		Currency currency = payment.getCurrency();
+		String sign = StringUtils.joinWith(":", merchantId, amount, secret, currency, paymentId);
+
+		return DigestUtils.md5DigestAsHex(sign.getBytes());
+	}
+
+	public static String getFreekassaSignatureForTransfer(FundTransfer fundTransfer) {
+		Store store = fundTransfer.getStoreFrom();
+
+		String wallet_id = Utils.getStoreConfig("freekassa.wallet.id", store);
+		String amount = fundTransfer.getAmount().setScale(2, RoundingMode.UNNECESSARY).toString();
+		String purse = fundTransfer.getWalletTo();
+		String apiKey = Utils.getStoreConfig("freekassa.wallet.api.key", store);
+		String sign = StringUtils.joinWith(StringUtils.EMPTY, wallet_id, amount, purse, apiKey);
+
+		return DigestUtils.md5DigestAsHex(sign.getBytes());
+	}
+
+	public static String getFreekassaSignatureForWithdraw(Map<String, String> data, Store store) throws NoSuchAlgorithmException, InvalidKeyException {
+		SortedSet<String> keys = new TreeSet<>(data.keySet());
+		List<String> sortedValues = new ArrayList<>();
+		for (String key : keys) {
+			sortedValues.add(data.get(key));
+		}
+		String sign = StringUtils.joinWith(PIPE, sortedValues.toArray());
+
+		return encode(getStoreConfig("freekassa.api_key", store), sign);
+	}
+
+	public static String encode(String key, String data) throws NoSuchAlgorithmException, InvalidKeyException {
+		Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
+		SecretKeySpec secret_key = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+		sha256_HMAC.init(secret_key);
+
+		return new String(Hex.encode(sha256_HMAC.doFinal(data.getBytes(StandardCharsets.UTF_8))));
 	}
 }

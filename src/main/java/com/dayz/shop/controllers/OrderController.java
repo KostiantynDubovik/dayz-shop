@@ -52,10 +52,10 @@ public class OrderController {
 		return orderService.getAllUserOrders(userRepository.getBySteamIdAndStore(steamId, store), store, pageable);
 	}
 
-	@PostMapping("add/{item}")
+	@PostMapping("add/{item}/{count}")
 	@PreAuthorize("hasAuthority('STORE_READ')")
-	public Order addOrderItem(@PathVariable Item item, @RequestAttribute Store store) {
-		return orderService.addOrderItem(item, store);
+	public Order addOrderItem(@PathVariable Item item, @RequestAttribute Store store, @PathVariable(required = false) Integer count) {
+		return orderService.addOrderItem(item, store, count == null || count < 1 ? 1 : count);
 	}
 
 	@DeleteMapping("delete/{item}")
@@ -65,11 +65,11 @@ public class OrderController {
 	}
 
 	@ProcessMessage
-	@PostMapping("{item}/{server}")
+	@PostMapping("{item}/{server}/{count}")
 	@PreAuthorize("hasAuthority('STORE_READ')")
-	public Order buyItemNow(@PathVariable Item item, @PathVariable Server server, @RequestAttribute Store store) {
+	public Order buyItemNow(@PathVariable Item item, @PathVariable Server server, @RequestAttribute Store store, @PathVariable(required = false) Integer count) {
 		try {
-			return orderService.buyItemNow(item, store, server);
+			return orderService.buyItemNow(item, store, server, count == null || count < 1 ? 1 : count);
 		} catch (Exception e) {
 			throw new ServerErrorException(e.getMessage(), e);
 		}

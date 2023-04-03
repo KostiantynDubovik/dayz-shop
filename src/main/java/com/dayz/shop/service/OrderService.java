@@ -50,10 +50,10 @@ public class OrderService {
 		this.userRepository = userRepository;
 	}
 
-	public Order addOrderItem(Item item, Store store) {
+	public Order addOrderItem(Item item, Store store, int count) {
 		User user = Utils.getCurrentUser();
 		Order order = OrderUtils.getCurrentOrder(user, store);
-		OrderItem orderItem = OrderUtils.createOrderItem(item, user, order);
+		OrderItem orderItem = OrderUtils.createOrderItem(item, user, order, count);
 		orderItemRepository.save(orderItem);
 		OrderUtils.recalculateOrder(order);
 		return orderRepository.save(order);
@@ -68,12 +68,12 @@ public class OrderService {
 		return orderRepository.save(order);
 	}
 
-	public Order buyItemNow(Item item, Store store, Server server) throws InterruptedException {
+	public Order buyItemNow(Item item, Store store, Server server, int count) throws InterruptedException {
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Order order = OrderUtils.createOrder(user, store);
 		order.setServer(server);
 		orderRepository.save(order);
-		OrderItem orderItem = OrderUtils.createOrderItem(item, user, order);
+		OrderItem orderItem = OrderUtils.createOrderItem(item, user, order, count);
 		List<OrderItem> orderItems = new ArrayList<>(order.getOrderItems());
 		orderItems.add(orderItemRepository.save(orderItem));
 		order.setOrderItems(orderItems);
@@ -86,6 +86,7 @@ public class OrderService {
 
 	public Order placeOrder(Order order) throws InterruptedException {
 		User user = userRepository.getById(order.getUser().getId());
+		OrderUtils.recalculateOrder(order);
 		if (user.getBalance().compareTo(order.getOrderTotal()) < 0) {
 			LOGGER.log(Level.WARNING, "Insufficient funds to place order");
 			order.setStatus(OrderStatus.FAILED);
@@ -94,7 +95,7 @@ public class OrderService {
 		} else {
 			order.setTimePlaced(LocalDateTime.now());
 			try {
-				Map<ItemType, Order> separatedTypes = splitTypes(order);
+				Map<ItemType, List<OrderItem>> separatedTypes = splitTypes(order);
 				sendToServerService.sendOrder(order, separatedTypes);
 				user.setBalance(user.getBalance().subtract(order.getOrderTotal()));
 				order.setStatus(OrderStatus.COMPLETE);
@@ -115,15 +116,16 @@ public class OrderService {
 	}
 
 	private static String getKey(Order order) {
-		return order.getOrderItems().get(0).getItem().getItemType() == ItemType.ITEM
-				|| order.getOrderItems().get(0).getItem().getItemType() == ItemType.VEHICLE
+		OrderItem orderItem = order.getOrderItems().stream().findFirst().get();
+		return orderItem.getItem().getItemType() == ItemType.ITEM
+				|| orderItem.getItem().getItemType() == ItemType.VEHICLE
 				? "order.success" : "service.success";
 	}
 
-	private void saveServices(Map<ItemType, Order> separatedTypes) {
-		for (Map.Entry<ItemType, Order> itemTypeOrderEntry : separatedTypes.entrySet()) {
-			Order order = itemTypeOrderEntry.getValue();
-			OrderItem orderItem = order.getOrderItems().get(0);
+	private void saveServices(Map<ItemType, List<OrderItem>> separatedTypes) {
+		for (Map.Entry<ItemType, List<OrderItem>> itemTypeOrderEntry : separatedTypes.entrySet()) {
+			List<OrderItem> orderItems = itemTypeOrderEntry.getValue();
+			OrderItem orderItem = orderItems.stream().findFirst().get();
 			User user = orderItem.getUser();
 			Item item = orderItem.getItem();
 			switch (itemTypeOrderEntry.getKey()) {
@@ -149,15 +151,17 @@ public class OrderService {
 							userService.setItemType(itemType);
 							userService.setServer(server);
 							userService.setUser(user);
-							userService.setOrder(order);
 							endDate = LocalDateTime.now();
 							repeat = false;
 						}
+						if (!repeat) {
+							userService.setOrder(orderItem.getOrder());
+						}
 					} while (repeat);
 					if (itemTypeOrderEntry.getKey().equals(ItemType.VIP)) {
-						endDate = endDate.plusDays(Integer.parseInt(item.getColor()));
+						endDate = endDate.plusDays((long) Integer.parseInt(item.getColor()) * orderItem.getCount());
 					} else if (itemTypeOrderEntry.getKey().equals(ItemType.SET)) {
-						endDate = LocalDateTime.now().plusDays(30);
+						endDate = LocalDateTime.now().plusDays((long) Integer.parseInt(item.getColor()) * orderItem.getCount());
 					}
 					userService.setEndDate(endDate);
 					userServiceRepository.save(userService);
@@ -168,20 +172,22 @@ public class OrderService {
 	private void chargebackSet(UserService userService) {
 		LocalDateTime end = userService.getEndDate();
 		long days = ChronoUnit.DAYS.between(LocalDateTime.now(), end);
-		BigDecimal chargebackAmount = userService.getOrder().getOrderTotal().divide(BigDecimal.valueOf(30), 0, RoundingMode.HALF_DOWN).multiply(BigDecimal.valueOf(days).abs());
+		OrderItem orderItem = OrderUtils.getItemsByType(userService.getOrder(), ItemType.SET).stream().findFirst().get();
+		int totalDays = orderItem.getCount() * Integer.parseInt(orderItem.getItem().getColor());
+		BigDecimal chargebackAmount = userService.getOrder().getOrderTotal().divide(BigDecimal.valueOf(totalDays), 0, RoundingMode.HALF_DOWN).multiply(BigDecimal.valueOf(days).abs());
 		User user = userService.getUser();
 		user.setBalance(user.getBalance().add(chargebackAmount));
 		userRepository.save(user);
 		userServiceRepository.delete(userService);
 	}
 
-	private Map<ItemType, Order> splitTypes(Order order) {
-		Map<ItemType, Order> separatedItems = new HashMap<>();
+	private Map<ItemType, List<OrderItem>> splitTypes(Order order) {
+		Map<ItemType, List<OrderItem>> separatedItems = new HashMap<>();
 		for (OrderItem orderItem : order.getOrderItems()) {
 			ItemType itemType = orderItem.getItem().getItemType();
-			Order splitOrder = separatedItems.getOrDefault(itemType, new Order());
-			splitOrder.getOrderItems().add(orderItem);
-			separatedItems.put(itemType, splitOrder);
+			List<OrderItem> orderItems = separatedItems.getOrDefault(itemType, new ArrayList<>());
+			orderItems.add(orderItem);
+			separatedItems.put(itemType, orderItems);
 		}
 		return separatedItems;
 	}

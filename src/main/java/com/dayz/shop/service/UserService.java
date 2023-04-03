@@ -72,7 +72,7 @@ public class UserService {
 	@SuppressWarnings("unchecked")
 	private void fillUserSteamData(User user, Store store) {
 		Map<String, Object> userInfo = getSteamUserInfo(user.getSteamId(), store);
-		Map<String, String> stringObjectMap = ((List<Map<String, String>>) ((Map<String, Object>) userInfo.get("response")).get("players")).get(0);
+		Map<String, String> stringObjectMap = ((List<Map<String, String>>) ((Map<String, Object>) userInfo.get("response")).get("players")).stream().findFirst().get();
 		user.setSteamNickName(stringObjectMap.get("personaname"));
 		user.setSteamAvatarUrl(stringObjectMap.get("avatar"));
 		user.setActive(true);
