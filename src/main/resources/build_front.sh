@@ -1,3 +1,3 @@
 #!/bin/bash
-cd ../react || return
+cd ../react/alcatraz || return
 npm run build

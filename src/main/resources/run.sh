@@ -8,10 +8,10 @@ esac
 curl --request GET -sL -o nul\
 			--max-time 30 \
 			--url 'https://localhost/shutdown'
-cd ../react || return
+cd ../react/alcatraz || return
 git pull
 npm run build
-cd ../../../
+cd ../../../../
 git pull
 ./gradlew clean
 ./gradlew bootRun $DEBUG
