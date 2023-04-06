@@ -7,6 +7,7 @@ import com.dayz.shop.jpa.entities.Store;
 import com.dayz.shop.repository.FundTransferRepository;
 import com.dayz.shop.utils.Utils;
 import okhttp3.*;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.wink.client.ClientWebException;
 import org.apache.wink.client.RestClient;
 import org.apache.wink.json4j.JSONException;
@@ -83,7 +84,12 @@ public class FundTransferService {
 		fundWithdraw.setPercentage(BigDecimal.ZERO);
 		String walletTo = Utils.getStoreConfig("freekassa.wallet.id", store);
 		fundWithdraw.setWalletTo(walletTo);
-		fundWithdraw.setAmount(payment.getAmount());
+		BigDecimal amount = payment.getAmount();
+		String commission = payment.getProperties().get("commission");
+		if (NumberUtils.isParsable(commission)) {
+			amount = amount.subtract(new BigDecimal(commission));
+		}
+		fundWithdraw.setAmount(amount);
 		fundWithdraw.setStatus(OrderStatus.PENDING);
 		fundWithdraw.setStoreFrom(store);
 		return fundTransferRepository.save(fundWithdraw);
@@ -139,7 +145,12 @@ public class FundTransferService {
 		FundTransfer fundTransfer = new FundTransfer();
 		fundTransfer.setCurrency(payment.getCurrency());
 		fundTransfer.setTransferTime(LocalDateTime.now());
-		fundTransfer.setInitialAmount(payment.getAmount());
+		BigDecimal paymentAmount = payment.getAmount();
+		String commission = payment.getProperties().get("commission");
+		if (NumberUtils.isParsable(commission)) {
+			paymentAmount = paymentAmount.subtract(new BigDecimal(commission));
+		}
+		fundTransfer.setInitialAmount(paymentAmount);
 		Store store = payment.getStore();
 		BigDecimal percentage = new BigDecimal(Utils.getStoreConfig("freekassa.comission", store));
 		fundTransfer.setPercentage(percentage);
