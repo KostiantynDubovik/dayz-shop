@@ -8,7 +8,7 @@ esac
 curl --request GET -sL -o nul\
 			--max-time 30 \
 			--url 'https://localhost/shutdown'
-cd ../react/alcatraz || return
+cd ../react/voyage || return
 git pull
 npm run build
 cd ../../../../
