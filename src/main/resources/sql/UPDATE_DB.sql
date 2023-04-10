@@ -66,3 +66,12 @@ create table funds_transfer_properties
 INSERT INTO shop.store_config (STORE_ID,`KEY`,VALUE) VALUES
 	(-2,'freekassa.withdraw.api.url','https://api.freekassa.ru/v1/withdrawals/create'),
 	(-2,'freekassa.wallet.api.url','https://fkwallet.com/api_v1.php');
+
+
+alter table funds_transfers
+	add payment_id BIGINT not null;
+
+alter table funds_transfers
+	add constraint funds_transfers_payments_null_fk
+		foreign key (payment_id) references payments (PAYMENT_ID);
+

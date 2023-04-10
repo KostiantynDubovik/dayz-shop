@@ -47,6 +47,10 @@ public class FundTransfer {
 	@Column(name = "transfer_time")
 	private LocalDateTime transferTime;
 
+	@OneToOne
+	@JoinColumn(name = "payment_id")
+	private Payment payment;
+
 	@ElementCollection
 	@CollectionTable(name = "funds_transfer_properties",
 			joinColumns = {@JoinColumn(name = "fund_transfer_id", referencedColumnName = "fund_transfer_id")})

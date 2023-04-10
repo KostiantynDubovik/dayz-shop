@@ -13,6 +13,7 @@ import org.apache.wink.client.RestClient;
 import org.apache.wink.json4j.JSONException;
 import org.apache.wink.json4j.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.core.HttpHeaders;
@@ -25,6 +26,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,24 +44,32 @@ public class FundTransferService {
 	}
 
 	public void transfer(Payment payment) throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-		FundTransfer fundWithdraw = doWithdraw(payment);
-		if (OrderStatus.COMPLETE.equals(fundWithdraw.getStatus())) {
-			doTransfer(payment);
+		buildFundWithdraw(payment);
+		buildFundTransfer(payment);
+	}
+
+	@Scheduled(cron = "0 */5 * * * *")
+	public void transferFunds() throws NoSuchAlgorithmException, InvalidKeyException {
+		List<FundTransfer> pendingWithdraws = fundTransferRepository.getAllByStatusAndPercentage(OrderStatus.PENDING, BigDecimal.ZERO);
+		for (FundTransfer pendingWithdraw : pendingWithdraws) {
+			doWithdraw(pendingWithdraw);
+		}
+		List<FundTransfer> pendingTransfers = fundTransferRepository.getAllByStatusAndPercentageGreaterThan(OrderStatus.PENDING, BigDecimal.ZERO);
+		for (FundTransfer pendingTransfer : pendingTransfers) {
+			doTransfer(pendingTransfer);
 		}
 	}
 
-	private FundTransfer doWithdraw(Payment payment) throws NoSuchAlgorithmException, InvalidKeyException {
+	private void doWithdraw(FundTransfer fundWithdraw) throws NoSuchAlgorithmException, InvalidKeyException {
 		String methodName = "doWithdraw";
-		FundTransfer fundWithdraw = buildFundWithdraw(payment);
 		try {
 			Map<String, String> requestObject = buildWithdrawRequest(fundWithdraw);
-			String response = new RestClient().resource(Utils.getStoreConfig("freekassa.withdraw.api.url", payment.getStore())).contentType(MediaType.APPLICATION_JSON_TYPE).post(String.class, new JSONObject(requestObject).toString());
+			String response = new RestClient().resource(Utils.getStoreConfig("freekassa.withdraw.api.url", fundWithdraw.getStoreFrom())).contentType(MediaType.APPLICATION_JSON_TYPE).post(String.class, new JSONObject(requestObject).toString());
 			processResponse(fundWithdraw, response);
 		} catch (ClientWebException e) {
 			processWebException(fundWithdraw, e);
 			LOGGER.logp(Level.SEVERE, CLASSNAME, methodName, "Fund withdraw failed with following response: ", fundWithdraw.getProperties());
 		}
-		return fundWithdraw;
 	}
 
 	private Map<String, String> buildWithdrawRequest(FundTransfer fundWithdraw) throws NoSuchAlgorithmException, InvalidKeyException {
@@ -75,11 +85,12 @@ public class FundTransferService {
 		return requestObject;
 	}
 
-	private FundTransfer buildFundWithdraw(Payment payment) {
+	private void buildFundWithdraw(Payment payment) {
 		FundTransfer fundWithdraw = new FundTransfer();
 		fundWithdraw.setCurrency(payment.getCurrency());
 		fundWithdraw.setTransferTime(LocalDateTime.now());
 		fundWithdraw.setInitialAmount(BigDecimal.ONE);
+		fundWithdraw.setPayment(payment);
 		Store store = payment.getStore();
 		fundWithdraw.setPercentage(BigDecimal.ZERO);
 		String walletTo = Utils.getStoreConfig("freekassa.wallet.id", store);
@@ -92,21 +103,14 @@ public class FundTransferService {
 		fundWithdraw.setAmount(amount);
 		fundWithdraw.setStatus(OrderStatus.PENDING);
 		fundWithdraw.setStoreFrom(store);
-		return fundTransferRepository.save(fundWithdraw);
+		fundTransferRepository.save(fundWithdraw);
 	}
 
-	private void doTransfer(Payment payment) {
-		String methodName = "doTransfer";
-		FundTransfer fundTransfer = buildFundTransfer(payment);
-		try {
-			Map<String, String> requestObject = buildTransferRequest(fundTransfer);
-			String fkWalletApi = Utils.getStoreConfig("freekassa.wallet.api.url", payment.getStore());
-			String response = sendMultipart(fkWalletApi, requestObject);
-			processResponse(fundTransfer, response);
-		} catch (ClientWebException e) {
-			processWebException(fundTransfer, e);
-			LOGGER.logp(Level.SEVERE, CLASSNAME, methodName, "Fund transfer failed with following response: ", fundTransfer.getProperties());
-		}
+	private void doTransfer(FundTransfer fundTransfer) {
+		Map<String, String> requestObject = buildTransferRequest(fundTransfer);
+		String fkWalletApi = Utils.getStoreConfig("freekassa.wallet.api.url", fundTransfer.getStoreFrom());
+		String response = sendMultipart(fkWalletApi, requestObject);
+		processResponse(fundTransfer, response);
 	}
 
 	private String sendMultipart(String url, Map<String, String> parameters) {
@@ -141,9 +145,10 @@ public class FundTransferService {
 		return requestObject;
 	}
 
-	private FundTransfer buildFundTransfer(Payment payment) {
+	private void buildFundTransfer(Payment payment) {
 		FundTransfer fundTransfer = new FundTransfer();
 		fundTransfer.setCurrency(payment.getCurrency());
+		fundTransfer.setPayment(payment);
 		fundTransfer.setTransferTime(LocalDateTime.now());
 		BigDecimal paymentAmount = payment.getAmount();
 		String commission = payment.getProperties().get("commission");
@@ -161,7 +166,7 @@ public class FundTransferService {
 		fundTransfer.setAmount(amount);
 		fundTransfer.setStatus(OrderStatus.PENDING);
 		fundTransfer.setStoreFrom(store);
-		return fundTransferRepository.save(fundTransfer);
+		fundTransferRepository.save(fundTransfer);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -176,6 +181,7 @@ public class FundTransferService {
 			properties.put("response", entity);
 		}
 		fundWithdraw.setProperties(properties);
+		fundWithdraw.setStatus(OrderStatus.FAILED);
 		fundTransferRepository.save(fundWithdraw);
 	}
 
