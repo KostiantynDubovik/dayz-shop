@@ -28,9 +28,6 @@ public class Category {
 	@Column(name = "CATEGORY_NAME", nullable = false, unique = true)
 	private String categoryName;
 
-	@Column(name = "DISPLAY_NAME", nullable = false, unique = true)
-	private String displayName;
-
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "category_relations",
 			joinColumns = @JoinColumn(name = "PARENT_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"),
