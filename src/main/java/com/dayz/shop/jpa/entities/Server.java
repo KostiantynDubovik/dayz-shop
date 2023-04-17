@@ -22,6 +22,7 @@ import java.util.Objects;
 public class Server {
 	@Id
 	@Column(name = "SERVER_ID", nullable = false)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Long id;
 
 	@ManyToOne(cascade = CascadeType.MERGE)

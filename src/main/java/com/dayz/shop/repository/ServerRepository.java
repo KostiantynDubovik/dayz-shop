@@ -55,4 +55,7 @@ public interface ServerRepository extends JpaRepository<Server, Long> {
 			"  AND O.STATUS = 'COMPLETE'\n" +
 			"ORDER BY SERVER_REVENUE DESC\n" )
 	List<List<String>> getServersRevenue(Long storeId, LocalDate from, LocalDate to);
+
+	@Query(nativeQuery = true, value = "SELECT S.SERVER_NAME, SUM(O.ORDER_TOTAL) AS SERVER_REVENUE FROM orders O JOIN servers S ON S.SERVER_ID = O.SERVER_ID WHERE O.TIME_PLACED > :from AND O.TIME_PLACED < :to AND O.STORE_ID = :storeId AND O.STATUS = 'COMPLETE' GROUP BY O.SERVER_ID UNION SELECT 'TOTAL', SUM(O.ORDER_TOTAL) AS SERVER_REVENUE FROM orders O JOIN servers S ON S.SERVER_ID = O.SERVER_ID WHERE O.TIME_PLACED > :from AND O.TIME_PLACED < :to AND O.STORE_ID = :storeId AND O.STATUS = 'COMPLETE' ORDER BY SERVER_REVENUE DESC" )
+	List<List<String>> getServersRevenueByItem(Long storeId, LocalDate from, LocalDate to);
 }

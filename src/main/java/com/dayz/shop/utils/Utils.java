@@ -185,6 +185,12 @@ public class Utils {
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, LinkedHashMap::new));
 	}
 
+	public static Map<String, String> transformResultSetToMap2(List<List<String>> resultSet) {
+		return resultSet.stream()
+				.map(input -> new AbstractMap.SimpleEntry<>(input.get(0).concat(" : ").concat(input.get(1)), input.get(2)))
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, LinkedHashMap::new));
+	}
+
 	public static User createUser(Store store, String steamId) {
 		User paymentUser = new User();
 		paymentUser.setSteamId(steamId);

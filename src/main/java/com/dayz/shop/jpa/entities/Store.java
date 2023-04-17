@@ -23,6 +23,7 @@ import java.util.Objects;
 public class Store implements Serializable {
 	@Id
 	@Column(name = "STORE_ID", nullable = false)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Long id;
 
 	@Column(name = "STORE_NAME", nullable = false, unique = true)

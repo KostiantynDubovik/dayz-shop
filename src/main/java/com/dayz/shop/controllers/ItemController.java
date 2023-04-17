@@ -2,7 +2,9 @@ package com.dayz.shop.controllers;
 
 import com.dayz.shop.jpa.entities.*;
 import com.dayz.shop.repository.CategoryRepository;
+import com.dayz.shop.repository.DescriptionRepository;
 import com.dayz.shop.repository.ItemRepository;
+import com.dayz.shop.repository.LanguageRepository;
 import com.dayz.shop.service.ItemService;
 import com.dayz.shop.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,16 +31,16 @@ public class ItemController {
 	private final ItemRepository itemRepository;
 	private final CategoryRepository categoryRepository;
 	private final LanguageRepository languageRepository;
-	private final ItemDescriptionRepository itemDescriptionRepository;
+	private final DescriptionRepository descriptionRepository;
 
 	@Autowired
 	public ItemController(ItemService itemService, ItemRepository itemRepository, CategoryRepository categoryRepository,
-	                      LanguageRepository languageRepository, ItemDescriptionRepository itemDescriptionRepository) {
+	                      LanguageRepository languageRepository, DescriptionRepository descriptionRepository) {
 		this.itemService = itemService;
 		this.itemRepository = itemRepository;
 		this.categoryRepository = categoryRepository;
 		this.languageRepository = languageRepository;
-		this.itemDescriptionRepository = itemDescriptionRepository;
+		this.descriptionRepository = descriptionRepository;
 	}
 
 	@GetMapping("{itemId}")
@@ -53,7 +55,7 @@ public class ItemController {
 	                                @RequestParam(defaultValue = "100") int pageSize,
 	                                @RequestAttribute Store store) {
 		Pageable pageable = PageRequest.of(page > 0 ? page - 1 : 0, pageSize < 3 ? 3 : pageSize, Sort.by(sortBy));
-		Page<Item> allByStoreAndBuyableAndCategory = itemRepository.findAllByStoreAndBuyableAndCategory(store, categoryRepository.findByCategoryName(categoryName), pageable);
+		Page<Item> allByStoreAndBuyableAndCategory = itemRepository.findAllByStoreAndBuyableAndCategory(store, categoryRepository.findByCategoryNameAndStore(categoryName, store), pageable);
 		LocalDateTime now = LocalDateTime.now();
 		allByStoreAndBuyableAndCategory.getContent().forEach(item -> item.setOfferPrices(item.getOfferPrices().stream().filter(offerPrice -> offerPrice.getStartTime().isBefore(now) && offerPrice.getEndTime().isAfter(now)).collect(Collectors.toList())));
 		return allByStoreAndBuyableAndCategory;
@@ -64,13 +66,13 @@ public class ItemController {
 	@PreAuthorize("hasAuthority('STORE_WRITE')")
 	public Item createItem(@RequestBody Item item, @RequestParam BigDecimal listPrice, @RequestAttribute Store store) {
 		item.setStore(store);
-		ItemDescription itemDescription = item.getItemDescription();
-		if (itemDescription != null) {
-			itemDescription.setStore(store);
-			itemDescription.setItem(item);
-			itemDescription.setLanguage(languageRepository.getById(-3L));
-			itemDescriptionRepository.save(itemDescription);
+		Description description = item.getDescription();
+		if (description != null) {
+			description.setStore(store);
+			description.setLanguage(languageRepository.getById(-3L));
+			descriptionRepository.save(description);
 		}
+		item.setDescription(description);
 		ListPrice price = new ListPrice();
 		price.setPrice(listPrice);
 		price.setStore(store);
@@ -95,10 +97,15 @@ public class ItemController {
 		itemRepository.delete(item);
 	}
 
-
 	@GetMapping("revenue")
 	@PreAuthorize("hasAnyAuthority('STORE_WRITE')")
 	public Map<String, String> getServersRevenue(@RequestAttribute Store store, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
 		return itemService.getItemRevenue(store.getId(), from, to);
+	}
+
+	@GetMapping("revenue/per/server")
+	@PreAuthorize("hasAnyAuthority('STORE_WRITE')")
+	public Map<String, String> getServersRevenuePerServer(@RequestAttribute Store store, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+		return itemService.getItemRevenuePerServer(store.getId(), from, to);
 	}
 }

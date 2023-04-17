@@ -10,7 +10,8 @@ STORE_ID BIGINT not null;
 
 alter table offer_price
 	add constraint sub_items_stores_STORE_ID_fk
-		foreign key (STORE_ID) references stores (STORE_ID);
+		foreign key (STORE_ID) references stores (STORE_ID)
+			ON DELETE CASCADE ON UPDATE CASCADE;
 
 alter table offer_price
 	add OFFER_PRICE_TYPE VARCHAR(30) default 'ABSOLUTE' not null;
@@ -49,6 +50,7 @@ create table funds_transfers
 		primary key (fund_transfer_id),
 	constraint funds_transfers_stores_from_fk
 		foreign key (store_from) references stores (STORE_ID)
+			ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 create table funds_transfer_properties
@@ -75,3 +77,106 @@ alter table funds_transfers
 	add constraint funds_transfers_payments_null_fk
 		foreign key (payment_id) references payments (PAYMENT_ID);
 
+
+
+
+-- -------------------------------------------------------------------
+
+
+
+alter table items
+	add DESCRIPTION_ID BIGINT null;
+
+alter table items
+	add constraint items_description_DESCIPTION_ID_fk
+		foreign key (DESCRIPTION_ID) references description (DESCRIPTION_ID)
+			on update cascade;
+
+
+rename table item_description to description;
+
+UPDATE items i join description d on d.ITEM_ID = i.ITEM_ID
+set i.DESCRIPTION_ID = d.DESCRIPTION_ID;
+
+alter table description
+	drop foreign key item_description_items_ITEM_ID_fk;
+
+alter table description
+	drop ITEM_ID;
+
+alter table description
+	add constraint description_languages_LANGUAGE_ID_fk
+		foreign key (LANGUAGE_ID) references languages (LANGUAGE_ID)
+			on delete cascade;
+
+alter table description
+	change ITEM_NAME ENTITY_NAME varchar(255) null after DESCRIPTION_ID;
+
+alter table categories
+	add VISIBLE bit default 0 not null;
+
+alter table categories
+	add STORE_ID bigint default -2 not null;
+
+alter table categories
+	add constraint categories_stores_STORE_ID_fk
+		foreign key (STORE_ID) references stores (STORE_ID)
+			on update cascade;
+
+
+alter table categories
+	add DESCRIPTION_ID BIGINT null;
+
+
+alter table categories
+	add constraint categories_description_DESCRIPTIOM_ID_fk
+		foreign key (DESCRIPTION_ID) references description (DESCRIPTION_ID)
+			on update cascade;
+
+update categories set CATEGORY_ID = 100 where CATEGORY_ID = 1;
+
+insert into description (DESCRIPTION_ID, ENTITY_NAME, DESCRIPTION, LANGUAGE_ID, STORE_ID, PUBLISHED)
+values (100, 'Все', '', -3, -2, 1),
+       (107, 'Услуги', '', -3, -2, 1),
+       (108, 'Экипировка', '', -3, -2, 1),
+       (109, 'Транспортные средства', '', -3, -2, 1),
+       (110, 'Стройматериалы', '', -3, -2, 1),
+       (111, 'Контейнеры', '', -3, -2, 1),
+       (200, 'Одежда', '', -3, -2, 1),
+       (201, 'Головной убор', '', -3, -2, 1),
+       (202, 'Очки', '', -3, -2, 1),
+       (203, 'Маска', '', -3, -2, 1),
+       (204, 'Торс', '', -3, -2, 1),
+       (205, 'Перчатки', '', -3, -2, 1),
+       (206, 'Рюкзак', '', -3, -2, 1),
+       (207, 'Пояс', '', -3, -2, 1),
+       (208, 'Ноги', '', -3, -2, 1),
+       (209, 'Обувь', '', -3, -2, 1),
+       (210, 'Жилет', '', -3, -2, 1);
+
+insert into categories(CATEGORY_ID, category_name, DESCRIPTION_ID, visible, store_id)
+values (200, 'cloth', 200, 0, -2),
+       (201, 'hats', 201, 0, -2),
+       (202, 'goggles', 202, 0, -2),
+       (203, 'mask', 203, 0, -2),
+       (204, 'body', 204, 0, -2),
+       (205, 'gloves', 205, 0, -2),
+       (206, 'backpack', 206, 0, -2),
+       (207, 'belt', 207, 0, -2),
+       (208, 'legs', 208, 0, -2),
+       (209, 'shoes', 209, 0, -2),
+       (210, 'vest', 210, 0, -2);
+
+update categories c join description d on c.DESCRIPTION_ID = d.DESCRIPTION_ID set c.DESCRIPTION_ID = d.DESCRIPTION_ID where c.CATEGORY_ID between 99 and 211;
+
+insert into category_relations
+values (200, 201),
+       (200, 202),
+       (200, 203),
+       (200, 204),
+       (200, 205),
+       (200, 206),
+       (200, 207),
+       (200, 208),
+       (200, 209),
+       (200, 210);

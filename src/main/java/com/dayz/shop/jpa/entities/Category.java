@@ -38,6 +38,17 @@ public class Category {
 	@ToString.Exclude
 	private List<Category> childCategories;
 
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "DESCRIPTION_ID")
+	private Description description;
+
+	@Column(name = "visible")
+	private boolean visible;
+
+	@ManyToOne
+	@JoinColumn(name = "STORE_ID")
+	private Store store;
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
