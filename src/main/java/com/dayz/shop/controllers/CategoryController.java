@@ -4,10 +4,7 @@ import com.dayz.shop.jpa.entities.Category;
 import com.dayz.shop.jpa.entities.Store;
 import com.dayz.shop.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,5 +22,17 @@ public class CategoryController {
 	@GetMapping("all")
 	public List<Category> getAllCategories(@RequestAttribute(name = "store") Store store) {
 		return categoryRepository.findAllByStoreAndVisible(store, true);
+	}
+
+	@GetMapping("by/parent/{categoryName}")
+	public List<Category> getByParentCategories(@PathVariable String categoryName, @RequestAttribute(name = "store") Store store) {
+		return categoryRepository.findByCategoryNameAndStore(categoryName, store).getChildCategories();
+	}
+
+	@GetMapping("with/parent/{categoryName}")
+	public List<Category> getWithParentCategories(@PathVariable String categoryName, @RequestAttribute(name = "store") Store store) {
+		Category byCategoryNameAndStore = categoryRepository.findByCategoryNameAndStore(categoryName, store);
+		byCategoryNameAndStore.getChildCategories().add(0, byCategoryNameAndStore);
+		return byCategoryNameAndStore.getChildCategories();
 	}
 }

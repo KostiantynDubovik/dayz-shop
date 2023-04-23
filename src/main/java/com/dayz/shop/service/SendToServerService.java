@@ -3,6 +3,7 @@ package com.dayz.shop.service;
 import com.dayz.shop.jpa.entities.ItemType;
 import com.dayz.shop.jpa.entities.Order;
 import com.dayz.shop.jpa.entities.OrderItem;
+import com.dayz.shop.jpa.entities.Server;
 import com.dayz.shop.json.MCodeArray;
 import com.dayz.shop.json.Root;
 import com.dayz.shop.utils.MCodeMapper;
@@ -119,36 +120,39 @@ public class SendToServerService {
 	}
 
 	private void set(List<OrderItem> orderItems, String steamId, boolean add, int retryNumber) throws IOException, JSchException, SftpException, InterruptedException {
-		Order order = orderItems.stream().findFirst().get().getOrder();
-		String pathToSet = SFTPUtils.getPathToSet(order);
-		String completePath = String.format(pathToSet, order.getServer().getInstanceName(), SETS_FILE);
-		try {
-			InputStream existingSets = SFTPUtils.getFileContent(order, completePath);
-			if (existingSets != null) {
-				Map<String, String> setMap = IOUtils.readLines(existingSets, StandardCharsets.UTF_8).stream().collect(Collectors.toMap(input -> StringUtils.split(input, PIPE)[0], input -> input, (s, s2) -> s2, LinkedHashMap::new));
-				if (add) {
-					setMap.put(steamId, String.join(PIPE, steamId, ZERO, orderItems.stream().findFirst().get().getItem().getInGameId(), ZERO));
-				} else {
-					setMap.remove(steamId);
-				}
-				ByteArrayInputStream contentStream = new ByteArrayInputStream(String.join(System.lineSeparator(), setMap.values()).getBytes(StandardCharsets.UTF_8));
-				SFTPUtils.updateFile(order, completePath, contentStream);
-
-				existingSets = SFTPUtils.getFileContent(order, completePath);
+		if (!orderItems.isEmpty()) {
+			OrderItem orderItem = orderItems.stream().findFirst().get();
+			Order order = orderItem.getOrder();
+			String pathToSet = SFTPUtils.getPathToSet(order);
+			String completePath = String.format(pathToSet, order.getServer().getInstanceName(), SETS_FILE);
+			try {
+				InputStream existingSets = SFTPUtils.getFileContent(order, completePath);
 				if (existingSets != null) {
-					setMap = IOUtils.readLines(existingSets, StandardCharsets.UTF_8).stream().collect(Collectors.toMap(input -> StringUtils.split(input, PIPE)[0], input -> input));
-					if (add && !setMap.containsKey(steamId)) {
-						throw new SftpException(-1, "no such item in file");
+					Map<String, String> setMap = IOUtils.readLines(existingSets, StandardCharsets.UTF_8).stream().collect(Collectors.toMap(input -> StringUtils.split(input, PIPE)[0], input -> input, (s, s2) -> s2, LinkedHashMap::new));
+					if (add) {
+						setMap.put(steamId, String.join(PIPE, steamId, ZERO, orderItem.getItem().getInGameId(), ZERO));
+					} else {
+						setMap.remove(steamId);
+					}
+					ByteArrayInputStream contentStream = new ByteArrayInputStream(String.join(System.lineSeparator(), setMap.values()).getBytes(StandardCharsets.UTF_8));
+					SFTPUtils.updateFile(order, completePath, contentStream);
+
+					existingSets = SFTPUtils.getFileContent(order, completePath);
+					if (existingSets != null) {
+						setMap = IOUtils.readLines(existingSets, StandardCharsets.UTF_8).stream().collect(Collectors.toMap(input -> StringUtils.split(input, PIPE)[0], input -> input));
+						if (add && !setMap.containsKey(steamId)) {
+							throw new SftpException(-1, "no such item in file");
+						}
 					}
 				}
-			}
-		} catch (JSchException | SftpException | IOException e) {
-			if (retryNumber < RETRY_COUNT) {
-				TimeUnit.SECONDS.sleep(1);
-				set(orderItems, steamId, add, retryNumber + 1);
-			} else {
-				logSendError(order, completePath);
-				throw e;
+			} catch (JSchException | SftpException | IOException e) {
+				if (retryNumber < RETRY_COUNT) {
+					TimeUnit.SECONDS.sleep(1);
+					set(orderItems, steamId, add, retryNumber + 1);
+				} else {
+					logSendError(order, completePath);
+					throw e;
+				}
 			}
 		}
 	}
@@ -167,63 +171,66 @@ public class SendToServerService {
 	}
 
 	private void spawningItems(List<OrderItem> orderItems, boolean add, int retryNumber) throws IOException, JSchException, SftpException, InterruptedException {
-		Order order = orderItems.stream().findFirst().get().getOrder();
-		String pathToJson = SFTPUtils.getPathToSpawningItemsJson(order);
-		String steamId = order.getUser().getSteamId();
-		String completePath = String.format(pathToJson, order.getServer().getInstanceName(), steamId);
-		try {
-			InputStream existingItems = null;
+		if (!orderItems.isEmpty()) {
+			Order order = orderItems.stream().findFirst().get().getOrder();
+			Server server = order.getServer();
+			String pathToJson = SFTPUtils.getPathToSpawningItemsJson(server);
+			String steamId = order.getUser().getSteamId();
+			String completePath = String.format(pathToJson, server.getInstanceName(), steamId);
 			try {
-				existingItems = SFTPUtils.getFileContent(order, completePath);
-			} catch (JSchException | SftpException e) {
-				LOGGER.info("There is no such file on server: " + order.getServer().getInstanceName() + ", will create for user: " + steamId);
-			}
-			Root root = new Root();
-			ObjectMapper om = new ObjectMapper();
-			om.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-			if (existingItems != null) {
-				root = om.readValue(existingItems, Root.class);
-			}
-			List<MCodeArray> m_codeArray = mCodeMapper.mapOrderToRoot(orderItems).getM_CodeArray();
-			if (add) {
-				root.getM_CodeArray().addAll(m_codeArray);
-			} else {
-				root.getM_CodeArray().removeAll(m_codeArray);
-			}
-
-			InputStream content = new ByteArrayInputStream(om.writerWithDefaultPrettyPrinter().writeValueAsString(root).getBytes(StandardCharsets.UTF_8));
-			SFTPUtils.updateFile(order, completePath, content);
-			try {
-				existingItems = SFTPUtils.getFileContent(order, completePath);
-			} catch (JSchException | SftpException e) {
-				LOGGER.info("There is no such file on server: " + order.getServer().getInstanceName() + ", will create for user: " + steamId);
-			}
-
-			root = new Root();
-			om = new ObjectMapper();
-			if (existingItems != null) {
-				root = om.readValue(existingItems, Root.class);
-			}
-			if (root.getM_CodeArray().stream().filter(mCodeArray -> {
-				boolean result = false;
-				for (MCodeArray codeArray : m_codeArray) {
-					result = mCodeArray.getM_code().equals(codeArray.getM_code());
-					if (result) {
-						break;
-					}
+				InputStream existingItems = null;
+				try {
+					existingItems = SFTPUtils.getFileContent(order, completePath);
+				} catch (JSchException | SftpException e) {
+					LOGGER.info("There is no such file on server: " + server.getInstanceName() + ", will create for user: " + steamId);
 				}
-				return result;
-			}).collect(Collectors.toSet()).isEmpty()) {
-				throw new SftpException(-1, "no such item in file");
-			}
+				Root root = new Root();
+				ObjectMapper om = new ObjectMapper();
+				om.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+				if (existingItems != null) {
+					root = om.readValue(existingItems, Root.class);
+				}
+				List<MCodeArray> m_codeArray = mCodeMapper.mapOrderToRoot(orderItems).getM_CodeArray();
+				if (add) {
+					root.getM_CodeArray().addAll(m_codeArray);
+				} else {
+					root.getM_CodeArray().removeAll(m_codeArray);
+				}
 
-		} catch (JSchException | SftpException | IOException e) {
-			if (retryNumber < RETRY_COUNT) {
-				TimeUnit.SECONDS.sleep(1);
-				spawningItems(orderItems, add, retryNumber + 1);
-			} else {
-				logSendError(order, completePath);
-				throw e;
+				InputStream content = new ByteArrayInputStream(om.writerWithDefaultPrettyPrinter().writeValueAsString(root).getBytes(StandardCharsets.UTF_8));
+				SFTPUtils.updateFile(order, completePath, content);
+				try {
+					existingItems = SFTPUtils.getFileContent(order, completePath);
+				} catch (JSchException | SftpException e) {
+					LOGGER.info("There is no such file on server: " + server.getInstanceName() + ", will create for user: " + steamId);
+				}
+
+				root = new Root();
+				om = new ObjectMapper();
+				if (existingItems != null) {
+					root = om.readValue(existingItems, Root.class);
+				}
+				if (root.getM_CodeArray().stream().filter(mCodeArray -> {
+					boolean result = false;
+					for (MCodeArray codeArray : m_codeArray) {
+						result = mCodeArray.getM_code().equals(codeArray.getM_code());
+						if (result) {
+							break;
+						}
+					}
+					return result;
+				}).collect(Collectors.toSet()).isEmpty()) {
+					throw new SftpException(-1, "no such item in file");
+				}
+
+			} catch (JSchException | SftpException | IOException e) {
+				if (retryNumber < RETRY_COUNT) {
+					TimeUnit.SECONDS.sleep(1);
+					spawningItems(orderItems, add, retryNumber + 1);
+				} else {
+					logSendError(order, completePath);
+					throw e;
+				}
 			}
 		}
 	}

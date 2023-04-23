@@ -57,6 +57,10 @@ public class User implements UserDetails {
 	@Column(name = "IS_ACTIVE")
 	private Boolean active;
 
+	@OneToOne
+	@JoinColumn(name = "LANGUAGE_ID")
+	private Language language;
+
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
 	@JoinTable(

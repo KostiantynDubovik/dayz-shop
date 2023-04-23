@@ -6,7 +6,6 @@ import com.dayz.shop.repository.DescriptionRepository;
 import com.dayz.shop.repository.ItemRepository;
 import com.dayz.shop.repository.LanguageRepository;
 import com.dayz.shop.service.ItemService;
-import com.dayz.shop.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -69,7 +68,9 @@ public class ItemController {
 		Description description = item.getDescription();
 		if (description != null) {
 			description.setStore(store);
-			description.setLanguage(languageRepository.getById(-3L));
+			if (description.getLanguage() == null) {
+				description.setLanguage(languageRepository.getById(store.getLong("language.default")));
+			}
 			descriptionRepository.save(description);
 		}
 		item.setDescription(description);
@@ -80,7 +81,7 @@ public class ItemController {
 		price.setCurrency("RUB");
 		item.setListPrice(price);
 		if (item.getImageUrl() == null) {
-			item.setImageUrl(Utils.getStoreConfig("default.image", store));
+			item.setImageUrl(store.getString("default.image"));
 		}
 		return itemRepository.save(item);
 	}

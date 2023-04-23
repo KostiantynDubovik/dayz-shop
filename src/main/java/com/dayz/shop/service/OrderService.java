@@ -22,6 +22,7 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,8 @@ import java.util.logging.Logger;
 public class OrderService {
 	public static final String CLASSNAME = OrderService.class.getName();
 	private static final Logger LOGGER = Logger.getLogger(CLASSNAME);
+
+	private static final List<ItemType> RECHARGEABLE = Arrays.asList(ItemType.SET, ItemType.CUSTOM_SET);
 
 	private final OrderRepository orderRepository;
 	private final OrderItemRepository orderItemRepository;
@@ -87,17 +90,19 @@ public class OrderService {
 	public Order placeOrder(Order order) throws InterruptedException {
 		User user = userRepository.getById(order.getUser().getId());
 		OrderUtils.recalculateOrder(order);
-		if (user.getBalance().compareTo(order.getOrderTotal()) < 0) {
+		BigDecimal orderTotal = order.getOrderTotal();
+		if (user.getBalance().compareTo(orderTotal) < 0) {
 			LOGGER.log(Level.WARNING, "Insufficient funds to place order");
 			order.setStatus(OrderStatus.FAILED);
 			order.getOrderItems().forEach(orderItem -> orderItem.setStatus(OrderStatus.FAILED));
-			order.getProperties().put("message", Utils.getMessage("order.failed.insufficient", order.getStore(), user.getBalance(), order.getOrderTotal()));
+			order.getProperties().put("message", Utils.getMessage("order.failed.insufficient", order.getStore(), user.getBalance(), orderTotal));
 		} else {
+			Utils.updateUserBalance(user, orderTotal.negate());
 			order.setTimePlaced(LocalDateTime.now());
 			try {
 				Map<ItemType, List<OrderItem>> separatedTypes = splitTypes(order);
 				sendToServerService.sendOrder(order, separatedTypes);
-				user.setBalance(user.getBalance().subtract(order.getOrderTotal()));
+				user.setBalance(user.getBalance().subtract(orderTotal));
 				order.setStatus(OrderStatus.COMPLETE);
 				order.getOrderItems().forEach(orderItem -> orderItem.setStatus(OrderStatus.COMPLETE));
 
@@ -110,6 +115,7 @@ public class OrderService {
 				order.setStatus(OrderStatus.FAILED);
 				order.getOrderItems().forEach(orderItem -> orderItem.setStatus(OrderStatus.FAILED));
 				order = orderRepository.save(order);
+				Utils.updateUserBalance(user, orderTotal);
 			}
 		}
 		return order;
@@ -140,7 +146,7 @@ public class OrderService {
 						userService = userServiceRepository.findByUserAndItemTypeAndServer(user, itemType, server);
 						if (userService != null) {
 							endDate = userService.getEndDate();
-							if (itemTypeOrderEntry.getKey().equals(ItemType.SET)) {
+							if (RECHARGEABLE.contains(itemTypeOrderEntry.getKey())) {
 								chargebackSet(userService);
 								repeat = true;
 							}

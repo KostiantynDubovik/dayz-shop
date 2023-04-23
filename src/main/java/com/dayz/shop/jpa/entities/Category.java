@@ -1,5 +1,6 @@
 package com.dayz.shop.jpa.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class Category {
 			joinColumns = @JoinColumn(name = "PARENT_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"),
 			inverseJoinColumns = @JoinColumn(name = "CHILD_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
 	@ToString.Exclude
+	@JsonBackReference
 	private List<Category> childCategories;
 
 	@OneToOne(cascade = CascadeType.ALL)

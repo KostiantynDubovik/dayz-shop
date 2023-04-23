@@ -64,7 +64,7 @@ public class FundTransferService {
 		String methodName = "doWithdraw";
 		try {
 			Map<String, String> requestObject = buildWithdrawRequest(fundWithdraw);
-			String response = new RestClient().resource(Utils.getStoreConfig("freekassa.withdraw.api.url", fundWithdraw.getStoreFrom())).contentType(MediaType.APPLICATION_JSON_TYPE).post(String.class, new JSONObject(requestObject).toString());
+			String response = new RestClient().resource(fundWithdraw.getStoreFrom().getString("freekassa.withdraw.api.url")).contentType(MediaType.APPLICATION_JSON_TYPE).post(String.class, new JSONObject(requestObject).toString());
 			processResponse(fundWithdraw, response);
 		} catch (ClientWebException e) {
 			processWebException(fundWithdraw, e);
@@ -75,7 +75,7 @@ public class FundTransferService {
 	private Map<String, String> buildWithdrawRequest(FundTransfer fundWithdraw) throws NoSuchAlgorithmException, InvalidKeyException {
 		Map<String, String> requestObject = new HashMap<>();
 		putAsString("nonce", System.currentTimeMillis(), requestObject);
-		putAsString("shopId", Utils.getStoreConfig("freekassa.merchantId", fundWithdraw.getStoreFrom()), requestObject);
+		putAsString("shopId", fundWithdraw.getStoreFrom().getString("freekassa.merchantId"), requestObject);
 		putAsString("paymentId", fundWithdraw.getId(), requestObject);
 		putAsString("i", fundWithdraw.getInitialAmount().setScale(0, RoundingMode.UNNECESSARY), requestObject);
 		putAsString("account", fundWithdraw.getWalletTo(), requestObject);
@@ -93,7 +93,7 @@ public class FundTransferService {
 		fundWithdraw.setPayment(payment);
 		Store store = payment.getStore();
 		fundWithdraw.setPercentage(BigDecimal.ZERO);
-		String walletTo = Utils.getStoreConfig("freekassa.wallet.id", store);
+		String walletTo = store.getString("freekassa.wallet.id");
 		fundWithdraw.setWalletTo(walletTo);
 		BigDecimal amount = payment.getAmount();
 		String commission = payment.getProperties().get("commission");
@@ -108,7 +108,7 @@ public class FundTransferService {
 
 	private void doTransfer(FundTransfer fundTransfer) {
 		Map<String, String> requestObject = buildTransferRequest(fundTransfer);
-		String fkWalletApi = Utils.getStoreConfig("freekassa.wallet.api.url", fundTransfer.getStoreFrom());
+		String fkWalletApi = fundTransfer.getStoreFrom().getString("freekassa.wallet.api.url");
 		String response = sendMultipart(fkWalletApi, requestObject);
 		processResponse(fundTransfer, response);
 	}
@@ -137,7 +137,7 @@ public class FundTransferService {
 
 	private Map<String, String> buildTransferRequest(FundTransfer fundTransfer) {
 		Map<String, String> requestObject = new LinkedHashMap<>();
-		putAsString("wallet_id", Utils.getStoreConfig("freekassa.wallet.id", fundTransfer.getStoreFrom()), requestObject);
+		putAsString("wallet_id", fundTransfer.getStoreFrom().getString("freekassa.wallet.id"), requestObject);
 		putAsString("purse", fundTransfer.getWalletTo(), requestObject);
 		putAsString("amount", fundTransfer.getAmount().setScale(2, RoundingMode.UNNECESSARY), requestObject);
 		putAsString("sign", Utils.getFreekassaSignatureForTransfer(fundTransfer), requestObject);
@@ -157,9 +157,9 @@ public class FundTransferService {
 		}
 		fundTransfer.setInitialAmount(paymentAmount);
 		Store store = payment.getStore();
-		BigDecimal percentage = new BigDecimal(Utils.getStoreConfig("freekassa.comission", store));
+		BigDecimal percentage = new BigDecimal(store.getString("freekassa.comission"));
 		fundTransfer.setPercentage(percentage);
-		String purse = Utils.getStoreConfig("freekassa.purse", store);
+		String purse = store.getString("freekassa.purse");
 		fundTransfer.setWalletTo(purse);
 		BigDecimal fee = fundTransfer.getInitialAmount().multiply(percentage).setScale(0, RoundingMode.DOWN);
 		BigDecimal amount = fundTransfer.getInitialAmount().subtract(fee);

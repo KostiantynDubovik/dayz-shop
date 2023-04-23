@@ -180,3 +180,32 @@ values (200, 201),
        (200, 208),
        (200, 209),
        (200, 210);
+
+
+
+-- ---------------------------------------------------------------------------------------------------------------------
+
+
+
+alter table users
+	add LANGUANGE_ID BIGINT default -2 not null;
+
+alter table users
+	add constraint users_languages_LANGUANGE_ID_fk
+		foreign key (LANGUANGE_ID) references languages (LANGUAGE_ID)
+			on update cascade;
+
+
+
+
+alter table users
+	add USER_AGREEMENT bit(1) default 0 null;
+
+
+
+insert into store_config
+values (-1, 'language.default', -2),
+       (-2, 'language.default', -3);
+
+
+update shop.store_config set STORE_ID = -1 where shop.store_config.`KEY` = 'freekassa.ips';

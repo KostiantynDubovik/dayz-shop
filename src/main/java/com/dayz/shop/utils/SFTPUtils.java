@@ -15,19 +15,19 @@ public class SFTPUtils {
 	public static final String SSH_KNOWN_HOSTS = "~/.ssh/known_hosts";
 
 	public static String getUsr(Server server) {
-		return Utils.getServerConfig("SSH_USR", server);
+		return server.getString("SSH_USR");
 	}
 
 	public static String getPwd(Server server) {
-		return Utils.getServerConfig("SSH_PWD", server);
+		return server.getString("SSH_PWD");
 	}
 
 	public static String getIp(Server server) {
-		return Utils.getServerConfig("SSH_IP", server);
+		return server.getString("SSH_IP");
 	}
 
-	public static String getPathToSpawningItemsJson(Order order) {
-		return Utils.getServerConfig("PATH_TO_JSON", order.getServer());
+	public static String getPathToSpawningItemsJson(Server server) {
+		return server.getString("PATH_TO_JSON");
 	}
 
 	public static String getPathToSet(Order order) {
@@ -35,14 +35,14 @@ public class SFTPUtils {
 	}
 
 	public static String getPathToSet(Server server) {
-		return Utils.getServerConfig("PATH_TO_SET", server);
+		return server.getString("PATH_TO_SET");
 	}
 
 	public static String getPathToVip(Order order) {
 		return getPathToVip(order.getServer());
 	}
 	public static String getPathToVip(Server server) {
-		return Utils.getServerConfig("PATH_TO_VIP", server);
+		return server.getString("PATH_TO_VIP");
 	}
 
 	public static ByteArrayInputStream getFileContent(Order order, String path) throws JSchException, SftpException {
