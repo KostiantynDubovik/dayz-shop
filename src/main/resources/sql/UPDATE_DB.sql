@@ -188,11 +188,11 @@ values (200, 201),
 
 
 alter table users
-	add LANGUANGE_ID BIGINT default -2 not null;
+	add LANGUAGE_ID BIGINT default -2 not null;
 
 alter table users
 	add constraint users_languages_LANGUANGE_ID_fk
-		foreign key (LANGUANGE_ID) references languages (LANGUAGE_ID)
+		foreign key (LANGUAGE_ID) references languages (LANGUAGE_ID)
 			on update cascade;
 
 
