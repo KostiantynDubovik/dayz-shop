@@ -16,6 +16,9 @@ import org.springframework.security.openid.OpenIDAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ServerErrorException;
 
+import javax.ws.rs.QueryParam;
+import java.util.List;
+
 @Aspect
 @RestController
 @RequestMapping("/api/order")
@@ -70,6 +73,17 @@ public class OrderController {
 	public Order buyItemNow(@PathVariable Item item, @PathVariable Server server, @RequestAttribute Store store, @PathVariable(required = false) Integer count) {
 		try {
 			return orderService.buyItemNow(item, store, server, count == null || count < 1 ? 1 : count);
+		} catch (Exception e) {
+			throw new ServerErrorException(e.getMessage(), e);
+		}
+	}
+
+	@ProcessMessage
+	@PostMapping("set/")
+	@PreAuthorize("hasAuthority('STORE_READ')")
+	public Order buyCustomSetNow(@RequestParam("itemId") List<Item> items, @RequestAttribute Store store) {
+		try {
+			return orderService.buyCustomSetNow(items, store);
 		} catch (Exception e) {
 			throw new ServerErrorException(e.getMessage(), e);
 		}

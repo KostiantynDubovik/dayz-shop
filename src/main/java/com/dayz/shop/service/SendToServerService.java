@@ -1,9 +1,6 @@
 package com.dayz.shop.service;
 
-import com.dayz.shop.jpa.entities.ItemType;
-import com.dayz.shop.jpa.entities.Order;
-import com.dayz.shop.jpa.entities.OrderItem;
-import com.dayz.shop.jpa.entities.Server;
+import com.dayz.shop.jpa.entities.*;
 import com.dayz.shop.json.MCodeArray;
 import com.dayz.shop.json.Root;
 import com.dayz.shop.utils.MCodeMapper;
@@ -59,6 +56,9 @@ public class SendToServerService {
 						break;
 					case SET:
 						set(separatedTypes.get(itemType), steamId, true);
+						break;
+					case CUSTOM_SET_ITEM:
+						customSet(separatedTypes.get(itemType), separatedTypes.get(ItemType.CUSTOM_SET), steamId, true);
 				}
 			}
 		} catch (JSchException | SftpException | IOException e) {
@@ -155,6 +155,62 @@ public class SendToServerService {
 				}
 			}
 		}
+	}
+
+	public void customSet(List<OrderItem> orderItems, List<OrderItem> customSetItems, String steamId, boolean add) throws JSchException, SftpException, IOException, InterruptedException {
+		if (!orderItems.isEmpty()) {
+			OrderItem orderItem = orderItems.stream().findFirst().get();
+			OrderItem customSetItem = customSetItems.stream().findFirst().get();
+			Order order = orderItem.getOrder();
+			String filename = steamId.concat(".txt");
+			String content = orderItems.stream().map(orderItem1 -> orderItem1.getItem().getInGameId()).collect(Collectors.joining(PIPE));
+			for (Server server : customSetItem.getItem().getServers()) {
+				List<OrderItem> stubOrderItems = getStubOrderItems(order, server);
+				set(stubOrderItems, steamId, add);
+				customSetContent(add, order, filename, content, server, 1);
+			}
+		}
+	}
+
+	private void customSetContent(boolean add, Order order, String filename, String content, Server server, int retryNumber)
+			throws JSchException, SftpException, IOException, InterruptedException {
+		String pathToCustomSet = SFTPUtils.getPathToCustomSet(server);
+		String setContentPath = String.format(pathToCustomSet, server.getInstanceName(), filename);
+		try {
+			content = add ? content : StringUtils.EMPTY;
+			SFTPUtils.updateFile(server, setContentPath, new ByteArrayInputStream(content.getBytes()));
+			InputStream existingSet = SFTPUtils.getFileContent(server, setContentPath);
+			if (existingSet != null) {
+				String fileContent = IOUtils.readLines(existingSet, StandardCharsets.UTF_8).get(0);
+				if (add && !fileContent.equals(content)) {
+					throw new SftpException(-1, "no such item in file");
+				}
+			}
+		} catch (JSchException | SftpException | IOException e) {
+			if (retryNumber < RETRY_COUNT) {
+				TimeUnit.SECONDS.sleep(1);
+				customSetContent(add, order, filename, content, server, retryNumber + 1);
+			} else {
+				logSendError(order, setContentPath);
+				throw e;
+			}
+		}
+	}
+
+	private static List<OrderItem> getStubOrderItems(Order order, Server server) {
+		Order stubOrder = new Order();
+		User user = order.getUser();
+		stubOrder.setUser(user);
+		stubOrder.setServer(server);
+		Item stubItem = new Item();
+		stubItem.setId(server.getId());
+		stubItem.setInGameId(user.getSteamId());
+		OrderItem stubOrderItem = new OrderItem();
+		stubOrderItem.setOrder(stubOrder);
+		stubOrderItem.setItem(stubItem);
+		List<OrderItem> stubOrderItems = Collections.singletonList(stubOrderItem);
+		stubOrder.setOrderItems(stubOrderItems);
+		return stubOrderItems;
 	}
 
 	private void logSendError(Order order, String completePath) {

@@ -80,7 +80,7 @@ alter table funds_transfers
 
 
 
--- -------------------------------------------------------------------
+-- ---------------------------------------------------------------------------------------------------------------------
 
 
 
@@ -209,3 +209,42 @@ values (-1, 'language.default', -2),
 
 
 update shop.store_config set STORE_ID = -1 where shop.store_config.`KEY` = 'freekassa.ips';
+
+
+
+
+-- ---------------------------------------------------------------------------------------------------------------------
+
+
+
+
+alter table user_services
+	modify SERVER_ID bigint null;
+
+insert into server_config values
+	                              (1, 'PATH_TO_CUSTOM_SET', '../../Omega/servers/%s/profiles/DayZShop/DataBase/CustomSets/%s', -2),
+	                              (2, 'PATH_TO_CUSTOM_SET', '../../Omega/servers/%s/profiles/DayZShop/DataBase/CustomSets/%s', -2),
+	                              (3, 'PATH_TO_CUSTOM_SET', '../../Omega/servers/%s/profiles/DayZShop/DataBase/CustomSets/%s', -2),
+	                              (4, 'PATH_TO_CUSTOM_SET', '../../Omega/servers/%s/profiles/DayZShop/DataBase/CustomSets/%s', -2),
+	                              (5, 'PATH_TO_CUSTOM_SET', '../../Omega/servers/%s/profiles/DayZShop/DataBase/CustomSets/%s', -2),
+	                              (6, 'PATH_TO_CUSTOM_SET', '../../Omega/servers/%s/profiles/DayZShop/DataBase/CustomSets/%s', -2),
+	                              (7, 'PATH_TO_CUSTOM_SET', '../../Omega/servers/%s/profiles/DayZShop/DataBase/CustomSets/%s', -2);
+
+
+insert into description values ((select next_val + 1 from hibernate_sequence), 'Кастомный сет', 'Собери сет на свое усмотрение', -2, -2, 1);
+
+insert into items values ((select next_val + 2 from hibernate_sequence), 'custom_set', 'https://cdn.discordapp.com/attachments/934733103589654558/1086383901150294049/1unknown345.png', -2, 'CUSTOM_SET', 1, null, 0, (select next_val + 1 from hibernate_sequence));
+
+insert into item_server_buyable values ((select next_val + 2 from hibernate_sequence), 1),
+                                       ((select next_val + 2 from hibernate_sequence), 2),
+                                       ((select next_val + 2 from hibernate_sequence), 3),
+                                       ((select next_val + 2 from hibernate_sequence), 4),
+                                       ((select next_val + 2 from hibernate_sequence), 5),
+                                       ((select next_val + 2 from hibernate_sequence), 6),
+                                       ((select next_val + 2 from hibernate_sequence), 7);
+
+insert into item_category values ((select next_val + 2 from hibernate_sequence), 1), ((select next_val + 2 from hibernate_sequence), 108);
+
+insert into list_price values ((select next_val + 3 from hibernate_sequence), 1000, 'RUB', (select next_val + 2 from hibernate_sequence), -2);
+
+update hibernate_sequence set next_val = next_val + 4;

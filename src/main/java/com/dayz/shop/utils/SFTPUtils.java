@@ -38,6 +38,14 @@ public class SFTPUtils {
 		return server.getString("PATH_TO_SET");
 	}
 
+	public static String getPathToCustomSet(Order order) {
+		return getPathToCustomSet(order.getServer());
+	}
+
+	public static String getPathToCustomSet(Server server) {
+		return server.getString("PATH_TO_CUSTOM_SET");
+	}
+
 	public static String getPathToVip(Order order) {
 		return getPathToVip(order.getServer());
 	}

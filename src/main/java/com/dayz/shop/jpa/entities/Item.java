@@ -38,7 +38,6 @@ public class Item {
 			joinColumns = @JoinColumn(name = "ITEM_ID", referencedColumnName = "ITEM_ID"),
 			inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
 	@ToString.Exclude
-	@JsonIgnore
 	private List<Category> categories = new ArrayList<>();
 
 	@OneToOne(mappedBy = "item", cascade = CascadeType.ALL)
@@ -82,7 +81,6 @@ public class Item {
 			joinColumns = {@JoinColumn(name = "item_id")},
 			inverseJoinColumns = {@JoinColumn(name = "server_id")})
 	@ToString.Exclude
-	@JsonIgnore
 	private List<Server> servers;
 
 	@Override

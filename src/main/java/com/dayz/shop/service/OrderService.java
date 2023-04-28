@@ -2,10 +2,7 @@ package com.dayz.shop.service;
 
 import com.dayz.shop.jpa.entities.UserService;
 import com.dayz.shop.jpa.entities.*;
-import com.dayz.shop.repository.OrderItemRepository;
-import com.dayz.shop.repository.OrderRepository;
-import com.dayz.shop.repository.UserRepository;
-import com.dayz.shop.repository.UserServiceRepository;
+import com.dayz.shop.repository.*;
 import com.dayz.shop.utils.OrderUtils;
 import com.dayz.shop.utils.Utils;
 import com.jcraft.jsch.JSchException;
@@ -21,11 +18,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,23 +27,26 @@ public class OrderService {
 	public static final String CLASSNAME = OrderService.class.getName();
 	private static final Logger LOGGER = Logger.getLogger(CLASSNAME);
 
-	private static final List<ItemType> RECHARGEABLE = Arrays.asList(ItemType.SET, ItemType.CUSTOM_SET);
+	private static final List<ItemType> RECHARGEABLE = Collections.singletonList(ItemType.SET);
 
 	private final OrderRepository orderRepository;
 	private final OrderItemRepository orderItemRepository;
 	private final SendToServerService sendToServerService;
 	private final UserServiceRepository userServiceRepository;
 	private final UserRepository userRepository;
+	private final ItemRepository itemRepository;
 
 	@Autowired
 	public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository,
 	                    SendToServerService sendToServerService, UserServiceRepository userServiceRepository,
-	                    UserRepository userRepository) {
+	                    UserRepository userRepository,
+	                    ItemRepository itemRepository) {
 		this.orderRepository = orderRepository;
 		this.orderItemRepository = orderItemRepository;
 		this.sendToServerService = sendToServerService;
 		this.userServiceRepository = userServiceRepository;
 		this.userRepository = userRepository;
+		this.itemRepository = itemRepository;
 	}
 
 	public Order addOrderItem(Item item, Store store, int count) {
@@ -102,7 +98,6 @@ public class OrderService {
 			try {
 				Map<ItemType, List<OrderItem>> separatedTypes = splitTypes(order);
 				sendToServerService.sendOrder(order, separatedTypes);
-				user.setBalance(user.getBalance().subtract(orderTotal));
 				order.setStatus(OrderStatus.COMPLETE);
 				order.getOrderItems().forEach(orderItem -> orderItem.setStatus(OrderStatus.COMPLETE));
 
@@ -136,6 +131,7 @@ public class OrderService {
 			Item item = orderItem.getItem();
 			switch (itemTypeOrderEntry.getKey()) {
 				case SET:
+				case CUSTOM_SET:
 				case VIP:
 					ItemType itemType = item.getItemType();
 					Server server = orderItem.getServer();
@@ -200,5 +196,19 @@ public class OrderService {
 
 	public Page<Order> getAllUserOrders(User user, Store store, Pageable pageable) {
 		return orderRepository.findAllByUserAndStoreAndStatus(user, store, OrderStatus.COMPLETE, pageable);
+	}
+
+	public Order buyCustomSetNow(List<Item> items, Store store) throws InterruptedException {
+		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Order order = OrderUtils.createOrder(user, store);
+		orderRepository.save(order);
+		List<OrderItem> orderItems = order.getOrderItems();
+		OrderItem customSetItem = orderItemRepository.save(OrderUtils.createOrderItem(itemRepository.findByItemTypeAndStore(ItemType.CUSTOM_SET, store), user, order, 1));
+		orderItems.add(customSetItem);
+		for (Item item : items) {
+			OrderItem orderItem = orderItemRepository.save(OrderUtils.createOrderItem(item, user, order, 1));
+			orderItems.add(orderItem);
+		}
+		return placeOrder(orderRepository.save(order));
 	}
 }
