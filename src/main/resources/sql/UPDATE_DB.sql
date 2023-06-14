@@ -10,7 +10,8 @@ STORE_ID BIGINT not null;
 
 alter table offer_price
 	add constraint sub_items_stores_STORE_ID_fk
-		foreign key (STORE_ID) references stores (STORE_ID);
+		foreign key (STORE_ID) references stores (STORE_ID)
+			ON DELETE CASCADE ON UPDATE CASCADE;
 
 alter table offer_price
 	add OFFER_PRICE_TYPE VARCHAR(30) default 'ABSOLUTE' not null;
@@ -49,6 +50,7 @@ create table funds_transfers
 		primary key (fund_transfer_id),
 	constraint funds_transfers_stores_from_fk
 		foreign key (store_from) references stores (STORE_ID)
+			ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 create table funds_transfer_properties
@@ -74,4 +76,213 @@ alter table funds_transfers
 alter table funds_transfers
 	add constraint funds_transfers_payments_null_fk
 		foreign key (payment_id) references payments (PAYMENT_ID);
+
+
+
+
+-- ---------------------------------------------------------------------------------------------------------------------
+
+
+
+alter table items
+	add DESCRIPTION_ID BIGINT null;
+
+alter table items
+	add constraint items_description_DESCIPTION_ID_fk
+		foreign key (DESCRIPTION_ID) references description (DESCRIPTION_ID)
+			on update cascade;
+
+
+rename table item_description to description;
+
+UPDATE items i join description d on d.ITEM_ID = i.ITEM_ID
+set i.DESCRIPTION_ID = d.DESCRIPTION_ID;
+
+alter table description
+	drop foreign key item_description_items_ITEM_ID_fk;
+
+alter table description
+	drop ITEM_ID;
+
+alter table description
+	add constraint description_languages_LANGUAGE_ID_fk
+		foreign key (LANGUAGE_ID) references languages (LANGUAGE_ID)
+			on delete cascade;
+
+alter table description
+	change ITEM_NAME ENTITY_NAME varchar(255) null after DESCRIPTION_ID;
+
+alter table categories
+	add VISIBLE bit default 0 not null;
+
+alter table categories
+	add STORE_ID bigint default -2 not null;
+
+alter table categories
+	add constraint categories_stores_STORE_ID_fk
+		foreign key (STORE_ID) references stores (STORE_ID)
+			on update cascade;
+
+
+alter table categories
+	add DESCRIPTION_ID BIGINT null;
+
+
+alter table categories
+	add constraint categories_description_DESCRIPTIOM_ID_fk
+		foreign key (DESCRIPTION_ID) references description (DESCRIPTION_ID)
+			on update cascade;
+
+update categories set CATEGORY_ID = 100 where CATEGORY_ID = 1;
+
+insert into description (DESCRIPTION_ID, ENTITY_NAME, DESCRIPTION, LANGUAGE_ID, STORE_ID, PUBLISHED)
+values (100, 'Все', '', -3, -2, 1),
+       (107, 'Услуги', '', -3, -2, 1),
+       (108, 'Экипировка', '', -3, -2, 1),
+       (109, 'Транспортные средства', '', -3, -2, 1),
+       (110, 'Стройматериалы', '', -3, -2, 1),
+       (111, 'Контейнеры', '', -3, -2, 1),
+       (200, 'Одежда', '', -3, -2, 1),
+       (201, 'Головной убор', '', -3, -2, 1),
+       (202, 'Очки', '', -3, -2, 1),
+       (203, 'Маска', '', -3, -2, 1),
+       (204, 'Торс', '', -3, -2, 1),
+       (205, 'Перчатки', '', -3, -2, 1),
+       (206, 'Рюкзак', '', -3, -2, 1),
+       (207, 'Пояс', '', -3, -2, 1),
+       (208, 'Ноги', '', -3, -2, 1),
+       (209, 'Обувь', '', -3, -2, 1),
+       (210, 'Жилет', '', -3, -2, 1);
+
+insert into categories(CATEGORY_ID, category_name, DESCRIPTION_ID, visible, store_id)
+values (200, 'cloth', 200, 0, -2),
+       (201, 'hats', 201, 0, -2),
+       (202, 'goggles', 202, 0, -2),
+       (203, 'mask', 203, 0, -2),
+       (204, 'body', 204, 0, -2),
+       (205, 'gloves', 205, 0, -2),
+       (206, 'backpack', 206, 0, -2),
+       (207, 'belt', 207, 0, -2),
+       (208, 'legs', 208, 0, -2),
+       (209, 'shoes', 209, 0, -2),
+       (210, 'vest', 210, 0, -2);
+
+update categories c join description d on c.DESCRIPTION_ID = d.DESCRIPTION_ID set c.DESCRIPTION_ID = d.DESCRIPTION_ID where c.CATEGORY_ID between 99 and 211;
+
+insert into category_relations
+values (200, 201),
+       (200, 202),
+       (200, 203),
+       (200, 204),
+       (200, 205),
+       (200, 206),
+       (200, 207),
+       (200, 208),
+       (200, 209),
+       (200, 210);
+
+
+
+-- ---------------------------------------------------------------------------------------------------------------------
+
+
+
+alter table users
+	add LANGUAGE_ID BIGINT default -2 not null;
+
+alter table users
+	add constraint users_languages_LANGUANGE_ID_fk
+		foreign key (LANGUAGE_ID) references languages (LANGUAGE_ID)
+			on update cascade;
+
+
+
+
+alter table users
+	add USER_AGREEMENT bit(1) default 0 null;
+
+
+
+insert into store_config
+values (-1, 'language.default', -2),
+       (-2, 'language.default', -3);
+
+
+update shop.store_config set STORE_ID = -1 where shop.store_config.`KEY` = 'freekassa.ips';
+
+
+
+
+-- ---------------------------------------------------------------------------------------------------------------------
+
+
+
+
+alter table user_services
+	modify SERVER_ID bigint null;
+
+insert into server_config values
+	                              (1, 'PATH_TO_CUSTOM_SET', '../../Omega/servers/%s/profiles/DayZShop/DataBase/CustomSets/%s', -2),
+	                              (2, 'PATH_TO_CUSTOM_SET', '../../Omega/servers/%s/profiles/DayZShop/DataBase/CustomSets/%s', -2),
+	                              (3, 'PATH_TO_CUSTOM_SET', '../../Omega/servers/%s/profiles/DayZShop/DataBase/CustomSets/%s', -2),
+	                              (4, 'PATH_TO_CUSTOM_SET', '../../Omega/servers/%s/profiles/DayZShop/DataBase/CustomSets/%s', -2),
+	                              (5, 'PATH_TO_CUSTOM_SET', '../../Omega/servers/%s/profiles/DayZShop/DataBase/CustomSets/%s', -2),
+	                              (6, 'PATH_TO_CUSTOM_SET', '../../Omega/servers/%s/profiles/DayZShop/DataBase/CustomSets/%s', -2),
+	                              (7, 'PATH_TO_CUSTOM_SET', '../../Omega/servers/%s/profiles/DayZShop/DataBase/CustomSets/%s', -2),
+	                              (8, 'PATH_TO_CUSTOM_SET', '../../Omega/servers/%s/profiles/DayZShop/DataBase/CustomSets/%s', -2),
+	                              (9, 'PATH_TO_CUSTOM_SET', '../../Omega/servers/%s/profiles/DayZShop/DataBase/CustomSets/%s', -2);
+
+
+
+
+insert into items values ((select next_val + 2 from hibernate_sequence), 'custom_set', 'https://cdn.discordapp.com/attachments/934733103589654558/1086383901150294049/1unknown345.png', -2, 'CUSTOM_SET', 1, null, 0, (select next_val + 1 from hibernate_sequence));
+
+
+insert into description values ((select next_val + 1 from hibernate_sequence), 'Собери сет на свое усмотрение', -2, -2, (select next_val + 2 from hibernate_sequence), 1, 'Настраиваемый кастомный сет');
+
+
+insert into item_server_buyable values ((select next_val + 2 from hibernate_sequence), 1),
+                                       ((select next_val + 2 from hibernate_sequence), 2),
+                                       ((select next_val + 2 from hibernate_sequence), 3),
+                                       ((select next_val + 2 from hibernate_sequence), 4),
+                                       ((select next_val + 2 from hibernate_sequence), 5),
+                                       ((select next_val + 2 from hibernate_sequence), 6),
+                                       ((select next_val + 2 from hibernate_sequence), 7),
+                                       ((select next_val + 2 from hibernate_sequence), 9);
+
+insert into item_category values ((select next_val + 2 from hibernate_sequence), 1), ((select next_val + 2 from hibernate_sequence), 108);
+
+insert into list_price values ((select next_val + 3 from hibernate_sequence), 1000, 'RUB', (select next_val + 2 from hibernate_sequence), -2);
+
+update hibernate_sequence set next_val = next_val + 4;
+
+
+
+alter table shop.orders add column USER_TO bigint not null;
+
+update shop.orders set orders.USER_TO = orders.USER_ID where USER_ID is not null;
+
+alter table shop.orders
+	add constraint orders_users_to_STORE_ID_fk
+		foreign key (USER_TO) references shop.users (USER_ID)
+			on update cascade on delete cascade;
+
+
+
+alter table shop.order_items add column USER_TO bigint not null;
+
+update shop.order_items set order_items.USER_TO = order_items.USER_ID where USER_ID is not null;
+
+alter table shop.order_items
+	add constraint order_items_users_to_STORE_ID_fk
+		foreign key (USER_TO) references shop.users (USER_ID)
+			on update cascade on delete cascade;
+
+alter table order_items
+	drop foreign key order_items_orders_ORDER_ID_fk;
+
+alter table order_items
+	add constraint order_items_orders_ORDER_ID_fk
+		foreign key (ORDER_ID) references orders (ORDER_ID)
+			on update cascade on delete cascade;
 

@@ -5,6 +5,7 @@ import com.dayz.shop.jpa.entities.UserService;
 import com.dayz.shop.repository.UserServiceRepository;
 import com.dayz.shop.utils.OrderUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.spi.HasDependencies;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -62,6 +60,9 @@ public class ClearServices {
 				break;
 			case SET:
 				sendToServerService.set(OrderUtils.getItemsByType(order, ItemType.SET), steamId, false);
+				break;
+			case CUSTOM_SET:
+				sendToServerService.set(OrderUtils.getItemsByType(order, ItemType.CUSTOM_SET), steamId, false);
 		}
 		userServiceRepository.delete(userService);
 	}

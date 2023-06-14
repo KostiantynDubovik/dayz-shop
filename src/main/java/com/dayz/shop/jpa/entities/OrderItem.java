@@ -43,6 +43,11 @@ public class OrderItem {
 	private User user;
 
 	@ManyToOne(cascade = CascadeType.MERGE)
+	@JoinColumn(name = "USER_TO", referencedColumnName = "USER_ID", foreignKey = @ForeignKey(name = "order_items_users_to_STORE_ID_fk"))
+	@JsonIgnore
+	private User userTo;
+
+	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "STORE_ID", referencedColumnName = "STORE_ID")
 	@JsonIgnore
 	private Store store;

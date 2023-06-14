@@ -45,7 +45,7 @@ public class MCodeMapper {
 			for (int i = 0; i < orderItem.getCount(); i++) {
 				MCodeArray mCodeArray = new MCodeArray();
 				mCodeArray.setM_code(StringUtils.joinWith(PIPE, orderItem.getId().toString(), i + 1));
-				mCodeArray.setM_name(orderItem.getItem().getName());
+				mCodeArray.setM_name(orderItem.getItem().getDescription().getName());
 				fillSubItems(orderItem, mCodeArray);
 				mCodeArrays.add(mCodeArray);
 			}

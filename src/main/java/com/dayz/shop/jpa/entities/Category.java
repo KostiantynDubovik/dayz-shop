@@ -1,5 +1,6 @@
 package com.dayz.shop.jpa.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -28,15 +29,24 @@ public class Category {
 	@Column(name = "CATEGORY_NAME", nullable = false, unique = true)
 	private String categoryName;
 
-	@Column(name = "DISPLAY_NAME", nullable = false, unique = true)
-	private String displayName;
-
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "category_relations",
 			joinColumns = @JoinColumn(name = "PARENT_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"),
 			inverseJoinColumns = @JoinColumn(name = "CHILD_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
 	@ToString.Exclude
+	@JsonBackReference
 	private List<Category> childCategories;
+
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "DESCRIPTION_ID")
+	private Description description;
+
+	@Column(name = "visible")
+	private boolean visible;
+
+	@ManyToOne
+	@JoinColumn(name = "STORE_ID")
+	private Store store;
 
 	@Override
 	public boolean equals(Object o) {

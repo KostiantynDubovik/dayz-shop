@@ -41,10 +41,8 @@ public class Utils {
 	private static Map<String, Store> storeNameStoreMap;
 
 	private static PrivilegeRepository privilegeRepository;
-	private static StoreConfigRepository storeConfigRepository;
 	private static StoreRepository storeRepository;
 	private static PaymentRepository paymentRepository;
-	private static ServerConfigRepository serverConfigRepository;
 	private static ResourceBundleMessageSourceExt messageSource;
 	private static AcceptHeaderLocaleResolver localeResolver;
 	private static RoleRepository roleRepository;
@@ -57,14 +55,13 @@ public class Utils {
 		fkWalletCurrencyIds.put(Currency.RUB, "133");
 	}
 
+	public static Store rootStore;
+
 	@Autowired
 	public Utils(StoreRepository storeRepository, PrivilegeRepository privilegeRepository,
-	             StoreConfigRepository storeConfigRepository, ServerConfigRepository serverConfigRepository,
 	             PaymentRepository paymentRepository, ResourceBundleMessageSource messageSource,
 	             AcceptHeaderLocaleResolver localeResolver, RoleRepository roleRepository, UserRepository userRepository) {
 		Utils.privilegeRepository = privilegeRepository;
-		Utils.storeConfigRepository = storeConfigRepository;
-		Utils.serverConfigRepository = serverConfigRepository;
 		Utils.storeRepository = storeRepository;
 		Utils.paymentRepository = paymentRepository;
 		Utils.storeNameStoreMap = storeRepository.findAll().stream().collect(Collectors.toMap(Store::getStoreName, store -> store));
@@ -72,7 +69,8 @@ public class Utils {
 		Utils.localeResolver = localeResolver;
 		Utils.roleRepository = roleRepository;
 		Utils.userRepository = userRepository;
-		DEFAULT_USER = userRepository.getById(-1000L);
+		Utils.DEFAULT_USER = userRepository.getById(-1000L);
+		Utils.rootStore = storeRepository.getById(rootStoreId);
 	}
 
 	public static boolean isAppAdmin(User user) {
@@ -92,7 +90,7 @@ public class Utils {
 	}
 
 	public static boolean isRootStore(Store store) {
-		return rootStoreId.equals(store.getId());
+		return rootStore.equals(store);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -115,17 +113,26 @@ public class Utils {
 
 	public static boolean isFreeKassaIp(HttpServletRequest request) {
 		String reqIp = Utils.getClientIpAddress(request);
-		return Utils.getStoreConfig("freekassa.ips", -2L).contains(reqIp);
+		return rootStore.getString("freekassa.ips").contains(reqIp);
 	}
 
 	public static boolean isStoreServersRequest(HttpServletRequest request, Store store) {
-		List<String> ips = serverConfigRepository.findAllByStoreAndKey(store, "SSH_IP").stream().map(ServerConfig::getValue).collect(Collectors.toList());
+		List<String> ips = store.getServers().stream().map(Server::getConfigs).map(map -> map.get("SSH_IP")).collect(Collectors.toList());
 		String reqIp = Utils.getClientIpAddress(request);
 		return ips.contains(reqIp);
 	}
 
 	public static User getCurrentUser() {
 		return userRepository.getBySteamId(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getSteamId());
+	}
+
+	public static User getUserTo(User user, String steamIdTo) {
+		return steamIdTo == null || user.getSteamId().equals(steamIdTo) ? user : userRepository.getBySteamId(steamIdTo);
+	}
+
+	public static User getUserTo(String steamIdTo) {
+		User user = getCurrentUser();
+		return getUserTo(user, steamIdTo);
 	}
 
 	public static String getClientIpAddress(HttpServletRequest request) {
@@ -137,42 +144,6 @@ public class Utils {
 		}
 	}
 
-	public static String getStoreConfig(String key, Long storeId) {
-		String result = null;
-		StoreConfig storeConfig = storeConfigRepository.findByKeyAndStoreId(key, storeId);
-		if (storeConfig != null) {
-			result = storeConfig.getValue();
-		}
-		return result;
-	}
-
-	public static String getStoreConfig(String key, Store store) {
-		String result = null;
-		StoreConfig storeConfig = storeConfigRepository.findByKeyAndStore(key, store);
-		if (storeConfig != null) {
-			result = storeConfig.getValue();
-		}
-		return result;
-	}
-
-	public static String getServerConfig(String key, Long serverId) {
-		String result = null;
-		ServerConfig serverConfig = serverConfigRepository.findByKeyAndServerId(key, serverId);
-		if (serverConfig != null) {
-			result = serverConfig.getValue();
-		}
-		return result;
-	}
-
-	public static String getServerConfig(String key, Server server) {
-		String result = null;
-		ServerConfig serverConfig = serverConfigRepository.findByKeyAndServer(key, server);
-		if (serverConfig != null) {
-			result = serverConfig.getValue();
-		}
-		return result;
-	}
-
 	public static String getMessage(String key, Store store, Object... args) {
 		ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 		Locale locale = LocalizationConfiguration.DEFAULT_LOCALE;
@@ -182,6 +153,12 @@ public class Utils {
 	public static Map<String, String> transformResultSetToMap(List<List<String>> resultSet) {
 		return resultSet.stream()
 				.map(input -> new AbstractMap.SimpleEntry<>(input.get(0), input.get(1)))
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, LinkedHashMap::new));
+	}
+
+	public static Map<String, String> transformResultSetToMap2(List<List<String>> resultSet) {
+		return resultSet.stream()
+				.map(input -> new AbstractMap.SimpleEntry<>(input.get(0).concat(" : ").concat(input.get(1)), input.get(2)))
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, LinkedHashMap::new));
 	}
 
@@ -199,8 +176,8 @@ public class Utils {
 
 	public static String getFreekassaSignatureForPayment(Payment payment) {
 		Store store = payment.getStore();
-		String merchantId = Utils.getStoreConfig("freekassa.merchantId", store);
-		String secret = Utils.getStoreConfig("freekassa.secret", store);
+		String merchantId = store.getString("freekassa.merchantId");
+		String secret = store.getString("freekassa.secret");
 
 		String amount = payment.getAmount().setScale(2, RoundingMode.UNNECESSARY).toString();
 		Long paymentId = payment.getId();
@@ -213,10 +190,10 @@ public class Utils {
 	public static String getFreekassaSignatureForTransfer(FundTransfer fundTransfer) {
 		Store store = fundTransfer.getStoreFrom();
 
-		String wallet_id = Utils.getStoreConfig("freekassa.wallet.id", store);
+		String wallet_id = store.getString("freekassa.wallet.id");
 		String amount = fundTransfer.getAmount().setScale(2, RoundingMode.UNNECESSARY).toString();
 		String purse = fundTransfer.getWalletTo();
-		String apiKey = Utils.getStoreConfig("freekassa.wallet.api.key", store);
+		String apiKey = store.getString("freekassa.wallet.api.key");
 		String sign = StringUtils.joinWith(StringUtils.EMPTY, wallet_id, amount, purse, apiKey);
 
 		return DigestUtils.md5DigestAsHex(sign.getBytes());
@@ -230,7 +207,7 @@ public class Utils {
 		}
 		String sign = StringUtils.joinWith(PIPE, sortedValues.toArray());
 
-		return encode(getStoreConfig("freekassa.api_key", store), sign);
+		return encode(store.getString("freekassa.api_key"), sign);
 	}
 
 	public static String encode(String key, String data) throws NoSuchAlgorithmException, InvalidKeyException {
@@ -239,5 +216,10 @@ public class Utils {
 		sha256_HMAC.init(secret_key);
 
 		return new String(Hex.encode(sha256_HMAC.doFinal(data.getBytes(StandardCharsets.UTF_8))));
+	}
+
+	public static User updateUserBalance(User user, BigDecimal amount) {
+		user.setBalance(user.getBalance().add(amount));
+		return userRepository.save(user);
 	}
 }

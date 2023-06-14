@@ -1,6 +1,5 @@
 package com.dayz.shop.jpa.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
@@ -17,9 +16,9 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "item_description")
+@Table(name = "description")
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
-public class ItemDescription {
+public class Description {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	@Column(name = "DESCRIPTION_ID", nullable = false)
@@ -35,12 +34,7 @@ public class ItemDescription {
 	@JoinColumn(name = "STORE_ID")
 	private Store store;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "ITEM_ID", referencedColumnName = "ITEM_ID", nullable = false)
-	@JsonBackReference
-	private Item item;
-
-	@Column(name = "ITEM_NAME", nullable = false)
+	@Column(name = "ENTITY_NAME", nullable = false)
 	private String name;
 
 	@Column(name = "DESCRIPTION")
@@ -53,7 +47,7 @@ public class ItemDescription {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-		ItemDescription that = (ItemDescription) o;
+		Description that = (Description) o;
 		return id != null && Objects.equals(id, that.id);
 	}
 

@@ -53,14 +53,14 @@ public class FreeKassaService {
 		payment.setDirection(PaymentDirection.INCOMING);
 		Store store = payment.getStore();
 
-		String merchantId = Utils.getStoreConfig("freekassa.merchantId", store);
+		String merchantId = store.getString("freekassa.merchantId");
 		String amount = payment.getAmount().setScale(2, RoundingMode.UNNECESSARY).toString();
 		Long paymentId = payment.getId();
 		Currency currency = payment.getCurrency();
 		String signHashed = Utils.getFreekassaSignatureForPayment(payment);
 
 		paymentRepository.save(payment);
-		return UriBuilder.fromUri(Utils.getStoreConfig("freekassa.baseUrl", store))
+		return UriBuilder.fromUri(store.getString("freekassa.baseUrl"))
 				.queryParam(MERCHAND_ID_KEY, merchantId)
 				.queryParam(AMOUNT_KEY, amount)
 				.queryParam(CURRENCY_KEY, currency)
@@ -86,10 +86,10 @@ public class FreeKassaService {
 					}
 					payment.getProperties().put("message", Utils.getMessage("payment.success", payment.getStore(), amount, payment.getCurrency()));
 					payment.setBalanceBefore(payment.getUser().getBalance());
-					userService.updateUserBalance(payment.getUser(), payment.getAmount());
+					Utils.updateUserBalance(payment.getUser(), payment.getAmount());
 					payment.setBalanceAfter(payment.getUser().getBalance());
 					paymentRepository.save(payment);
-					boolean commissionEnabled = Boolean.parseBoolean(Utils.getStoreConfig("comisson.enabled", payment.getStore()));
+					boolean commissionEnabled = Boolean.parseBoolean(payment.getStore().getString("comisson.enabled"));
 					if (commissionEnabled) {
 						fee(payment);
 					}

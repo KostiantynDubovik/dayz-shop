@@ -2,10 +2,7 @@ package com.dayz.shop.service;
 
 import com.dayz.shop.jpa.entities.UserService;
 import com.dayz.shop.jpa.entities.*;
-import com.dayz.shop.repository.OrderItemRepository;
-import com.dayz.shop.repository.OrderRepository;
-import com.dayz.shop.repository.UserRepository;
-import com.dayz.shop.repository.UserServiceRepository;
+import com.dayz.shop.repository.*;
 import com.dayz.shop.utils.OrderUtils;
 import com.dayz.shop.utils.Utils;
 import com.jcraft.jsch.JSchException;
@@ -13,7 +10,6 @@ import com.jcraft.jsch.SftpException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -21,10 +17,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,27 +26,33 @@ public class OrderService {
 	public static final String CLASSNAME = OrderService.class.getName();
 	private static final Logger LOGGER = Logger.getLogger(CLASSNAME);
 
+	private static final List<ItemType> RECHARGEABLE = Collections.singletonList(ItemType.SET);
+	public static final Long CONSTANTINE_ID = -1L;
+
 	private final OrderRepository orderRepository;
 	private final OrderItemRepository orderItemRepository;
 	private final SendToServerService sendToServerService;
 	private final UserServiceRepository userServiceRepository;
 	private final UserRepository userRepository;
+	private final ItemRepository itemRepository;
 
 	@Autowired
 	public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository,
 	                    SendToServerService sendToServerService, UserServiceRepository userServiceRepository,
-	                    UserRepository userRepository) {
+	                    UserRepository userRepository,
+	                    ItemRepository itemRepository) {
 		this.orderRepository = orderRepository;
 		this.orderItemRepository = orderItemRepository;
 		this.sendToServerService = sendToServerService;
 		this.userServiceRepository = userServiceRepository;
 		this.userRepository = userRepository;
+		this.itemRepository = itemRepository;
 	}
 
 	public Order addOrderItem(Item item, Store store, int count) {
 		User user = Utils.getCurrentUser();
-		Order order = OrderUtils.getCurrentOrder(user, store);
-		OrderItem orderItem = OrderUtils.createOrderItem(item, user, order, count);
+		Order order = OrderUtils.getCurrentOrder(user, store, null);
+		OrderItem orderItem = OrderUtils.createOrderItem(item, user, user, order, count);
 		orderItemRepository.save(orderItem);
 		OrderUtils.recalculateOrder(order);
 		return orderRepository.save(order);
@@ -68,51 +67,59 @@ public class OrderService {
 		return orderRepository.save(order);
 	}
 
-	public Order buyItemNow(Item item, Store store, Server server, int count) throws InterruptedException {
-		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		Order order = OrderUtils.createOrder(user, store);
+	public Order buyItemNow(Item item, Store store, Server server, int count, User user, User userTo) throws InterruptedException {
+		Order order = OrderUtils.createOrder(user, store, userTo);
 		order.setServer(server);
 		orderRepository.save(order);
-		OrderItem orderItem = OrderUtils.createOrderItem(item, user, order, count);
+		OrderItem orderItem = OrderUtils.createOrderItem(item, user, userTo, order, count);
 		List<OrderItem> orderItems = new ArrayList<>(order.getOrderItems());
 		orderItems.add(orderItemRepository.save(orderItem));
 		order.setOrderItems(orderItems);
 		return placeOrder(orderRepository.save(order));
 	}
 
-	public Order placeOrder(Store store) throws InterruptedException {
-		return placeOrder(OrderUtils.getCurrentOrder(Utils.getCurrentUser(), store));
+	public Order placeOrder(Store store, User user, User userTo) throws InterruptedException {
+		return placeOrder(OrderUtils.getCurrentOrder(user, store, userTo));
 	}
 
 	public Order placeOrder(Order order) throws InterruptedException {
 		User user = userRepository.getById(order.getUser().getId());
 		OrderUtils.recalculateOrder(order);
-		if (user.getBalance().compareTo(order.getOrderTotal()) < 0) {
+		BigDecimal orderTotal = order.getOrderTotal();
+		if (user.getBalance().compareTo(orderTotal) < 0) {
 			LOGGER.log(Level.WARNING, "Insufficient funds to place order");
 			order.setStatus(OrderStatus.FAILED);
 			order.getOrderItems().forEach(orderItem -> orderItem.setStatus(OrderStatus.FAILED));
-			order.getProperties().put("message", Utils.getMessage("order.failed.insufficient", order.getStore(), user.getBalance(), order.getOrderTotal()));
+			order.getProperties().put("message", Utils.getMessage("order.failed.insufficient", order.getStore(), user.getBalance(), orderTotal));
 		} else {
+			Utils.updateUserBalance(user, orderTotal.negate());
 			order.setTimePlaced(LocalDateTime.now());
 			try {
 				Map<ItemType, List<OrderItem>> separatedTypes = splitTypes(order);
 				sendToServerService.sendOrder(order, separatedTypes);
-				user.setBalance(user.getBalance().subtract(order.getOrderTotal()));
 				order.setStatus(OrderStatus.COMPLETE);
 				order.getOrderItems().forEach(orderItem -> orderItem.setStatus(OrderStatus.COMPLETE));
 
 				order.getProperties().put("message", Utils.getMessage(getKey(order), order.getStore()));
 				order = orderRepository.save(order);
 				saveServices(separatedTypes);
+				clearConstantineOrder(order);
 			} catch (JSchException | SftpException | IOException e) {
 				LOGGER.log(Level.SEVERE, "Error during order placing", e);
 				order.getProperties().put("message", Utils.getMessage("order.failed", order.getStore()));
 				order.setStatus(OrderStatus.FAILED);
 				order.getOrderItems().forEach(orderItem -> orderItem.setStatus(OrderStatus.FAILED));
 				order = orderRepository.save(order);
+				Utils.updateUserBalance(user, orderTotal);
 			}
 		}
 		return order;
+	}
+
+	private void clearConstantineOrder(Order order) {
+		if (CONSTANTINE_ID.equals(order.getUser().getId())) {
+			orderRepository.delete(order);
+		}
 	}
 
 	private static String getKey(Order order) {
@@ -130,6 +137,7 @@ public class OrderService {
 			Item item = orderItem.getItem();
 			switch (itemTypeOrderEntry.getKey()) {
 				case SET:
+				case CUSTOM_SET:
 				case VIP:
 					ItemType itemType = item.getItemType();
 					Server server = orderItem.getServer();
@@ -139,8 +147,11 @@ public class OrderService {
 					do {
 						userService = userServiceRepository.findByUserAndItemTypeAndServer(user, itemType, server);
 						if (userService != null) {
+							if (itemTypeOrderEntry.getKey().equals(ItemType.CUSTOM_SET)) {
+								return;
+							}
 							endDate = userService.getEndDate();
-							if (itemTypeOrderEntry.getKey().equals(ItemType.SET)) {
+							if (RECHARGEABLE.contains(itemTypeOrderEntry.getKey())) {
 								chargebackSet(userService);
 								repeat = true;
 							}
@@ -194,5 +205,14 @@ public class OrderService {
 
 	public Page<Order> getAllUserOrders(User user, Store store, Pageable pageable) {
 		return orderRepository.findAllByUserAndStoreAndStatus(user, store, OrderStatus.COMPLETE, pageable);
+	}
+
+	public Order changeCustomSet(Map<Item, Integer> items, Store store, User user, User userTo) throws InterruptedException {
+		Order order = OrderUtils.createOrder(user, store, userTo);
+		orderRepository.save(order);
+		List<OrderItem> orderItems = OrderUtils.toOrderItems(items, userTo, order);
+		order.setOrderItems(orderItems);
+		order.setOrderTotal(BigDecimal.ZERO);
+		return placeOrder(orderRepository.save(order));
 	}
 }

@@ -4,6 +4,7 @@ import com.dayz.shop.jpa.entities.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -11,6 +12,8 @@ import java.util.List;
 
 @Repository
 public interface UserServiceRepository extends JpaRepository<UserService, Long> {
+	List<UserService> findByUser(User user);
+	List<UserService> findByUser_Id(@NonNull Long id);
 
 	List<UserService> findAllByEndDateIsBefore(LocalDateTime endDate);
 
@@ -22,5 +25,5 @@ public interface UserServiceRepository extends JpaRepository<UserService, Long> 
 	@Query(value = "delete FROM user_services US where US.USER_ID = :userId AND US.ITEM_TYPE = :itemType AND US.SERVER_ID = :serverId", nativeQuery = true)
 	void deleteUserServiceByUserAndItemTypeAndServer(Long userId, String itemType, Long serverId);
 
-	void deleteAllByUserServiceIdIsNotIn(List<Long> ids);
+	UserService findAnyByUserAndItemType(User user, ItemType customSet);
 }

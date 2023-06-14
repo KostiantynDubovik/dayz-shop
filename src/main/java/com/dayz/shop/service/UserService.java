@@ -2,9 +2,9 @@ package com.dayz.shop.service;
 
 import com.dayz.shop.jpa.entities.Store;
 import com.dayz.shop.jpa.entities.User;
+import com.dayz.shop.repository.LanguageRepository;
 import com.dayz.shop.repository.RoleRepository;
 import com.dayz.shop.repository.UserRepository;
-import com.dayz.shop.utils.Utils;
 import org.apache.wink.client.RestClient;
 import org.apache.wink.json4j.JSONException;
 import org.apache.wink.json4j.JSONObject;
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
@@ -26,12 +25,15 @@ public class UserService {
 
 	@Value("${steam.api.url}")
 	private String apiUrl;
+	private final LanguageRepository languageRepository;
 
 
 	@Autowired
-	public UserService(UserRepository userRepository, RoleRepository roleRepository) {
+	public UserService(UserRepository userRepository, RoleRepository roleRepository,
+	                   LanguageRepository languageRepository) {
 		this.userRepository = userRepository;
 		this.roleRepository = roleRepository;
+		this.languageRepository = languageRepository;
 	}
 
 	public String getApiUrl() {
@@ -43,7 +45,7 @@ public class UserService {
 	}
 
 	public String getApiKey(Store store) {
-		return Utils.getStoreConfig(STEAM_API_KEY, store);
+		return store.getString(STEAM_API_KEY);
 	}
 
 	//parse json to get nickname and avatar url
@@ -59,6 +61,7 @@ public class UserService {
 	public User createUser(String steamId, Store store) {
 		User user = new User();
 		user.setSteamId(steamId);
+		user.setLanguage(languageRepository.getById(store.getLong("language.default")));
 		user.setRoles(roleRepository.findAllByName("USER"));
 		user.setStore(store);
 		return updateUser(user, store);
@@ -76,11 +79,6 @@ public class UserService {
 		user.setSteamNickName(stringObjectMap.get("personaname"));
 		user.setSteamAvatarUrl(stringObjectMap.get("avatar"));
 		user.setActive(true);
-	}
-
-	public User updateUserBalance(User user, BigDecimal amount) {
-		user.setBalance(user.getBalance().add(amount));
-		return userRepository.save(user);
 	}
 
 	public User findOne(Long id) {
