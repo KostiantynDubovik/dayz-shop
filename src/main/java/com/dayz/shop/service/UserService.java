@@ -5,7 +5,6 @@ import com.dayz.shop.jpa.entities.User;
 import com.dayz.shop.repository.LanguageRepository;
 import com.dayz.shop.repository.RoleRepository;
 import com.dayz.shop.repository.UserRepository;
-import com.dayz.shop.utils.Utils;
 import org.apache.wink.client.RestClient;
 import org.apache.wink.json4j.JSONException;
 import org.apache.wink.json4j.JSONObject;
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;

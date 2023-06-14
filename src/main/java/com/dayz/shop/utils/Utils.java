@@ -126,6 +126,15 @@ public class Utils {
 		return userRepository.getBySteamId(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getSteamId());
 	}
 
+	public static User getUserTo(User user, String steamIdTo) {
+		return steamIdTo == null || user.getSteamId().equals(steamIdTo) ? user : userRepository.getBySteamId(steamIdTo);
+	}
+
+	public static User getUserTo(String steamIdTo) {
+		User user = getCurrentUser();
+		return getUserTo(user, steamIdTo);
+	}
+
 	public static String getClientIpAddress(HttpServletRequest request) {
 		String xForwardedForHeader = request.getHeader("X-Forwarded-For");
 		if (xForwardedForHeader == null) {

@@ -43,6 +43,11 @@ public class Order {
 
 	@ManyToOne
 	@JsonBackReference
+	@JoinColumn(name = "USER_TO", foreignKey = @ForeignKey(name = "orders_users_to_STORE_ID_fk"))
+	private User userTo;
+
+	@ManyToOne
+	@JsonBackReference
 	@JoinColumn(name = "STORE_ID")
 	private Store store;
 
@@ -67,6 +72,13 @@ public class Order {
 
 	@Column(name = "TIME_PLACED")
 	private LocalDateTime timePlaced;
+
+	public void setStatus(OrderStatus status) {
+		this.status = status;
+		for (OrderItem orderItem : orderItems) {
+			orderItem.setStatus(status);
+		}
+	}
 
 	@Override
 	public boolean equals(Object o) {

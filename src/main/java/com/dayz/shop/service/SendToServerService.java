@@ -43,7 +43,7 @@ public class SendToServerService {
 	}
 
 	public void sendOrder(Order order, Map<ItemType, List<OrderItem>> separatedTypes) throws JSchException, IOException, SftpException, InterruptedException {
-		String steamId = order.getUser().getSteamId();
+		String steamId = order.getUserTo().getSteamId();
 		try {
 			for (ItemType itemType : separatedTypes.keySet()) {
 				switch (itemType) {
@@ -199,7 +199,7 @@ public class SendToServerService {
 
 	private static List<OrderItem> getStubOrderItems(Order order, Server server) {
 		Order stubOrder = new Order();
-		User user = order.getUser();
+		User user = order.getUserTo();
 		stubOrder.setUser(user);
 		stubOrder.setServer(server);
 		Item stubItem = new Item();
@@ -218,7 +218,7 @@ public class SendToServerService {
 		msgParams.add(order.getServer().getId());
 		msgParams.add(completePath);
 		msgParams.add(order.getOrderItems().stream().map(OrderItem::getId).collect(Collectors.toSet()));
-		msgParams.add(order.getUser().getSteamId());
+		msgParams.add(order.getUserTo().getSteamId());
 		LOGGER.log(Level.SEVERE, "Cannot write SET to server: {0}, with path {1}, using order items: {2}, for user steam id:{3}", msgParams.toArray());
 	}
 
@@ -231,7 +231,7 @@ public class SendToServerService {
 			Order order = orderItems.stream().findFirst().get().getOrder();
 			Server server = order.getServer();
 			String pathToJson = SFTPUtils.getPathToSpawningItemsJson(server);
-			String steamId = order.getUser().getSteamId();
+			String steamId = order.getUserTo().getSteamId();
 			String completePath = String.format(pathToJson, server.getInstanceName(), steamId);
 			try {
 				InputStream existingItems = null;

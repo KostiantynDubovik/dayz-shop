@@ -10,7 +10,6 @@ import com.jcraft.jsch.SftpException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -28,6 +27,7 @@ public class OrderService {
 	private static final Logger LOGGER = Logger.getLogger(CLASSNAME);
 
 	private static final List<ItemType> RECHARGEABLE = Collections.singletonList(ItemType.SET);
+	public static final Long CONSTANTINE_ID = -1L;
 
 	private final OrderRepository orderRepository;
 	private final OrderItemRepository orderItemRepository;
@@ -51,8 +51,8 @@ public class OrderService {
 
 	public Order addOrderItem(Item item, Store store, int count) {
 		User user = Utils.getCurrentUser();
-		Order order = OrderUtils.getCurrentOrder(user, store);
-		OrderItem orderItem = OrderUtils.createOrderItem(item, user, order, count);
+		Order order = OrderUtils.getCurrentOrder(user, store, null);
+		OrderItem orderItem = OrderUtils.createOrderItem(item, user, user, order, count);
 		orderItemRepository.save(orderItem);
 		OrderUtils.recalculateOrder(order);
 		return orderRepository.save(order);
@@ -67,20 +67,19 @@ public class OrderService {
 		return orderRepository.save(order);
 	}
 
-	public Order buyItemNow(Item item, Store store, Server server, int count) throws InterruptedException {
-		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		Order order = OrderUtils.createOrder(user, store);
+	public Order buyItemNow(Item item, Store store, Server server, int count, User user, User userTo) throws InterruptedException {
+		Order order = OrderUtils.createOrder(user, store, userTo);
 		order.setServer(server);
 		orderRepository.save(order);
-		OrderItem orderItem = OrderUtils.createOrderItem(item, user, order, count);
+		OrderItem orderItem = OrderUtils.createOrderItem(item, user, userTo, order, count);
 		List<OrderItem> orderItems = new ArrayList<>(order.getOrderItems());
 		orderItems.add(orderItemRepository.save(orderItem));
 		order.setOrderItems(orderItems);
 		return placeOrder(orderRepository.save(order));
 	}
 
-	public Order placeOrder(Store store) throws InterruptedException {
-		return placeOrder(OrderUtils.getCurrentOrder(Utils.getCurrentUser(), store));
+	public Order placeOrder(Store store, User user, User userTo) throws InterruptedException {
+		return placeOrder(OrderUtils.getCurrentOrder(user, store, userTo));
 	}
 
 	public Order placeOrder(Order order) throws InterruptedException {
@@ -104,6 +103,7 @@ public class OrderService {
 				order.getProperties().put("message", Utils.getMessage(getKey(order), order.getStore()));
 				order = orderRepository.save(order);
 				saveServices(separatedTypes);
+				clearConstantineOrder(order);
 			} catch (JSchException | SftpException | IOException e) {
 				LOGGER.log(Level.SEVERE, "Error during order placing", e);
 				order.getProperties().put("message", Utils.getMessage("order.failed", order.getStore()));
@@ -114,6 +114,12 @@ public class OrderService {
 			}
 		}
 		return order;
+	}
+
+	private void clearConstantineOrder(Order order) {
+		if (CONSTANTINE_ID.equals(order.getUser().getId())) {
+			orderRepository.delete(order);
+		}
 	}
 
 	private static String getKey(Order order) {
@@ -141,6 +147,9 @@ public class OrderService {
 					do {
 						userService = userServiceRepository.findByUserAndItemTypeAndServer(user, itemType, server);
 						if (userService != null) {
+							if (itemTypeOrderEntry.getKey().equals(ItemType.CUSTOM_SET)) {
+								return;
+							}
 							endDate = userService.getEndDate();
 							if (RECHARGEABLE.contains(itemTypeOrderEntry.getKey())) {
 								chargebackSet(userService);
@@ -198,17 +207,12 @@ public class OrderService {
 		return orderRepository.findAllByUserAndStoreAndStatus(user, store, OrderStatus.COMPLETE, pageable);
 	}
 
-	public Order buyCustomSetNow(List<Item> items, Store store) throws InterruptedException {
-		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		Order order = OrderUtils.createOrder(user, store);
+	public Order changeCustomSet(Map<Item, Integer> items, Store store, User user, User userTo) throws InterruptedException {
+		Order order = OrderUtils.createOrder(user, store, userTo);
 		orderRepository.save(order);
-		List<OrderItem> orderItems = order.getOrderItems();
-		OrderItem customSetItem = orderItemRepository.save(OrderUtils.createOrderItem(itemRepository.findByItemTypeAndStore(ItemType.CUSTOM_SET, store), user, order, 1));
-		orderItems.add(customSetItem);
-		for (Item item : items) {
-			OrderItem orderItem = orderItemRepository.save(OrderUtils.createOrderItem(item, user, order, 1));
-			orderItems.add(orderItem);
-		}
+		List<OrderItem> orderItems = OrderUtils.toOrderItems(items, userTo, order);
+		order.setOrderItems(orderItems);
+		order.setOrderTotal(BigDecimal.ZERO);
 		return placeOrder(orderRepository.save(order));
 	}
 }

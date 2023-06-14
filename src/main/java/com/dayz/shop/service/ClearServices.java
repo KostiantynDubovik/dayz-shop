@@ -62,8 +62,7 @@ public class ClearServices {
 				sendToServerService.set(OrderUtils.getItemsByType(order, ItemType.SET), steamId, false);
 				break;
 			case CUSTOM_SET:
-				List<OrderItem> customSetItems = order.getOrderItems().stream().filter(orderItem -> orderItem.getItem().getItemType().equals(ItemType.CUSTOM_SET)).collect(Collectors.toList());
-				sendToServerService.customSet(OrderUtils.getItemsByType(order, ItemType.CUSTOM_SET), customSetItems, steamId, false);
+				sendToServerService.set(OrderUtils.getItemsByType(order, ItemType.CUSTOM_SET), steamId, false);
 		}
 		userServiceRepository.delete(userService);
 	}

@@ -228,12 +228,18 @@ insert into server_config values
 	                              (4, 'PATH_TO_CUSTOM_SET', '../../Omega/servers/%s/profiles/DayZShop/DataBase/CustomSets/%s', -2),
 	                              (5, 'PATH_TO_CUSTOM_SET', '../../Omega/servers/%s/profiles/DayZShop/DataBase/CustomSets/%s', -2),
 	                              (6, 'PATH_TO_CUSTOM_SET', '../../Omega/servers/%s/profiles/DayZShop/DataBase/CustomSets/%s', -2),
-	                              (7, 'PATH_TO_CUSTOM_SET', '../../Omega/servers/%s/profiles/DayZShop/DataBase/CustomSets/%s', -2);
+	                              (7, 'PATH_TO_CUSTOM_SET', '../../Omega/servers/%s/profiles/DayZShop/DataBase/CustomSets/%s', -2),
+	                              (8, 'PATH_TO_CUSTOM_SET', '../../Omega/servers/%s/profiles/DayZShop/DataBase/CustomSets/%s', -2),
+	                              (9, 'PATH_TO_CUSTOM_SET', '../../Omega/servers/%s/profiles/DayZShop/DataBase/CustomSets/%s', -2);
 
 
-insert into description values ((select next_val + 1 from hibernate_sequence), 'Кастомный сет', 'Собери сет на свое усмотрение', -2, -2, 1);
+
 
 insert into items values ((select next_val + 2 from hibernate_sequence), 'custom_set', 'https://cdn.discordapp.com/attachments/934733103589654558/1086383901150294049/1unknown345.png', -2, 'CUSTOM_SET', 1, null, 0, (select next_val + 1 from hibernate_sequence));
+
+
+insert into description values ((select next_val + 1 from hibernate_sequence), 'Собери сет на свое усмотрение', -2, -2, (select next_val + 2 from hibernate_sequence), 1, 'Настраиваемый кастомный сет');
+
 
 insert into item_server_buyable values ((select next_val + 2 from hibernate_sequence), 1),
                                        ((select next_val + 2 from hibernate_sequence), 2),
@@ -241,10 +247,42 @@ insert into item_server_buyable values ((select next_val + 2 from hibernate_sequ
                                        ((select next_val + 2 from hibernate_sequence), 4),
                                        ((select next_val + 2 from hibernate_sequence), 5),
                                        ((select next_val + 2 from hibernate_sequence), 6),
-                                       ((select next_val + 2 from hibernate_sequence), 7);
+                                       ((select next_val + 2 from hibernate_sequence), 7),
+                                       ((select next_val + 2 from hibernate_sequence), 9);
 
 insert into item_category values ((select next_val + 2 from hibernate_sequence), 1), ((select next_val + 2 from hibernate_sequence), 108);
 
 insert into list_price values ((select next_val + 3 from hibernate_sequence), 1000, 'RUB', (select next_val + 2 from hibernate_sequence), -2);
 
 update hibernate_sequence set next_val = next_val + 4;
+
+
+
+alter table shop.orders add column USER_TO bigint not null;
+
+update shop.orders set orders.USER_TO = orders.USER_ID where USER_ID is not null;
+
+alter table shop.orders
+	add constraint orders_users_to_STORE_ID_fk
+		foreign key (USER_TO) references shop.users (USER_ID)
+			on update cascade on delete cascade;
+
+
+
+alter table shop.order_items add column USER_TO bigint not null;
+
+update shop.order_items set order_items.USER_TO = order_items.USER_ID where USER_ID is not null;
+
+alter table shop.order_items
+	add constraint order_items_users_to_STORE_ID_fk
+		foreign key (USER_TO) references shop.users (USER_ID)
+			on update cascade on delete cascade;
+
+alter table order_items
+	drop foreign key order_items_orders_ORDER_ID_fk;
+
+alter table order_items
+	add constraint order_items_orders_ORDER_ID_fk
+		foreign key (ORDER_ID) references orders (ORDER_ID)
+			on update cascade on delete cascade;
+

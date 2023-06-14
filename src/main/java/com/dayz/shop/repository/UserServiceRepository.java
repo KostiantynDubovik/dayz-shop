@@ -24,4 +24,6 @@ public interface UserServiceRepository extends JpaRepository<UserService, Long> 
 	@Modifying
 	@Query(value = "delete FROM user_services US where US.USER_ID = :userId AND US.ITEM_TYPE = :itemType AND US.SERVER_ID = :serverId", nativeQuery = true)
 	void deleteUserServiceByUserAndItemTypeAndServer(Long userId, String itemType, Long serverId);
+
+	UserService findAnyByUserAndItemType(User user, ItemType customSet);
 }
