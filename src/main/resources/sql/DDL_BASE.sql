@@ -14,10 +14,10 @@ create table category_relations
 		unique (CHILD_CATEGORY_ID),
 	constraint FKalr31nuy9d9x4qs006sca2w70
 		foreign key (CHILD_CATEGORY_ID) references categories (CATEGORY_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE,
+			ON DELETE CASCADE,
 	constraint FKc50resr68q3cpwobaikm9lf9c
 		foreign key (PARENT_CATEGORY_ID) references categories (CATEGORY_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE
+			ON DELETE CASCADE
 );
 
 create table hibernate_sequence
@@ -58,10 +58,10 @@ create table roles_privileges
 	PRIVILEGE_ID bigint not null,
 	constraint FK8kxttvjnfb2dtfhjsw9nbwgnb
 		foreign key (PRIVILEGE_ID) references privileges (PRIVILEGE_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE,
+			ON DELETE CASCADE,
 	constraint roles_privileges_roles_ROLE_ID_fk
 		foreign key (ROLE_ID) references roles (ROLE_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE
+			ON DELETE CASCADE
 );
 
 create table stores
@@ -88,7 +88,7 @@ create table items
 	SEQUENCE   bigint       not null default 0,
 	constraint items_stores_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE
+			ON DELETE CASCADE
 );
 
 create table item_category
@@ -97,10 +97,10 @@ create table item_category
 	CATEGORY_ID bigint not null,
 	constraint item_category_item_category_CATEGORY_ID_fk
 		foreign key (CATEGORY_ID) references categories (CATEGORY_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE,
+			ON DELETE CASCADE,
 	constraint item_category_items_ITEM_ID_fk
 		foreign key (ITEM_ID) references items (ITEM_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE
+			ON DELETE CASCADE
 );
 
 create table item_description
@@ -111,16 +111,16 @@ create table item_description
 	LANGUAGE_ID    bigint       default -3 null,
 	STORE_ID       bigint       null,
 	ITEM_ID        bigint       null,
-	PUBLISHED      bit          null,
+	PUBLISHED      boolean          null,
 	constraint item_description_store_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE,
+			ON DELETE CASCADE,
 	constraint item_description_items_ITEM_ID_fk
 		foreign key (ITEM_ID) references items (ITEM_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE,
+			ON DELETE CASCADE,
 	constraint item_description_languages_LANGUAGE_ID_fk
 		foreign key (LANGUAGE_ID) references languages (LANGUAGE_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE
+			ON DELETE CASCADE
 );
 
 create table list_price
@@ -133,10 +133,10 @@ create table list_price
 	STORE_ID     bigint         not null,
 	constraint list_price_items_ITEM_ID_fk
 		foreign key (ITEM_ID) references items (ITEM_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE,
+			ON DELETE CASCADE,
 	constraint list_price_stores_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE
+			ON DELETE CASCADE
 );
 
 create table offer_price
@@ -145,15 +145,15 @@ create table offer_price
 		primary key,
 	PRICE      decimal(19, 2) null,
 	CURRENCY   varchar(255)   null,
-	START_TIME datetime(6)    null,
-	END_TIME   datetime(6)    null,
+	START_TIME timestamp    null,
+	END_TIME   timestamp    null,
 	PRIORITY   int            null,
 	ITEM_ID    bigint         null,
 	constraint UK_equ60oycdwy8nhqr0emt1gh1e
 		unique (ITEM_ID),
 	constraint FKfenl0org6dixeh79gce55vj05
 		foreign key (ITEM_ID) references items (ITEM_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE
+			ON DELETE CASCADE
 );
 
 create table servers
@@ -166,18 +166,18 @@ create table servers
 		unique (SERVER_ID, STORE_ID, SERVER_NAME),
 	constraint servers_stores_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE
+			ON DELETE CASCADE
 );
 
 create table store_config
 (
 	STORE_ID bigint       not null,
-	`KEY`    varchar(255) not null,
+	KEY    varchar(255) not null,
 	VALUE    varchar(255) not null,
-	primary key (STORE_ID, `KEY`),
+	primary key (STORE_ID, KEY),
 	constraint store_config_stores_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE
+			ON DELETE CASCADE
 );
 
 create table store_languages
@@ -186,10 +186,10 @@ create table store_languages
 	LANGUAGE_ID bigint null,
 	constraint STORE_LANGUAGE_languages_LANGUAGE_ID_fk
 		foreign key (LANGUAGE_ID) references languages (LANGUAGE_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE,
+			ON DELETE CASCADE,
 	constraint STORE_LANGUAGE_stores_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE
+			ON DELETE CASCADE
 );
 
 create table sub_items
@@ -201,10 +201,10 @@ create table sub_items
 		primary key (ITEM_ID, SUB_ITEM_ID),
 	constraint main_item_FK
 		foreign key (ITEM_ID) references items (ITEM_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE,
+			ON DELETE CASCADE,
 	constraint sub_item_FK
 		foreign key (SUB_ITEM_ID) references items (ITEM_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE
+			ON DELETE CASCADE
 );
 
 create index sub_items_items_ITEM_ID_fk_2
@@ -217,16 +217,15 @@ create table users
 	USER_ID          bigint                      not null
 		primary key,
 	STEAM_ID         varchar(255)                not null,
-	BALANCE          decimal(19, 2) default 0.00 null,
 	STEAM_NICKNAME   varchar(255)                not null,
 	STEAM_AVATAR_URL varchar(255)                not null,
 	STORE_ID         bigint                      not null,
-	IS_ACTIVE        bit                         not null,
+	IS_ACTIVE        boolean                         not null,
 	constraint UKrsl8blftmuw9y1u82pt7o4i9r
 		unique (USER_ID, STORE_ID),
 	constraint FKojefi57a28my3srup14jrs2f8
 		foreign key (STORE_ID) references stores (STORE_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE
+			ON DELETE CASCADE
 );
 
 create table orders
@@ -237,26 +236,25 @@ create table orders
 	STATUS      varchar(255)   null,
 	USER_ID     bigint         null,
 	STORE_ID    bigint         null,
-	SERVER_ID   bigint         null,
 	TIME_PLACED TIMESTAMP      null,
 	constraint FKenwru67yr8f0ei6m1bc2xlj4w
 		foreign key (USER_ID) references users (USER_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE,
+			ON DELETE CASCADE,
 	constraint orders_servers_SERVER_ID_fk
 		foreign key (SERVER_ID) references servers (SERVER_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE,
+			ON DELETE CASCADE,
 	constraint orders_stores_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE
+			ON DELETE CASCADE
 );
 
 create table order_items
 (
 	ORDER_ITEM_ID bigint                      not null
 		primary key,
-	BOUGHT_TIME   datetime(6)                 null,
-	RECEIVED      bit                         null,
-	RECEIVE_TIME  datetime(6)                 null,
+	BOUGHT_TIME   timestamp                 null,
+	RECEIVED      boolean                         null,
+	RECEIVE_TIME  timestamp                 null,
 	PRICE         decimal(19, 2)              null,
 	TOTAL_PRICE   decimal(19, 2) default 0.00 null,
 	ITEM_ID       bigint                      null,
@@ -270,16 +268,16 @@ create table order_items
 		unique (ORDER_ITEM_ID),
 	constraint order_items_servers_SERVER_ID_fk
 		foreign key (SERVER_ID) references servers (SERVER_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE,
+			ON DELETE CASCADE,
 	constraint FK6sjhssmsryq1o07mqnpky6cny
 		foreign key (USER_ID) references users (USER_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE,
+			ON DELETE CASCADE,
 	constraint FKnnrjyhgtcxoh0eo45qvl41ira
 		foreign key (ORDER_ID) references orders (ORDER_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE,
+			ON DELETE CASCADE,
 	constraint FKssyx5rw664bnq7bwtjerw3wwy
 		foreign key (ITEM_ID) references items (ITEM_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE
+			ON DELETE CASCADE
 );
 
 create table users_roles
@@ -288,10 +286,10 @@ create table users_roles
 	ROLE_ID bigint null,
 	constraint USERS_ROLES_users_USER_ID_fk
 		foreign key (USER_ID) references users (USER_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE,
+			ON DELETE CASCADE,
 	constraint users_roles_roles_ROLE_ID_fk
 		foreign key (ROLE_ID) references roles (ROLE_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE
+			ON DELETE CASCADE
 );
 
 create table item_attributes
@@ -304,10 +302,10 @@ create table item_attributes
 		primary key (ITEM_ID, STORE_ID, ATTRIBUTE_NAME),
 	constraint ITEM_ATTRIBUTES_items_ITEM_ID_fk
 		foreign key (ITEM_ID) references items (ITEM_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE,
+			ON DELETE CASCADE,
 	constraint ITEM_ATTRIBUTES_stores_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE
+			ON DELETE CASCADE
 );
 
 create table payments
@@ -324,13 +322,13 @@ create table payments
 	CURRENCY       VARCHAR(3)   not null,
 	constraint PAYMENTS_users_null_fk
 		foreign key (USER_ID) references users (USER_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE,
+			ON DELETE CASCADE,
 	constraint PAYMENTS_users_from_fk
 		foreign key (USER_FROM) references users (USER_ID)
-			on update cascade on delete cascade,
+			 on delete cascade,
 	constraint payments_stores_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE
+			ON DELETE CASCADE
 );
 
 create table payment_properties
@@ -340,21 +338,21 @@ create table payment_properties
 	VALUE      varchar(255) null,
 	constraint PAYMENT_PROPERTIES_payments_null_fk
 		foreign key (PAYMENT_ID) references payments (PAYMENT_ID)
-			ON DELETE CASCADE ON UPDATE CASCADE
+			ON DELETE CASCADE
 );
 
 create table if not exists server_config
 (
 	SERVER_ID bigint       not null,
-	`KEY`     varchar(255) not null,
+	KEY     varchar(255) not null,
 	VALUE     varchar(255) not null,
 	STORE_ID  bigint       not null,
-	primary key (SERVER_ID, `KEY`),
+	primary key (SERVER_ID, KEY),
 	constraint server_config_stores_STORE_ID_fk
 		foreign key (STORE_ID) references stores (STORE_ID),
 	constraint server_config_servers_SERVER_ID_fk
 		foreign key (SERVER_ID) references servers (SERVER_ID)
-			on delete cascade on update cascade
+			on delete cascade
 );
 
 
@@ -368,13 +366,13 @@ create table if not exists user_services
 	primary key (USER_ID, ITEM_TYPE),
 	constraint user_services_users_USER_ID_fk
 		foreign key (USER_ID) references users (USER_ID)
-			on delete cascade on update cascade,
+			on delete cascade,
 	constraint user_services_orders_null_fk
 		foreign key (ORDER_ID) references orders (ORDER_ID)
-			on update cascade on delete cascade,
+			 on delete cascade,
 	constraint user_services_servers_SERVER_ID_fk
 		foreign key (SERVER_ID) references servers (SERVER_ID)
-			on delete cascade on update cascade
+			on delete cascade
 );
 
 
@@ -384,10 +382,10 @@ create table item_server_buyable
 	server_id bigint not null,
 	constraint item_server_buyable_items_null_fk
 		foreign key (item_id) references items (ITEM_ID)
-			on update cascade on delete cascade,
+			 on delete cascade,
 	constraint item_server_buyable_servers_null_fk
 		foreign key (server_id) references servers (server_id)
-			on update cascade on delete cascade
+			 on delete cascade
 );
 
 create table order_properties
@@ -397,5 +395,5 @@ create table order_properties
 	VALUE    varchar(255) null,
 	constraint order_properties_orders_null_fk
 		foreign key (ORDER_ID) references orders (ORDER_ID)
-			on update cascade on delete cascade
+			 on delete cascade
 );

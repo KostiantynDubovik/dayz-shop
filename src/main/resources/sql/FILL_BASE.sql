@@ -1,17 +1,16 @@
-INSERT INTO shop.hibernate_sequence (next_val)
+INSERT INTO COMMERCE.hibernate_sequence (next_val)
 VALUES (1);
 
-INSERT INTO shop.stores (STORE_ID, STORE_NAME)
+INSERT INTO COMMERCE.stores (STORE_ID, STORE_NAME)
 VALUES (-1, 'root');
-INSERT INTO shop.stores (STORE_ID, STORE_NAME)
+INSERT INTO COMMERCE.stores (STORE_ID, STORE_NAME)
 VALUES (-2, 'alcatraz');
 
-INSERT INTO shop.languages (LANGUAGE_ID, LANGUAGE, COUNTRY, LOCALE)
+INSERT INTO COMMERCE.languages (LANGUAGE_ID, LANGUAGE, COUNTRY, LOCALE)
 VALUES (-1, 'uk', 'UA', 'uk_UA'),
-       (-2, 'en', 'US', 'en_US'),
-       (-3, 'ru', 'RU', 'ru_RU');
+       (-2, 'en', 'US', 'en_US');
 
-INSERT INTO shop.store_languages (STORE_ID, LANGUAGE_ID)
+INSERT INTO COMMERCE.store_languages (STORE_ID, LANGUAGE_ID)
 VALUES (-1, -1),
        (-1, -2),
        (-1, -3),
@@ -19,17 +18,17 @@ VALUES (-1, -1),
        (-2, -2),
        (-2, -3);
 
-INSERT INTO shop.privileges (PRIVILEGE_ID, PRIVILEGE_NAME)
+INSERT INTO COMMERCE.privileges (PRIVILEGE_ID, PRIVILEGE_NAME)
 VALUES (-1, 'STORE_READ'),
        (-2, 'STORE_WRITE'),
        (-3, 'APP_WRITE');
 
-INSERT INTO shop.roles (ROLE_ID, ROLE_NAME)
+INSERT INTO COMMERCE.roles (ROLE_ID, ROLE_NAME)
 VALUES (-4, 'APP_ADMIN'),
        (-5, 'STORE_ADMIN'),
        (-6, 'USER');
 
-INSERT INTO shop.roles_privileges (ROLE_ID, PRIVILEGE_ID)
+INSERT INTO COMMERCE.roles_privileges (ROLE_ID, PRIVILEGE_ID)
 VALUES (-4, -1),
        (-4, -2),
        (-4, -3),
@@ -37,7 +36,7 @@ VALUES (-4, -1),
        (-5, -2),
        (-6, -1);
 
-INSERT INTO shop.users (USER_ID, STEAM_ID, BALANCE, STEAM_NICKNAME, STEAM_AVATAR_URL, STORE_ID, IS_ACTIVE)
+INSERT INTO COMMERCE.users (USER_ID, STEAM_ID, BALANCE, STEAM_NICKNAME, STEAM_AVATAR_URL, STORE_ID, IS_ACTIVE)
 VALUES (-1, '76561198107293144', 999999999.00, 'Constantine',
         'https://avatars.akamai.steamstatic.com/db91f340f01a90029a89b8fdc41e8976a2888f3f.jpg', -1, true),
        (-2, '76561198121789747', 999999999.00, 'ФУкаБляка',
@@ -49,14 +48,14 @@ VALUES (-1, '76561198107293144', 999999999.00, 'Constantine',
        (192, '76561199075276596', 0.00, 'Conqueeftador',
         'https://avatars.akamai.steamstatic.com/e1dde7fe207a397634580d4755f7890ccf24ddd7.jpg', -2, true);
 
-INSERT INTO shop.users_roles (USER_ID, ROLE_ID)
+INSERT INTO COMMERCE.users_roles (USER_ID, ROLE_ID)
 VALUES (-1, -4),
        (-2, -4),
        (174, -6),
        (189, -6),
        (192, -6);
 
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE)
+INSERT INTO COMMERCE.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR, SEQUENCE)
 VALUES (1, 'Радиатор', 'CarRadiator',
         'https://cdn.discordapp.com/attachments/952625703558475846/1037180388038148209/unknown.png', -2, 'ITEM', 1,
         null, 100),
@@ -184,7 +183,7 @@ VALUES (1, 'Радиатор', 'CarRadiator',
 
 
 
-INSERT INTO shop.list_price (LISTPRICE_ID, PRICE, CURRENCY, ITEM_ID, STORE_ID)
+INSERT INTO COMMERCE.list_price (LISTPRICE_ID, PRICE, CURRENCY, ITEM_ID, STORE_ID)
 VALUES (1, 50.00, 'RUB', 1, -2),
        (2, 50.00, 'RUB', 2, -2),
        (3, 50.00, 'RUB', 3, -2),
@@ -200,7 +199,7 @@ VALUES (1, 50.00, 'RUB', 1, -2),
        (14, 10.00, 'RUB', 14, -2),
        (15, 25.00, 'RUB', 15, -2);
 
-INSERT INTO shop.list_price (LISTPRICE_ID, PRICE, CURRENCY, ITEM_ID, STORE_ID)
+INSERT INTO COMMERCE.list_price (LISTPRICE_ID, PRICE, CURRENCY, ITEM_ID, STORE_ID)
 VALUES (19, 150.00, 'RUB', 19, -2),
        (21, 10.00, 'RUB', 21, -2),
        (22, 10.00, 'RUB', 22, -2),
@@ -209,7 +208,7 @@ VALUES (19, 150.00, 'RUB', 19, -2),
        (25, 10.00, 'RUB', 25, -2),
        (26, 25.00, 'RUB', 26, -2);
 
-INSERT INTO shop.servers (SERVER_ID, STORE_ID, SERVER_NAME, INSTANCE_NAME)
+INSERT INTO COMMERCE.servers (SERVER_ID, STORE_ID, SERVER_NAME, INSTANCE_NAME)
 VALUES (1, -2, '1PP', '1PP'),
        (2, -2, 'LITE', 'LITE'),
        (3, -2, '3PP', 'CHERNO_3PP'),
@@ -218,25 +217,13 @@ VALUES (1, -2, '1PP', '1PP'),
        (6, -2, 'WINTER', 'WINTER'),
        (7, -2, 'LIVONIA', 'LIVONIA');
 
-INSERT INTO shop.store_config (STORE_ID, `KEY`, VALUE)
+INSERT INTO COMMERCE.store_config (STORE_ID, KEY, VALUE)
 values (-2, 'checkRealCharges', true),
        (-2, 'realChargesThreshold', 1),
        (-2, 'steam.api.key', 'DF21B88E007F7F971EE63BFA733BB812'),
-       (-2, 'yoomoney.client_id', '283B42B550A5600978948FF5B6F48F1980E8C374C8B1F9F42FD867F80D0BE356'),
-       (-2, 'yoomoney.client_secret',
-        '5CD09F538D6F2D0C43A0B389A252B835C67109174C778C709ED7AC306C3B824B2F5945880B3B6381C4D51B0A3967D49639D45C4A0D0D42CD7ED54145EA8245D9'),
-       (-2, 'yoomoney.app_name', 'Alcatraz Donation'),
-       (-2, 'default.image',
-        'https://media.discordapp.net/attachments/925072921125351454/1056336180188299274/missing.png?width=676&height=676'),
-       (-2, 'freekassa.api_key', 'c7d8f2117410ec8d40a00b077d3b9bd9'),
-       (-2, 'freekassa.secret', 'TC*bn0XfesGM8cC'),
-       (-2, 'freekassa.secret2', 'toi(/(Ni7LxsCfm'),
-       (-2, 'freekassa.merchantId', '25874'),
-       (-2, 'freekassa.baseUrl', 'https://pay.freekassa.ru/'),
-       (-2, 'freekassa.ips', '168.119.157.136,168.119.60.227,138.201.88.124,178.154.197.79'),
        (-2, 'known_hosts', '~/.ssh/known_hosts');
 
-INSERT INTO shop.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID)
+INSERT INTO COMMERCE.server_config (SERVER_ID, `KEY`, VALUE, STORE_ID)
 VALUES (1, 'PATH_TO_JSON', 'servers/%s/profiles/HotlineTrade/%s.json', -2),
        (1, 'PATH_TO_SET', 'servers/%s/profiles/%s', -2),
        (1, 'PATH_TO_VIP', 'servers/%s/%s', -2),
@@ -282,7 +269,7 @@ VALUES (1, 'PATH_TO_JSON', 'servers/%s/profiles/HotlineTrade/%s.json', -2),
 
 
 
-INSERT INTO shop.categories (CATEGORY_ID, CATEGORY_NAME, DISPLAY_NAME)
+INSERT INTO COMMERCE.categories (CATEGORY_ID, CATEGORY_NAME, DISPLAY_NAME)
 VALUES (1, 'all', 'Все'),
        (107, 'vip', 'Услуги'),
        (108, 'clothes', 'Экипировка'),
@@ -307,7 +294,7 @@ VALUES (1, -2, 'buyable', 'true'),
 
 
 
-INSERT INTO shop.list_price (LISTPRICE_ID, PRICE, CURRENCY, ITEM_ID, STORE_ID)
+INSERT INTO COMMERCE.list_price (LISTPRICE_ID, PRICE, CURRENCY, ITEM_ID, STORE_ID)
 VALUES (27, 150.00, 'RUB', 27, -2),
        (28, 10.00, 'RUB', 28, -2),
        (29, 10.00, 'RUB', 29, -2),
@@ -321,7 +308,7 @@ VALUES (27, -2, 'buyable', 'true');
 
 
 
-INSERT INTO shop.list_price (LISTPRICE_ID, PRICE, CURRENCY, ITEM_ID, STORE_ID)
+INSERT INTO COMMERCE.list_price (LISTPRICE_ID, PRICE, CURRENCY, ITEM_ID, STORE_ID)
 VALUES (32, 140.00, 'RUB', 32, -2),
        (33, 10.00, 'RUB', 33, -2),
        (34, 10.00, 'RUB', 34, -2),
@@ -339,7 +326,7 @@ VALUES (32, -2, 'buyable', 'true'),
 
 
 
-INSERT INTO shop.list_price (LISTPRICE_ID, PRICE, CURRENCY, ITEM_ID, STORE_ID)
+INSERT INTO COMMERCE.list_price (LISTPRICE_ID, PRICE, CURRENCY, ITEM_ID, STORE_ID)
 VALUES (40, 120.00, 'RUB', 40, -2),
        (41, 10.00, 'RUB', 41, -2),
        (42, 10.00, 'RUB', 42, -2),
@@ -357,7 +344,7 @@ VALUES (40, -2, 'buyable', 'true'),
 
 
 
-INSERT INTO shop.list_price (LISTPRICE_ID, PRICE, CURRENCY, ITEM_ID, STORE_ID)
+INSERT INTO COMMERCE.list_price (LISTPRICE_ID, PRICE, CURRENCY, ITEM_ID, STORE_ID)
 VALUES (48, 200.00, 'RUB', 48, -2),
        (49, 10.00, 'RUB', 49, -2),
        (50, 10.00, 'RUB', 50, -2),
@@ -390,7 +377,7 @@ VALUES (54, -2, 'buyable', 'true'),
 
 
 
-INSERT INTO shop.list_price (LISTPRICE_ID, PRICE, CURRENCY, ITEM_ID, STORE_ID)
+INSERT INTO COMMERCE.list_price (LISTPRICE_ID, PRICE, CURRENCY, ITEM_ID, STORE_ID)
 VALUES (54, 300.00, 'RUB', 54, -2),
        (55, 600.00, 'RUB', 55, -2),
        (56, 250.00, 'RUB', 56, -2),
@@ -406,7 +393,7 @@ VALUES (54, 300.00, 'RUB', 54, -2),
        (66, 600.00, 'RUB', 66, -2)
 ;
 
-INSERT INTO shop.item_category (ITEM_ID, CATEGORY_ID)
+INSERT INTO COMMERCE.item_category (ITEM_ID, CATEGORY_ID)
 VALUES (1, 109),
        (2, 109),
        (3, 109),
@@ -534,21 +521,21 @@ VALUES (1, 109),
 
 
 
-INSERT INTO shop.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR)
+INSERT INTO COMMERCE.items (ITEM_ID, ITEM_NAME, IN_GAME_ID, IMAGE_URL, STORE_ID, ITEM_TYPE, COUNT, COLOR)
 VALUES (67, 'Стройка', '', 'https://cdn.discordapp.com/attachments/952625703558475846/1037178953154166824/unknown.png',
         -2, 'ITEM', 1, null);
 
 INSERT INTO item_attributes (ITEM_ID, STORE_ID, ATTRIBUTE_NAME, ATTRIBUTE_VALUE)
 VALUES (67, -2, 'buyable', 'true');
 
-INSERT INTO shop.item_category (ITEM_ID, CATEGORY_ID)
+INSERT INTO COMMERCE.item_category (ITEM_ID, CATEGORY_ID)
 VALUES (67, 110),
        (67, 1);
 
-INSERT INTO shop.list_price (LISTPRICE_ID, PRICE, CURRENCY, ITEM_ID, STORE_ID)
+INSERT INTO COMMERCE.list_price (LISTPRICE_ID, PRICE, CURRENCY, ITEM_ID, STORE_ID)
 VALUES (67, 200.00, 'RUB', 67, -2);
 
-insert into shop.sub_items (ITEM_ID, SUB_ITEM_ID, QUANTITY)
+insert into COMMERCE.sub_items (ITEM_ID, SUB_ITEM_ID, QUANTITY)
 values (8, 1, 1),
        (8, 2, 1),
        (8, 3, 1),

@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="ShopApplication without front" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
     <module name="dayz-shop.main" />
-    <option name="SPRING_BOOT_MAIN_CLASS" value="com.dayz.shop.ShopApplication" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="ua.oak.shop.ShopApplication" />
     <option name="UPDATE_ACTION_UPDATE_POLICY" value="UpdateClassesAndResources" />
     <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
     <method v="2">
