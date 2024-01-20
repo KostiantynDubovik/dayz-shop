@@ -1,6 +1,6 @@
 package org.springframework.context.support;
 
-import ua.oak.shop.jpa.entities.Store;
+import ua.com.oak.shop.jpa.entities.Store;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceResolvable;
